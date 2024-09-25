@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.form-field {
+  @apply border-2 border-gray-400 rounded-sm block w-full px-2 py-1 text-sm text-gray-600;
+}
+
+.form-label {
+  @apply block w-full font-medium mb-1;
+}
+
+.form-control {
+  @apply w-full mt-3;
+}
+
+.form-step-title {
+  @apply font-bold uppercase text-lg text-blue-900;
+}
+
+.step-wrapper {
+  @apply w-full flex-shrink-0 flex-grow-0 p-6;
+  height: min-content;
+}
+
+.invalid-form {
+  @apply border-red-700;
+}
+
+label[data-checked="true"] > .radio > span {
+  background-color: #2563eb !important;
+}
+
+.radio > span {
+  width: 14px;
+  height: 14px;
+}
