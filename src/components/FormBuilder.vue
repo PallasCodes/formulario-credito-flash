@@ -7,7 +7,7 @@ const props = defineProps<{ form: FormStep[]; currentStep: number }>();
 
 <template>
   <div
-    class="mt-10 mx-auto overflow-hidden max-w-sm w-full rounded"
+    class="mx-auto overflow-hidden max-w-md w-full rounded-lg"
     style="padding: 22px"
   >
     <section
@@ -27,8 +27,7 @@ const props = defineProps<{ form: FormStep[]; currentStep: number }>();
           width: 100%;
           flex-grow: 0;
           flex-shrink: 0;
-          padding: 1.5rem;
-          padding-bottom: 2px;
+          padding: 12px 1.5rem 2px 1.5rem;
           height: min-content;
         "
         :actions="false"
@@ -39,7 +38,6 @@ const props = defineProps<{ form: FormStep[]; currentStep: number }>();
               : '',
         }"
       >
-        <h3 class="form-step-title">{{ step.title }}</h3>
         <div
           v-for="field in step.fields"
           class="form-control"
@@ -54,7 +52,8 @@ const props = defineProps<{ form: FormStep[]; currentStep: number }>();
             :validation="field.rules"
             :name="field.name"
             :classes="{
-              outer: 'w-full max-w-[100%]',
+              input: 'w-full',
+              outer: 'w-full !max-w-[100%]',
               inner: field.type === 'radio' ? 'radio' : '',
             }"
             :options="field.items"
@@ -65,21 +64,23 @@ const props = defineProps<{ form: FormStep[]; currentStep: number }>();
             :placeholder="field.placeholder"
           />
         </div>
-        <div class="flex justify-end px-4 mt-2">
+        <div class="flex justify-end pt-1">
           <FormKit
             v-if="currentStep > 1"
             type="submit"
             label="Anterior"
             :classes="{
               input:
-                'bg-transparent border-none !text-blue-500 shadow-none hover:bg-transparent hover:!text-blue-700',
+                'bg-transparent border-none shadow-none hover:bg-transparent hover:!text-blue-700 !text-blue-600',
               outer: '!grow-0',
             }"
+            @click="$emit('setFormDirection', 'left')"
           />
           <FormKit
             type="submit"
             label="Siguiente"
             :classes="{ outer: '!grow-0' }"
+            @click="$emit('setFormDirection', 'right')"
           />
         </div>
       </FormKit>

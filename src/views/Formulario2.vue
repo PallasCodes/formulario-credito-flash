@@ -31,7 +31,7 @@ let idProspecto: number;
 
 const form = ref<FormStep[]>([
   {
-    title: "Paso 1",
+    title: "Datos de contacto",
     fields: [
       {
         label: "Nombre",
@@ -85,7 +85,7 @@ const form = ref<FormStep[]>([
         value: null,
       },
       {
-        label: "CURP",
+        label: "CURP*",
         name: "curp",
         type: "text",
         rules: [[`required`], [`matches`, curpRegex]],
@@ -94,7 +94,7 @@ const form = ref<FormStep[]>([
     ],
   },
   {
-    title: "Paso 2",
+    title: "Información de empleo",
     fields: [
       {
         label: "Salario neto mensual",
@@ -131,7 +131,7 @@ const form = ref<FormStep[]>([
     ],
   },
   {
-    title: "Paso 3",
+    title: "Validación de celular",
     fields: [
       {
         label: "Código de verificación",
@@ -144,7 +144,7 @@ const form = ref<FormStep[]>([
     btn: "VALIDAR",
   },
   {
-    title: "Paso 4",
+    title: "Información de domicilio",
     loading: false,
     fields: [
       {
@@ -214,7 +214,7 @@ const form = ref<FormStep[]>([
     ],
   },
   {
-    title: "Paso 5",
+    title: "Referencias personales",
     loading: false,
     fields: [
       {
@@ -242,7 +242,7 @@ const form = ref<FormStep[]>([
     ],
   },
   {
-    title: "Paso 6",
+    title: "Carga de documentos adicionales",
     loading: false,
     fields: [
       {
@@ -255,27 +255,37 @@ const form = ref<FormStep[]>([
     ],
   },
   {
-    title: "Paso 7",
+    title: "Oferta",
     loading: false,
     fields: [],
   },
 ]);
 
+const formDirection = ref<string>("right");
+
+function onSetFormDirection(direction: string) {
+  formDirection.value = direction;
+}
+
 const currentStep = ref(1);
 
 async function onSiguiente() {
-  switch (currentStep.value) {
-    case 2:
-      const payload = { ...getFormStepValues(1), ...getFormStepValues(2) };
-      await registrarInfoBasicaProspecto(payload);
-      break;
-    case 3:
-      const { codigo } = getFormStepValues(3);
-      await validarCodigo(codigo, idProspecto);
-      break;
-  }
+  if (formDirection.value === "right") {
+    switch (currentStep.value) {
+      case 2:
+        const payload = { ...getFormStepValues(1), ...getFormStepValues(2) };
+        await registrarInfoBasicaProspecto(payload);
+        break;
+      case 3:
+        const { codigo } = getFormStepValues(3);
+        await validarCodigo(codigo, idProspecto);
+        break;
+    }
 
-  currentStep.value += 1;
+    currentStep.value += 1;
+  } else {
+    currentStep.value -= 1;
+  }
 }
 
 function getFormStepValues(step: number): any {
@@ -331,10 +341,16 @@ async function validarCodigo(codigo: string, idprospecto: number) {
 </script>
 
 <template>
-  <h3 class="text-3xl font-bold text-center mt-16">Solicitar Crédito Flash</h3>
+  <h2 class="text-5xl font-bold text-center mt-16">Solicitar Crédito Flash</h2>
+  <h3 class="form-step-title mt-4">Paso {{ currentStep }}</h3>
+  <h2 class="text-center text-2xl uppercase font-bold text-blue-900">
+    {{ form[currentStep - 1].title }}
+  </h2>
   <FormBuilder
     :form="form"
     :current-step="currentStep"
     @siguiente="onSiguiente"
+    @set-form-direction="onSetFormDirection"
+    class="mt-8"
   />
 </template>

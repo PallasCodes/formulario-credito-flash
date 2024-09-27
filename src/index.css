@@ -15,7 +15,7 @@
 }
 
 .form-step-title {
-  @apply font-bold uppercase text-lg text-blue-900;
+  @apply font-bold text-lg uppercase text-blue-900 text-center;
 }
 
 .step-wrapper {
