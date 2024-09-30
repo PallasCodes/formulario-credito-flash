@@ -267,7 +267,7 @@ function onSetFormDirection(direction: string) {
   formDirection.value = direction;
 }
 
-const currentStep = ref(1);
+const currentStep = ref(3);
 
 async function onSiguiente() {
   if (formDirection.value === "right") {
@@ -278,7 +278,8 @@ async function onSiguiente() {
         break;
       case 3:
         const { codigo } = getFormStepValues(3);
-        await validarCodigo(codigo, idProspecto);
+        const codigoValido = await validarCodigo(codigo, idProspecto);
+        if (!codigoValido) return;
         break;
     }
 
@@ -326,7 +327,10 @@ async function getColoniasPorCP(CP: number) {
   form.value[3].loading = false;
 }
 
-async function validarCodigo(codigo: string, idprospecto: number) {
+async function validarCodigo(
+  codigo: string,
+  idprospecto: number
+): Promise<Boolean> {
   form.value[2].loading = true;
 
   const { data } = await api.post("/a154/validarcodigocelular", {
@@ -337,6 +341,8 @@ async function validarCodigo(codigo: string, idprospecto: number) {
   form.value[2].loading = false;
 
   console.log(data);
+
+  return !data.mensaje.error;
 }
 </script>
 
