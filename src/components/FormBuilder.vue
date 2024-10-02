@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { FormKit, submitForm } from "@formkit/vue";
+import { FormKit } from "@formkit/vue";
 import type { FormStep } from "@/interfaces/Form";
 
-const props = defineProps<{ form: FormStep[]; currentStep: number }>();
+defineProps<{
+  form: FormStep[];
+  currentStep: number;
+  loading: boolean;
+}>();
 </script>
 
 <template>
@@ -20,7 +24,6 @@ const props = defineProps<{ form: FormStep[]; currentStep: number }>();
         v-for="(step, i) in form"
         @submit="$emit('siguiente')"
         type="form"
-        #default="{ value }"
         :key="step.title"
         :id="`step-${i + 1}`"
         style="
@@ -29,6 +32,7 @@ const props = defineProps<{ form: FormStep[]; currentStep: number }>();
           flex-shrink: 0;
           padding: 12px 1.5rem 2px 1.5rem;
           height: min-content;
+          position: relative;
         "
         :actions="false"
         :style="{
@@ -37,7 +41,15 @@ const props = defineProps<{ form: FormStep[]; currentStep: number }>();
               ? 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px'
               : '',
         }"
+        :disabled="loading"
       >
+        <div
+          v-if="loading"
+          class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-white opacity-40 z-10"
+        >
+          <img src="/loading.gif" class="block w-28 h-28 z-10" />
+        </div>
+
         <div
           v-for="field in step.fields"
           class="form-control"
@@ -71,16 +83,17 @@ const props = defineProps<{ form: FormStep[]; currentStep: number }>();
             label="Anterior"
             :classes="{
               input:
-                'bg-transparent border-none shadow-none hover:bg-transparent hover:!text-blue-700 !text-blue-600',
+                'bg-transparent border-none shadow-none hover:bg-transparent hover:!text-blue-700 !text-blue-500 active:bg-transparent',
               outer: '!grow-0',
             }"
             @click="$emit('setFormDirection', 'left')"
           />
           <FormKit
-            type="submit"
-            label="Siguiente"
-            :classes="{ outer: '!grow-0' }"
             @click="$emit('setFormDirection', 'right')"
+            type="submit"
+            :label="step.btn || `SIGUIENTE`"
+            :classes="{ outer: '!grow-0' }"
+            :disabled="loading"
           />
         </div>
       </FormKit>

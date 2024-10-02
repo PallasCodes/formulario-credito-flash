@@ -6,6 +6,8 @@ import type { Catalogo } from "src/interfaces/Catalogo";
 import FormBuilder from "@/components/FormBuilder.vue";
 import { curpRegex } from "@/utils/curp";
 import type { FormStep } from "@/interfaces/Form";
+import { handleRequest } from "@/utils/handleRequest";
+import { ApiFunctions } from "@/api/apiFunctions";
 
 interface CatalogoColonias extends Catalogo {
   city?: string;
@@ -26,8 +28,6 @@ const catParentesco = [
 ];
 
 let catColonias: CatalogoColonias[] = [];
-
-let idProspecto: number;
 
 const form = ref<FormStep[]>([
   {
@@ -267,23 +267,25 @@ function onSetFormDirection(direction: string) {
   formDirection.value = direction;
 }
 
-const currentStep = ref(3);
+const currentStep = ref(2);
+let idProspecto: number;
 
 async function onSiguiente() {
   if (formDirection.value === "right") {
+    let error: Boolean = false;
+
     switch (currentStep.value) {
       case 2:
         const payload = { ...getFormStepValues(1), ...getFormStepValues(2) };
-        await registrarInfoBasicaProspecto(payload);
+        error = await registrarInfoBasicaProspecto(payload);
         break;
       case 3:
         const { codigo } = getFormStepValues(3);
-        const codigoValido = await validarCodigo(codigo, idProspecto);
-        if (!codigoValido) return;
+        error = await validarCodigo(codigo, idProspecto);
         break;
     }
 
-    currentStep.value += 1;
+    if (!error) currentStep.value += 1;
   } else {
     currentStep.value -= 1;
   }
@@ -303,15 +305,27 @@ function getFormStepValues(step: number): any {
   return values;
 }
 
-async function registrarInfoBasicaProspecto(info: Object) {
-  const { data } = await api.post("/a154/registrarinfobasica", info);
+async function registrarInfoBasicaProspecto(info: Object): Promise<Boolean> {
+  loading.value = true;
 
-  idProspecto = data.idprospecto;
-  console.log(data);
+  const { data, error, message } = await handleRequest(
+    ApiFunctions.registrarInfoBasica,
+    info
+  );
+
+  loading.value = false;
+
+  if (error) {
+    message?.display();
+  } else {
+    idProspecto = data.idprospecto;
+  }
+
+  return error;
 }
 
 async function getColoniasPorCP(CP: number) {
-  form.value[3].loading = true;
+  loading.value = true;
 
   const { data } = await api.post("/catalogos/getcoloniasporcodigopostal", {
     codigopostal: CP,
@@ -324,26 +338,30 @@ async function getColoniasPorCP(CP: number) {
   catColonias = catalogo;
   form.value[3].fields[3].items = catalogo;
 
-  form.value[3].loading = false;
+  loading.value = false;
 }
 
 async function validarCodigo(
   codigo: string,
   idprospecto: number
 ): Promise<Boolean> {
-  form.value[2].loading = true;
+  loading.value = true;
 
-  const { data } = await api.post("/a154/validarcodigocelular", {
-    codigo,
-    idprospecto,
-  });
+  const { error, message } = await handleRequest(
+    ApiFunctions.validarCodigoCelular,
+    {
+      codigo,
+      idprospecto,
+    }
+  );
 
-  form.value[2].loading = false;
+  loading.value = false;
+  message?.display();
 
-  console.log(data);
-
-  return !data.mensaje.error;
+  return error;
 }
+
+const loading = ref<boolean>(false);
 </script>
 
 <template>
@@ -352,11 +370,14 @@ async function validarCodigo(
   <h2 class="text-center text-2xl uppercase font-bold text-blue-900">
     {{ form[currentStep - 1].title }}
   </h2>
-  <FormBuilder
-    :form="form"
-    :current-step="currentStep"
-    @siguiente="onSiguiente"
-    @set-form-direction="onSetFormDirection"
-    class="mt-8"
-  />
+  <section class="relative">
+    <FormBuilder
+      :form="form"
+      :current-step="currentStep"
+      :loading="loading"
+      @siguiente="onSiguiente"
+      @set-form-direction="onSetFormDirection"
+      class="mt-8"
+    />
+  </section>
 </template>

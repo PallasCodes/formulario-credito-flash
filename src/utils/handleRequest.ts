@@ -1,15 +1,14 @@
-import { Message, MessageComponent, MessageType } from "src/utils/message";
+import { Message, MessageComponent, MessageType } from "@/utils/message";
 import type { AxiosError, AxiosResponse } from "axios";
 
 export interface AxiosCustomResponse extends AxiosResponse {
   data: {
-    responseData: any;
-    message: {
-      message: string;
-      component: MessageComponent;
-      type: MessageType;
+    mensaje: {
+      detallemensaje?: string[];
+      mensaje: string;
+      mostrar: MessageComponent;
+      error: boolean;
     };
-    error: boolean;
   };
 }
 
@@ -43,10 +42,15 @@ export async function handleRequest(
 
     const endTime = new Date();
 
-    responseObj.data = response.data.responseData;
+    const { mensaje, ...responseData } = response.data;
+
+    responseObj.data = responseData;
     responseObj.requestTime = msToHours(+endTime - +startTime);
-    responseObj.error = response.data.error;
-    responseObj.message = new Message(response.data.message);
+    responseObj.error = mensaje.error;
+    responseObj.message = new Message({
+      ...mensaje,
+      tipo: mensaje.error ? MessageType.ERROR : MessageType.SUCCESS,
+    });
     responseObj.status = response.status;
     responseObj.statusText = response.statusText;
 
@@ -75,10 +79,10 @@ function msToHours(millisencods: number): string {
 
 function handleRequestError(error: any) {
   const message = new Message({
-    component: MessageComponent.TOAST,
-    message: "Ocurrió un error, inténtalo más tarde",
+    mostrar: MessageComponent.TOAST,
+    mensaje: "Ocurrió un error, inténtalo más tarde",
     dialogTitle: "Error",
-    type: MessageType.ERROR,
+    tipo: MessageType.ERROR,
   });
 
   return message;

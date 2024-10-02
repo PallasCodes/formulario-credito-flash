@@ -1,4 +1,4 @@
-// import { Notify, Dialog } from "quasar";
+import { useToastsStore } from "@/stores/toasts";
 
 export enum MessageComponent {
   DIALOG = "dialog",
@@ -13,12 +13,20 @@ export enum MessageType {
   QUESTION = "question",
 }
 
-const MessageColor = {
+export const MessageColor = {
   success: "positive", //'#43A047'
   error: "negative", // '#D50000'
   warning: "warning", // #F18504
   info: "info", // #757575
   question: "secondary",
+};
+
+export const MessageColorHex = {
+  success: "#43A047",
+  error: "#D50000",
+  warning: "#F18504",
+  info: "#757575",
+  question: "#757575",
 };
 
 const MessageIcon = {
@@ -30,9 +38,9 @@ const MessageIcon = {
 };
 
 interface DestructuredMessageOpts {
-  component: MessageComponent;
-  message: string;
-  type: MessageType;
+  mostrar: MessageComponent;
+  mensaje: string;
+  tipo: MessageType;
   dialogTitle?: string;
 }
 
@@ -45,36 +53,21 @@ export class Message {
   dialogTitle?: string;
 
   constructor(opts: DestructuredMessageOpts) {
-    this.component = opts.component;
-    this.color = MessageColor[opts.type];
-    this.icon = MessageIcon[opts.type];
-    this.message = opts.message;
-    this.type = opts.type;
+    this.component = opts.mostrar;
+    this.color = MessageColor[opts.tipo];
+    this.icon = MessageIcon[opts.tipo];
+    this.message = opts.mensaje;
+    this.type = opts.tipo;
     this.dialogTitle = opts.dialogTitle;
   }
 
   display() {
-    if (this.component === MessageComponent.DIALOG) {
-      // Dialog.create({ title: this.dialogTitle, message: this.message });
-      console.log(this.message);
-    } else {
-      console.log(this.message);
-      // Notify.create({
-      //   color: this.color,
-      //   textColor: "white",
-      //   icon: this.icon,
-      //   message: this.message,
-      //   actions: [
-      //     {
-      //       icon: "close",
-      //       color: "white",
-      //       round: true,
-      //       handler: () => {
-      //         /* ... */
-      //       },
-      //     },
-      //   ],
-      // });
-    }
+    const toastsStore = useToastsStore();
+
+    toastsStore.addToast({
+      id: "123",
+      text: this.message,
+      type: this.type,
+    });
   }
 }
