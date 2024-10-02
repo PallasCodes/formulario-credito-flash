@@ -7,4 +7,10 @@ export const ApiFunctions = {
   validarCodigoCelular(payload: any) {
     return api.post("/a154/validarcodigocelular", payload);
   },
+  registrarInfoDomicilio(payload: any) {
+    return api.post("/a154/registrarinfodomicilio", payload);
+  },
+  getColoniasPorCP(payload: any) {
+    return api.post("/catalogos/getcoloniasporcodigopostal", payload);
+  },
 };

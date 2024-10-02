@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { FormKit } from "@formkit/vue";
 import type { FormStep } from "@/interfaces/Form";
+import { useAppConfig } from "@/stores/appConfig";
+import { storeToRefs } from "pinia";
 
 defineProps<{
   form: FormStep[];
   currentStep: number;
-  loading: boolean;
 }>();
+
+const appConfig = useAppConfig();
+const { loading } = storeToRefs(appConfig);
 </script>
 
 <template>
@@ -80,7 +84,7 @@ defineProps<{
           <FormKit
             v-if="currentStep > 1"
             type="submit"
-            label="Anterior"
+            label="ANTERIOR"
             :classes="{
               input:
                 'bg-transparent border-none shadow-none hover:bg-transparent hover:!text-blue-700 !text-blue-500 active:bg-transparent',

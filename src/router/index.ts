@@ -1,19 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Formulario from "@/views/FormularioSolicitarCredito.vue";
-import Formulario2 from "../views/Formulario2.vue";
+import SolicitarCredito from "@/views/SolicitarCredito.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/form",
-      name: "home",
-      component: Formulario,
-    },
-    {
       path: "/",
-      name: "home2",
-      component: Formulario2,
+      name: "home",
+      component: SolicitarCredito,
     },
   ],
 });

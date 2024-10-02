@@ -8,6 +8,9 @@ import { curpRegex } from "@/utils/curp";
 import type { FormStep } from "@/interfaces/Form";
 import { handleRequest } from "@/utils/handleRequest";
 import { ApiFunctions } from "@/api/apiFunctions";
+import { useApiCall } from "@/composables/useApiCall";
+
+const apiCalls = useApiCall();
 
 interface CatalogoColonias extends Catalogo {
   city?: string;
@@ -153,8 +156,14 @@ const form = ref<FormStep[]>([
         type: "text",
         rules: "required|number|length:5,5",
         on: {
-          change: (event: { srcElement: { _value: String | Number } }) => {
-            getColoniasPorCP(+event.srcElement._value);
+          change: async (event: {
+            srcElement: { _value: String | Number };
+          }) => {
+            const catalogo = await apiCalls.getColoniasPorCP(
+              +event.srcElement._value
+            );
+            catColonias = catalogo;
+            form.value[3].fields[3].items = catalogo;
           },
         },
         value: null,
@@ -181,11 +190,15 @@ const form = ref<FormStep[]>([
         rules: "required",
         items: catColonias,
         on: {
-          change: (event: { srcElement: { _value: String | Number } }) => {
+          change: (
+            event: { srcElement: { _value: String | Number } },
+            x: any
+          ) => {
             const value = catColonias.find(
               (obj: any) => obj.__original === form.value[3].fields[3].value
             );
             form.value[3].fields[2].value = value?.city;
+            console.log("🚀 ~ catColonias:", catColonias);
           },
         },
         value: null,
@@ -200,14 +213,14 @@ const form = ref<FormStep[]>([
       },
       {
         label: "Número",
-        name: "calle",
+        name: "numexterior",
         type: "number",
         rules: "required|number",
         value: null,
       },
       {
         label: "Número interior",
-        name: "calle",
+        name: "numinterior",
         type: "text",
         value: null,
       },
@@ -261,30 +274,49 @@ const form = ref<FormStep[]>([
   },
 ]);
 
+// COMPONENT STATE
+const currentStep = ref(4);
 const formDirection = ref<string>("right");
+let idProspecto: number;
 
+// METHODS
 function onSetFormDirection(direction: string) {
   formDirection.value = direction;
 }
 
-const currentStep = ref(2);
-let idProspecto: number;
+async function apiCallsHandler(): Promise<Boolean> {
+  let error: Boolean = false;
+  let payload;
+
+  switch (currentStep.value) {
+    case 2:
+      payload = { ...getFormStepValues(1), ...getFormStepValues(2) };
+      const idProspectoAux = await apiCalls.registrarInfoBasicaProspecto(
+        payload
+      );
+
+      if (idProspectoAux >= 0) {
+        idProspecto = idProspectoAux;
+      } else {
+        error = true;
+      }
+      break;
+    case 3:
+      const { codigo } = getFormStepValues(3);
+      error = await apiCalls.validarCodigo(codigo, idProspecto);
+      break;
+    case 4:
+      payload = { ...getFormStepValues(4), idprospecto: idProspecto };
+      error = await apiCalls.registrarInfoDomicilio(payload);
+      break;
+  }
+
+  return error;
+}
 
 async function onSiguiente() {
   if (formDirection.value === "right") {
-    let error: Boolean = false;
-
-    switch (currentStep.value) {
-      case 2:
-        const payload = { ...getFormStepValues(1), ...getFormStepValues(2) };
-        error = await registrarInfoBasicaProspecto(payload);
-        break;
-      case 3:
-        const { codigo } = getFormStepValues(3);
-        error = await validarCodigo(codigo, idProspecto);
-        break;
-    }
-
+    const error = await apiCallsHandler();
     if (!error) currentStep.value += 1;
   } else {
     currentStep.value -= 1;
@@ -304,64 +336,6 @@ function getFormStepValues(step: number): any {
 
   return values;
 }
-
-async function registrarInfoBasicaProspecto(info: Object): Promise<Boolean> {
-  loading.value = true;
-
-  const { data, error, message } = await handleRequest(
-    ApiFunctions.registrarInfoBasica,
-    info
-  );
-
-  loading.value = false;
-
-  if (error) {
-    message?.display();
-  } else {
-    idProspecto = data.idprospecto;
-  }
-
-  return error;
-}
-
-async function getColoniasPorCP(CP: number) {
-  loading.value = true;
-
-  const { data } = await api.post("/catalogos/getcoloniasporcodigopostal", {
-    codigopostal: CP,
-  });
-  const catalogo = data.colonias.map((obj: any) => ({
-    value: obj.identidadfederativa,
-    label: obj.colonia,
-    city: obj.ciudad,
-  }));
-  catColonias = catalogo;
-  form.value[3].fields[3].items = catalogo;
-
-  loading.value = false;
-}
-
-async function validarCodigo(
-  codigo: string,
-  idprospecto: number
-): Promise<Boolean> {
-  loading.value = true;
-
-  const { error, message } = await handleRequest(
-    ApiFunctions.validarCodigoCelular,
-    {
-      codigo,
-      idprospecto,
-    }
-  );
-
-  loading.value = false;
-  message?.display();
-
-  return error;
-}
-
-const loading = ref<boolean>(false);
 </script>
 
 <template>
@@ -374,7 +348,6 @@ const loading = ref<boolean>(false);
     <FormBuilder
       :form="form"
       :current-step="currentStep"
-      :loading="loading"
       @siguiente="onSiguiente"
       @set-form-direction="onSetFormDirection"
       class="mt-8"
