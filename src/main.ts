@@ -1,6 +1,5 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { formRules } from "./utils/formRules";
 import { plugin, defaultConfig } from "@formkit/vue";
 
 import config from "./formkit.config";
@@ -16,5 +15,3 @@ app.use(router);
 app.use(plugin, defaultConfig(config));
 
 app.mount("#app");
-
-formRules();

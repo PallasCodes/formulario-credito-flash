@@ -35,3 +35,7 @@ label[data-checked="true"] > .radio > span {
   width: 14px;
   height: 14px;
 }
+
+input:active {
+  background-color: transparent !important;
+}

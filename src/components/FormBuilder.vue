@@ -81,7 +81,7 @@ const { loading } = storeToRefs(appConfig);
           />
         </div>
         <div class="flex justify-end pt-1">
-          <FormKit
+          <!-- <FormKit
             v-if="currentStep > 1"
             type="submit"
             label="ANTERIOR"
@@ -91,7 +91,7 @@ const { loading } = storeToRefs(appConfig);
               outer: '!grow-0',
             }"
             @click="$emit('setFormDirection', 'left')"
-          />
+          /> -->
           <FormKit
             @click="$emit('setFormDirection', 'right')"
             type="submit"
