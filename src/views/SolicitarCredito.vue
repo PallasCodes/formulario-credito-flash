@@ -415,24 +415,24 @@ async function formStepHandler(): Promise<Boolean> {
       }
       break;
     case 5:
-      payload = { ...getFormStepValues(4), ...getFormStepValues(5) };
-      const idProspectoAux = await apiCalls.registrarInfoBasicaProspecto(
-        payload
-      );
+      // payload = { ...getFormStepValues(4), ...getFormStepValues(5) };
+      // const idProspectoAux = await apiCalls.registrarInfoBasicaProspecto(
+      //   payload
+      // );
 
-      if (idProspectoAux >= 0) {
-        idProspecto = idProspectoAux;
-      } else {
-        error = true;
-      }
+      // if (idProspectoAux >= 0) {
+      //   idProspecto = idProspectoAux;
+      // } else {
+      //   error = true;
+      // }
       break;
     case 6:
-      const { codigo } = getFormStepValues(6);
-      error = await apiCalls.validarCodigo(codigo, idProspecto);
+      // const { codigo } = getFormStepValues(6);
+      // error = await apiCalls.validarCodigo(codigo, idProspecto);
       break;
     case 7:
-      payload = { ...getFormStepValues(7), idprospecto: idProspecto };
-      error = await apiCalls.registrarInfoDomicilio(payload);
+      // payload = { ...getFormStepValues(7), idprospecto: idProspecto };
+      // error = await apiCalls.registrarInfoDomicilio(payload);
       break;
   }
 
