@@ -12,7 +12,7 @@ export interface AxiosCustomResponse extends AxiosResponse {
   };
 }
 
-interface HttpResponse {
+export interface HttpResponse {
   data: any;
   error: boolean;
   message?: Message;

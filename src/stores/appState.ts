@@ -1,7 +1,7 @@
 import { ref, readonly } from "vue";
 import { defineStore } from "pinia";
 
-export const useAppConfig = defineStore("appConfig", () => {
+export const useAppState = defineStore("appState", () => {
   let loading = ref<boolean>(false);
 
   function setLoading(loadingState: boolean) {

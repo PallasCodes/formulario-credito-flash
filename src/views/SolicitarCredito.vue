@@ -2,12 +2,16 @@
 import { ref } from "vue";
 
 import type { Catalogo } from "src/interfaces/Catalogo";
-import FormBuilder from "@/components/FormBuilder.vue";
-import { curpRegex } from "@/utils/curp";
 import type { FormStep } from "@/interfaces/Form";
 import { useApiCall } from "@/composables/useApiCall";
+import { useNuevaOrden } from "@/composables/useNuevaOrden";
+
+import FormBuilder from "@/components/FormBuilder.vue";
+import MsgCreditoNoViable from "@/components/MsgCreditoNoViable.vue";
+import CalculadoraCredito from "@/components/CalculadoraCredito.vue";
 
 const apiCalls = useApiCall();
+const nuevaOrden = useNuevaOrden();
 
 interface CatalogoColonias extends Catalogo {
   city?: string;
@@ -33,6 +37,8 @@ const catParentesco = [
   { value: 0, label: "Padre" },
   { value: 1, label: "Hermano/a" },
 ];
+
+let idSolicitudCreditoFlash: number;
 
 const catEntidadFederativa = [
   {
@@ -84,52 +90,17 @@ const catContrato = [
 let catColonias: CatalogoColonias[] = [];
 
 const form = ref<FormStep[]>([
+  // PASO 1
   {
-    title: "Entidad Federativa",
+    title: "Información personal",
     fields: [
       {
-        label: "¿En qué estado de la República Mexicana laboras?",
+        label: "RFC",
+        name: "rfc",
+        type: "text",
         rules: "required",
-        name: "entidadfederativa",
         value: null,
-        type: "select",
-        placeholder: "Seleccionar entidad federativa",
-        items: catEntidadFederativa,
       },
-    ],
-  },
-  {
-    title: "Empresa",
-    fields: [
-      {
-        label:
-          "¿Laboras en alguna de las siguientes empresas, dependencias o sindicatos en Veracruz?",
-        rules: "required",
-        name: "entidad",
-        value: null,
-        type: "radio",
-        placeholder: "Seleccionar empresa",
-        items: catEntidad,
-      },
-    ],
-  },
-  {
-    title: "Contratio",
-    fields: [
-      {
-        label: "¿Qué tipo de contrato tienes?",
-        rules: "required",
-        name: "tipocontrato",
-        value: null,
-        type: "radio",
-        placeholder: "Seleccionar empresa",
-        items: catContrato,
-      },
-    ],
-  },
-  {
-    title: "Datos de contacto",
-    fields: [
       {
         label: "Nombre",
         name: "nombre1",
@@ -145,101 +116,179 @@ const form = ref<FormStep[]>([
       },
       {
         label: "Apellido paterno",
-        name: "apellidoPaterno",
+        name: "apellidopaterno",
         type: "text",
         rules: "required",
         value: null,
       },
       {
         label: "Apellido materno",
-        name: "apellidoMaterno",
+        name: "apellidomaterno",
         type: "text",
         value: null,
       },
       {
+        label: "Entidad federativa de nacimiento",
+        name: "identidadfederativanacimiento",
+        type: "number",
+        value: 9,
+      },
+      {
+        label: "Estado civil",
+        name: "idestadocivil",
+        type: "number",
+        value: 1102,
+      },
+      {
         label: "Género",
-        name: "genero",
+        name: "sexo",
         type: "radio",
         rules: "required",
         items: [
-          { value: "H", label: "Hombre" },
-          { value: "M", label: "Mujer" },
+          { value: "M", label: "Masculino" },
+          { value: "F", label: "Femenino" },
         ],
         value: null,
       },
       {
-        label: "Correo electrónico",
-        name: "correo",
-        type: "email",
-        rules: "required|email",
-        value: null,
+        label: "Fecha de nacimiento",
+        name: "fechanacimiento",
+        type: "date",
+        rules: "required",
+        value: "1997-10-24",
+      },
+      {
+        label: "No. Dependientes",
+        name: "dependientes",
+        type: "number",
+        rules: "required",
+        value: 0,
+      },
+      {
+        label: "Grado de estudios",
+        name: "idgradoestudios",
+        type: "number",
+        rules: "required",
+        value: 5906,
+      },
+      {
+        label: "Nacionalidad",
+        name: "idnacionalidad",
+        type: "number",
+        rules: "required",
+        value: 700,
+      },
+      {
+        label: "País de nacimiento",
+        name: "idpaisnacimiento",
+        type: "number",
+        rules: "required",
+        value: 700,
       },
       {
         label: "Celular",
         name: "celular",
-        type: "tel",
-        rules: "required|number|length:10,10",
-        value: null,
-      },
-      {
-        label: "CURP*",
-        name: "curp",
         type: "text",
-        rules: [[`required`], [`matches`, curpRegex]],
-        value: null,
-      },
-    ],
-  },
-  {
-    title: "Información de empleo",
-    fields: [
-      {
-        label: "Salario neto mensual",
-        name: "salarioNetoMensual",
-        type: "number",
-        rules: "required|min:1|number",
-        value: null,
-      },
-      // {
-      //   label: "Entidad",
-      //   name: "entidad",
-      //   type: "select",
-      //   rules: "required",
-      //   items: catEntidad,
-      //   value: null,
-      //   placeholder: "Seleccionar entidad",
-      // },
-      {
-        label: "Teléfono entidad",
-        name: "telefonoEntidad",
-        type: "text",
-        rules: "required|mobileNumber",
-        value: null,
-      },
-      {
-        label: "Frecuencia de pago",
-        name: "frecuenciaPago",
-        type: "select",
         rules: "required",
-        items: catFrecuenciaPago,
-        value: null,
-        placeholder: "Seleccionar frecuencia de pago",
+        value: "2281237048",
       },
     ],
   },
+  // PASO 2
   {
     title: "Validación de celular",
     fields: [
       {
-        label: "Código de verificación",
+        name: "msgValidacion",
+        type: "readonly",
+        label: "Introduce el código que se ha enviado a tu celular",
+        class: "text-[17px] font-medium mb-6 block text-center",
+      },
+      {
+        label: "Código",
         name: "codigo",
         type: "text",
         rules: "required",
         value: null,
       },
     ],
-    btn: "VALIDAR",
   },
+  // PASO 3
+  {
+    title: "Registro de contraseña",
+    fields: [
+      {
+        type: "readonly",
+        label:
+          "Por favor, ingresa la contraseña para tu cuenta. Es importante que la recuerdes ya que tendrás que usarla en un futuro para conocer el estado de tu solicitud.",
+        name: "msgPassword",
+        class: "text-lg",
+      },
+      {
+        label: "Contraseña",
+        value: null,
+        name: "password",
+        rules: "required|length:6,16",
+        type: "password",
+      },
+      {
+        label: "Repetir contraseña",
+        value: null,
+        name: "password2",
+        rules: "required|length:6,16",
+        type: "password",
+      },
+    ],
+  },
+  // PASO 4
+  {
+    title: "Datos de identificación",
+    fields: [
+      {
+        label: "CURP",
+        name: "curp",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Número de seguro social",
+        name: "nss",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Identificación oficial",
+        name: "ididentificacionoficial",
+        type: "number",
+        rules: "required",
+        value: 27301,
+      },
+      {
+        label: "Fecha de expedición",
+        name: "fechaexpedicion",
+        type: "date",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Años de vigencia",
+        name: "aniosvigencia",
+        type: "number",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Número de identificación oficial",
+        name: "claveidentificacionoficial",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+    ],
+  },
+  // PASO 5
   {
     title: "Información de domicilio",
     loading: false,
@@ -251,7 +300,7 @@ const form = ref<FormStep[]>([
         rules: "required|number|length:5,5",
         on: {
           change: async (event: {
-            srcElement: { _value: String | Number };
+            srcElement: { _value: string | number };
           }) => {
             const catalogo = await apiCalls.getColoniasPorCP(
               +event.srcElement._value
@@ -285,7 +334,7 @@ const form = ref<FormStep[]>([
         items: catColonias,
         on: {
           change: (
-            event: { srcElement: { _value: String | Number } },
+            event: { srcElement: { _value: string | number } },
             x: any
           ) => {
             const value = catColonias.find(
@@ -367,6 +416,8 @@ const form = ref<FormStep[]>([
   },
 ]);
 
+let idsolicitud: string | number;
+
 const msgNoViable = ref<string>("");
 const entidadNoViable =
   "Lo sentimos, en este momento otorgamos créditos exclusivamente a trabajadores del sector público en los estados de Guanajuato, Puebla, Veracruz, Zacatecas y Oaxaca, donde contemos con un convenio activo con la entidad.";
@@ -377,62 +428,94 @@ const prospectoViable = ref(true);
 
 // COMPONENT STATE
 const currentStep = ref(1);
-const formDirection = ref<string>("right");
 let idProspecto: number;
+let mostrarCalculadora = ref<boolean>(true);
 
 // METHODS
-function onSetFormDirection(direction: string) {
-  formDirection.value = direction;
-}
-
-async function formStepHandler(): Promise<Boolean> {
-  let error: Boolean = false;
+async function formStepHandler(): Promise<boolean> {
+  let error: boolean = false;
   let payload;
 
   switch (currentStep.value) {
     case 1:
-      const { entidadfederativa } = getFormStepValues(1);
-      if (entidadfederativa === 7) {
-        error = true;
-        prospectoViable.value = false;
-        msgNoViable.value = entidadNoViable;
-      }
+      const { celular, rfc } = getFormStepValues(1);
+
+      const response4 = await apiCalls.registrarSolicitudCreditoFlash({
+        celular,
+        rfc,
+      });
+      error = response4.error;
       break;
     case 2:
-      const { entidad } = getFormStepValues(2);
-      if (entidad === -1) {
-        error = true;
-        prospectoViable.value = false;
-        msgNoViable.value = entidadNoViable;
-      }
-      break;
-    case 3:
+      // VALIDAR CELULAR
+      const { codigo } = getFormStepValues(2);
+      const { rfc: rfc2 } = getFormStepValues(1);
+
+      const response5 = await apiCalls.validarCodigo(codigo, rfc2);
+      error = response5.error;
+
+      if (error) break;
+
+      // INICIAR SOLICITUD
       const { tipocontrato } = getFormStepValues(3);
       if (tipocontrato === -1) {
         error = true;
         prospectoViable.value = false;
         msgNoViable.value = contratoNoViable;
-      }
-      break;
-    case 5:
-      // payload = { ...getFormStepValues(4), ...getFormStepValues(5) };
-      // const idProspectoAux = await apiCalls.registrarInfoBasicaProspecto(
-      //   payload
-      // );
+      } else {
+        payload = {
+          solicitudv3: {
+            idproductoscc: 299,
+            idtipoorden: 14,
+            idpersonafisica: -1,
+            idvendedor: 18088,
+          },
+        };
+        const { data, error } = await nuevaOrden.iniciarNuevaSolicitud(payload);
 
-      // if (idProspectoAux >= 0) {
-      //   idProspecto = idProspectoAux;
-      // } else {
-      //   error = true;
-      // }
+        if (!error) {
+          idsolicitud = data.solicitudcredito.idsolicitud;
+        }
+      }
+
+      // GUARDAR DATOS PERSONALES
+      payload = {
+        datos01infopersonal: getFormStepValues(4),
+        solicitudv3: { idsolicitud },
+      };
+
+      const responseAux = await nuevaOrden.guardarInfoPersonal(payload);
+      error = responseAux.error;
+
       break;
     case 6:
-      // const { codigo } = getFormStepValues(6);
-      // error = await apiCalls.validarCodigo(codigo, idProspecto);
+      const { password } = getFormStepValues(6);
+      const step4Values = getFormStepValues(4);
+      payload = {
+        password,
+        rfc: step4Values.rfc,
+      };
+
+      const response6 = await nuevaOrden.registrarContrasena(payload);
+      error = response6.error;
       break;
     case 7:
-      // payload = { ...getFormStepValues(7), idprospecto: idProspecto };
-      // error = await apiCalls.registrarInfoDomicilio(payload);
+      payload = {
+        datos02datosidentificacion: getFormStepValues(7),
+        solicitudv3: { idsolicitud },
+      };
+
+      const response7 = await nuevaOrden.guardarDatosIdentificacion(payload);
+      error = response7.error;
+
+      break;
+    case 8:
+      // const { codigo } = getFormStepValues(7);
+      // error = await apiCalls.validarCodigo(codigo, idProspecto);
+      break;
+    case 9:
+      payload = { ...getFormStepValues(9), idprospecto: idProspecto };
+      error = await apiCalls.registrarInfoDomicilio(payload);
       break;
   }
 
@@ -440,12 +523,13 @@ async function formStepHandler(): Promise<Boolean> {
 }
 
 async function onSiguiente() {
-  if (formDirection.value === "right") {
-    const error = await formStepHandler();
-    if (!error) currentStep.value += 1;
-  } else {
-    currentStep.value -= 1;
+  let error: boolean = false;
+
+  if (import.meta.env.VITE_APP_MODE === "prod") {
+    error = await formStepHandler();
   }
+
+  if (!error) currentStep.value += 1;
 }
 
 function getFormStepValues(step: number): any {
@@ -461,37 +545,39 @@ function getFormStepValues(step: number): any {
 
   return values;
 }
+
+function onSubmitCalculadora() {
+  mostrarCalculadora.value = false;
+}
 </script>
 
 <template>
-  <h2 class="text-5xl font-bold text-center mt-16">Solicitar Crédito Flash</h2>
-  <div v-if="prospectoViable">
-    <h3 class="form-step-title mt-4">Paso {{ currentStep }}</h3>
+  <input
+    type="number"
+    v-model.number="currentStep"
+    class="border-2 mx-auto fixed bottom-6 right-6 px-2 py-1 border-black w-16 text-lg rounded"
+  />
+  <!-- CALCULADORA -->
+  <div v-if="mostrarCalculadora" class="mt-20 mb-32">
+    <h3 class="text-center mb-10 text-4xl font-bold text-gray-800">
+      Solicita tu crédito
+    </h3>
+    <CalculadoraCredito @submit-calculadora="onSubmitCalculadora" />
+  </div>
+
+  <!-- FORMULARIO SOLICITUD -->
+  <div v-else-if="prospectoViable" class="mt-20 mb-32">
+    <h3 class="form-step-title mt-4 !text-gray-600">Paso {{ currentStep }}</h3>
     <h2 class="text-center text-2xl uppercase font-bold text-blue-900">
       {{ form[currentStep - 1].title }}
     </h2>
-    <section class="relative">
-      <FormBuilder
-        :form="form"
-        :current-step="currentStep"
-        @siguiente="onSiguiente"
-        @set-form-direction="onSetFormDirection"
-        class="mt-8"
-      />
-    </section>
+    <FormBuilder
+      :form="form"
+      :current-step="currentStep"
+      @siguiente="onSiguiente"
+      class="mt-4"
+    />
   </div>
-  <div
-    v-else
-    class="mx-auto overflow-hidden max-w-2xl w-full rounded-lg mt-8 p-6"
-    style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"
-  >
-    <p>
-      {{ msgNoViable }}
-    </p>
-    <br />
-    <p>
-      Te invitamos a seguirnos en Facebook para no perderte nuestras próximas
-      aperturas de convenios.
-    </p>
-  </div>
+
+  <MsgCreditoNoViable v-else :msg-no-viable="msgNoViable" class="my-32" />
 </template>

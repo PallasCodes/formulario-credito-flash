@@ -11,4 +11,5 @@ export interface Field {
   disabled?: boolean;
   value?: any;
   placeholder?: string;
+  class?: string;
 }

@@ -4,6 +4,14 @@ import ToastsBuilder from "@/components/ToastsBuilder.vue";
 </script>
 
 <template>
-  <RouterView />
-  <ToastsBuilder />
+  <div id="vue-app">
+    <RouterView />
+    <ToastsBuilder />
+  </div>
 </template>
+
+<style>
+#vue-app {
+  font-family: "Roboto", sans-serif;
+}
+</style>

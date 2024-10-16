@@ -1,9 +1,9 @@
-import { handleRequest } from "@/utils/handleRequest";
+import { handleRequest, type HttpResponse } from "@/utils/handleRequest";
 import { ApiFunctions } from "@/api/apiFunctions";
-import { useAppConfig } from "@/stores/appConfig";
+import { useAppState } from "@/stores/appState";
 
 export function useApiCall() {
-  const { setLoading } = useAppConfig();
+  const { setLoading } = useAppState();
 
   async function registrarInfoBasicaProspecto(info: Object): Promise<number> {
     let idProspecto: number = -1;
@@ -27,22 +27,19 @@ export function useApiCall() {
 
   async function validarCodigo(
     codigo: string,
-    idprospecto: number
-  ): Promise<Boolean> {
+    rfc: string
+  ): Promise<HttpResponse> {
     setLoading(true);
 
-    const { error, message } = await handleRequest(
-      ApiFunctions.validarCodigoCelular,
-      {
-        codigo,
-        idprospecto,
-      }
-    );
+    const response = await handleRequest(ApiFunctions.validarCodigoCelular, {
+      codigo,
+      rfc,
+    });
 
     setLoading(false);
-    message?.display();
+    response.message?.display();
 
-    return error;
+    return response;
   }
 
   async function registrarInfoDomicilio(payload: Object) {
@@ -83,10 +80,27 @@ export function useApiCall() {
     }
   }
 
+  async function registrarSolicitudCreditoFlash(
+    payload: Object
+  ): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      ApiFunctions.registrarSolicitudCreditoFlash,
+      payload
+    );
+
+    setLoading(false);
+    response.message?.display();
+
+    return response;
+  }
+
   return {
     registrarInfoBasicaProspecto,
     validarCodigo,
     registrarInfoDomicilio,
     getColoniasPorCP,
+    registrarSolicitudCreditoFlash,
   };
 }
