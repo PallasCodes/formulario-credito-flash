@@ -23,12 +23,12 @@ const catPlazos = [
 
 const catDependencias = [
   { value: 1, label: "IPE" },
-  { value: 2, label: "Otro" },
+  { value: -1, label: "Otro" },
 ];
 
 const catEstados = [
   { value: 1, label: "Veracruz" },
-  { value: 1, label: "Otro" },
+  { value: -1, label: "Otro" },
 ];
 
 const tasaInteres = {
@@ -36,14 +36,22 @@ const tasaInteres = {
   6: 25,
 };
 
-const emit = defineEmits(["submitCalculadora"]);
+const emit = defineEmits(["submitCalculadora", "creditoNoViable"]);
 
 const getPagare = computed(() => {
-  const interes = tasaInteres[form.value.plazos] / 100;
+  const interes =
+    tasaInteres[form.value.plazos as keyof typeof tasaInteres] / 100;
   const capital = +form.value.monto;
   const plazo = +form.value.plazos;
   return capital * (interes * plazo) * 1.16 + capital;
 });
+
+function onSubmitCalculadora() {
+  if (form.value.dependencia === -1 || form.value.estado === -1) {
+    emit("creditoNoViable");
+  }
+  emit("submitCalculadora");
+}
 </script>
 
 <template>
@@ -61,7 +69,7 @@ const getPagare = computed(() => {
           outer: '!max-w-full',
         },
       }"
-      @submit="emit('submitCalculadora')"
+      @submit="onSubmitCalculadora"
     >
       <FormKit
         v-model="form.estado"
@@ -138,7 +146,7 @@ const getPagare = computed(() => {
         <div class="w-1/2">
           <span class="block font-semibold"
             >Tasa de interés <br />{{
-              tasaInteres[form.plazos].toFixed(2)
+              tasaInteres[form.plazos as keyof typeof tasaInteres].toFixed(2)
             }}%</span
           >
           <span class="block text-sm"> Mensual sin IVA </span>

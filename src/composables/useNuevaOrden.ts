@@ -67,10 +67,84 @@ export function useNuevaOrden() {
     return response;
   }
 
+  async function guardarInfoLaboral(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      NuevaOrden.guardarInfoLaboral,
+      payload
+    );
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function guardarCentroTrabajo(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      NuevaOrden.guardarCentroTrabajo,
+      payload
+    );
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function guardarDomicilio(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(NuevaOrden.guardarDomicilio, payload);
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function registrarContacto(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(NuevaOrden.registrarContacto, payload);
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function guardarInfoContactos(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      NuevaOrden.guardarInfoContactos,
+      payload
+    );
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
   return {
     iniciarNuevaSolicitud,
     guardarInfoPersonal,
     guardarDatosIdentificacion,
     registrarContrasena,
+    guardarInfoLaboral,
+    guardarCentroTrabajo,
+    guardarDomicilio,
+    registrarContacto,
+    guardarInfoContactos,
   };
 }

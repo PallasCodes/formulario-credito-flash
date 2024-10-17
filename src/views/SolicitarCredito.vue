@@ -87,10 +87,28 @@ const catContrato = [
   },
 ];
 
+const infoCentroTrabajoIpe = {
+  idcentrotrabajo: -1,
+  idtipo: 1800,
+  clavecentrotrabajo: null,
+  nombre: "OFICINA IPE",
+  idmunicipio: 4603,
+  domicilio: null,
+  numero: null,
+  interior: null,
+  colonia: "CENTRO",
+  cp: "91000",
+  ciudad: "Xalapa",
+  telefono: "2281237054",
+  extension: "",
+  identidadfederativa: 30,
+  nuevoct: true,
+};
+
 let catColonias: CatalogoColonias[] = [];
 
 const form = ref<FormStep[]>([
-  // PASO 1
+  // PASO 1 - INFO PERSONAL
   {
     title: "Información personal",
     fields: [
@@ -106,7 +124,7 @@ const form = ref<FormStep[]>([
         name: "nombre1",
         type: "text",
         rules: "required",
-        value: null,
+        value: "Prueba",
       },
       {
         label: "Segundo nombre",
@@ -119,13 +137,13 @@ const form = ref<FormStep[]>([
         name: "apellidopaterno",
         type: "text",
         rules: "required",
-        value: null,
+        value: "Prueba",
       },
       {
         label: "Apellido materno",
         name: "apellidomaterno",
         type: "text",
-        value: null,
+        value: "Prueba",
       },
       {
         label: "Entidad federativa de nacimiento",
@@ -192,9 +210,16 @@ const form = ref<FormStep[]>([
         rules: "required",
         value: "2281237048",
       },
+      {
+        label: "Correo elctrónico",
+        name: "correo",
+        type: "email",
+        rules: "required",
+        value: "prueba@gmail.com",
+      },
     ],
   },
-  // PASO 2
+  // PASO 2 - VALIDACIÓN CELULAR
   {
     title: "Validación de celular",
     fields: [
@@ -213,14 +238,14 @@ const form = ref<FormStep[]>([
       },
     ],
   },
-  // PASO 3
+  // PASO 3 - GENERACIÓN CONTRASEÑA
   {
     title: "Registro de contraseña",
     fields: [
       {
         type: "readonly",
         label:
-          "Por favor, ingresa la contraseña para tu cuenta. Es importante que la recuerdes ya que tendrás que usarla en un futuro para conocer el estado de tu solicitud.",
+          "Por favor, genera una contraseña para tu cuenta. Es importante que la recuerdes ya que tendrás que usarla en un futuro para conocer el estado de tu solicitud.",
         name: "msgPassword",
         class: "text-lg",
       },
@@ -240,20 +265,13 @@ const form = ref<FormStep[]>([
       },
     ],
   },
-  // PASO 4
+  // PASO 4 - DATOS IDENTIFICACIÓN
   {
     title: "Datos de identificación",
     fields: [
       {
         label: "CURP",
         name: "curp",
-        type: "text",
-        rules: "required",
-        value: null,
-      },
-      {
-        label: "Número de seguro social",
-        name: "nss",
         type: "text",
         rules: "required",
         value: null,
@@ -275,9 +293,9 @@ const form = ref<FormStep[]>([
       {
         label: "Años de vigencia",
         name: "aniosvigencia",
-        type: "number",
+        type: "hidden",
         rules: "required",
-        value: null,
+        value: 10,
       },
       {
         label: "Número de identificación oficial",
@@ -288,11 +306,93 @@ const form = ref<FormStep[]>([
       },
     ],
   },
-  // PASO 5
+  // PASO 5 - CONVENIO
+  {
+    title: "Información laboral",
+    fields: [
+      {
+        label: "Número de personal",
+        name: "ndp",
+        type: "text",
+        value: null,
+        rules: "required",
+      },
+      {
+        label: "Área",
+        name: "idarea",
+        type: "hidden",
+        value: 1401,
+      },
+      {
+        label: "Puesto",
+        name: "idpuesto",
+        type: "hidden",
+        value: 359,
+      },
+      {
+        label: "Sindicato/Entidad",
+        name: "idsindicato",
+        type: "hidden",
+        value: 506,
+      },
+      {
+        label: "Fecha de contratación",
+        name: "fechacontratacion",
+        type: "date",
+        value: null,
+        rules: "required",
+      },
+      {
+        label: "Teléfono del centro de trabajo",
+        name: "telefonotrabajo",
+        type: "hidden",
+        value: "2281237024",
+      },
+      {
+        label: "Tipo de contratación",
+        name: "idtipo",
+        type: "hidden",
+        value: 700,
+      },
+      {
+        label: "Cliente",
+        name: "idcliente",
+        type: "hidden",
+        value: -1,
+      },
+      {
+        label: "Entidad",
+        name: "identidad",
+        type: "hidden",
+        value: 127,
+      },
+    ],
+  },
+  // PASO 6 - INFO DOMICILIO
   {
     title: "Información de domicilio",
     loading: false,
     fields: [
+      {
+        label: "Calle",
+        name: "calle",
+        type: "text",
+        rules: "required",
+        value: "Revolución",
+      },
+      {
+        label: "Número exterior",
+        name: "numero",
+        type: "text",
+        rules: "required|number",
+        value: 269,
+      },
+      {
+        label: "Número interior",
+        name: "interior",
+        type: "text",
+        value: 1,
+      },
       {
         label: "Código postal",
         name: "cp",
@@ -306,24 +406,9 @@ const form = ref<FormStep[]>([
               +event.srcElement._value
             );
             catColonias = catalogo;
-            form.value[3].fields[3].items = catalogo;
+            form.value[5].fields[4].items = catalogo;
           },
         },
-        value: null,
-      },
-      {
-        label: "Estado",
-        name: "estado",
-        type: "text",
-        rules: "required",
-        value: null,
-      },
-      {
-        label: "Municipio",
-        name: "municipio",
-        type: "text",
-        rules: "required",
-        disabled: true,
         value: null,
       },
       {
@@ -340,38 +425,75 @@ const form = ref<FormStep[]>([
             const value = catColonias.find(
               (obj: any) => obj.__original === form.value[3].fields[3].value
             );
-            form.value[3].fields[2].value = value?.city;
+            form.value[3].fields[8].value = value?.city;
           },
         },
         value: null,
         placeholder: "Seleccionar colonia",
       },
       {
-        label: "Calle",
-        name: "calle",
+        label: "Entidad federativa",
+        name: "identidadfederativa",
+        type: "number",
+        rules: "required",
+        value: 30,
+      },
+      {
+        label: "Municipio",
+        name: "idmunicipio",
+        type: "number",
+        rules: "required",
+        disabled: true,
+        value: 4603,
+      },
+      {
+        label: "Ciudad",
+        name: "ciudad",
         type: "text",
         rules: "required",
-        value: null,
+        value: "Xalapa",
       },
       {
-        label: "Número",
-        name: "numexterior",
+        label: "Años de residencia",
+        name: "antanios",
         type: "number",
-        rules: "required|number",
-        value: null,
+        rules: "required",
+        value: 1,
       },
       {
-        label: "Número interior",
-        name: "numinterior",
-        type: "text",
-        value: null,
+        label: "Meses de residencia",
+        name: "antmeses",
+        type: "number",
+        rules: "required",
+        value: 1,
+      },
+      {
+        label: "Tipo de vivienda",
+        name: "idtipovivienda",
+        type: "hidden",
+        rules: "required",
+        value: 1200,
+      },
+      {
+        label: "Domicilio",
+        name: "iddomicilio",
+        type: "hidden",
+        rules: "required",
+        value: -1,
       },
     ],
   },
+  // PASO 8 - REFERENCIAS PERSONALES
   {
     title: "Referencias personales",
     loading: false,
     fields: [
+      {
+        label: "REFERENCIA 1",
+        type: "readonly",
+        name: "referencia1",
+        class: "font-semibold text-gray-700",
+      },
       {
         label: "Parentesco",
         name: "parentesco",
@@ -388,9 +510,107 @@ const form = ref<FormStep[]>([
         value: null,
       },
       {
-        label: "Apellido(s)",
+        label: "Apellido paterno",
         name: "referenciaApellidos",
         type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Apellido materno",
+        name: "referenciaApellidos",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Celular",
+        name: "celular",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Años de conocerlo",
+        name: "referenciaApellidos",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Meses de conocerlo",
+        name: "referenciaApellidos",
+        type: "hidden",
+        rules: "required",
+        value: 0,
+      },
+      {
+        label: "Relación",
+        name: "referenciaApellidos",
+        type: "hidden",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "REFERENCIA 2",
+        type: "readonly",
+        name: "referencia1",
+        class: "font-semibold text-gray-700 pt-5 block",
+      },
+      {
+        label: "Parentesco",
+        name: "parentesco",
+        type: "select",
+        rules: "required",
+        value: null,
+        items: catParentesco,
+      },
+      {
+        label: "Nombre(s)",
+        name: "referenciaNombres",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Apellido paterno",
+        name: "referenciaApellidos",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Apellido materno",
+        name: "referenciaApellidos",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Celular",
+        name: "celular",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Años de conocerlo",
+        name: "referenciaApellidos",
+        type: "text",
+        rules: "required",
+        value: null,
+      },
+      {
+        label: "Meses de conocerlo",
+        name: "referenciaApellidos",
+        type: "hidden",
+        rules: "required",
+        value: 0,
+      },
+      {
+        label: "Relación",
+        name: "referenciaApellidos",
+        type: "hidden",
         rules: "required",
         value: null,
       },
@@ -416,20 +636,14 @@ const form = ref<FormStep[]>([
   },
 ]);
 
-let idsolicitud: string | number;
-
-const msgNoViable = ref<string>("");
-const entidadNoViable =
-  "Lo sentimos, en este momento otorgamos créditos exclusivamente a trabajadores del sector público en los estados de Guanajuato, Puebla, Veracruz, Zacatecas y Oaxaca, donde contemos con un convenio activo con la entidad.";
-const contratoNoViable =
-  "Lo sentimos, en este momento otorgamos créditos exclusivamente a trabajadores del sector público con base/plaza, o personal de confianza/contrato con más de 3 años de antiguedad o bien pensionados, que laboran en las dependencias mencionadas.";
+let idsolicitud = ref<number | string>();
 
 const prospectoViable = ref(true);
 
 // COMPONENT STATE
 const currentStep = ref(1);
 let idProspecto: number;
-let mostrarCalculadora = ref<boolean>(true);
+let mostrarCalculadora = ref<boolean>(false);
 
 // METHODS
 async function formStepHandler(): Promise<boolean> {
@@ -438,76 +652,52 @@ async function formStepHandler(): Promise<boolean> {
 
   switch (currentStep.value) {
     case 1:
-      const { celular, rfc } = getFormStepValues(1);
-
-      const response4 = await apiCalls.registrarSolicitudCreditoFlash({
-        celular,
-        rfc,
-      });
-      error = response4.error;
+      error = await registrarCreditoFlash();
       break;
     case 2:
-      // VALIDAR CELULAR
-      const { codigo } = getFormStepValues(2);
-      const { rfc: rfc2 } = getFormStepValues(1);
-
-      const response5 = await apiCalls.validarCodigo(codigo, rfc2);
-      error = response5.error;
-
+      error = await validarCelular();
       if (error) break;
 
-      // INICIAR SOLICITUD
-      const { tipocontrato } = getFormStepValues(3);
-      if (tipocontrato === -1) {
-        error = true;
-        prospectoViable.value = false;
-        msgNoViable.value = contratoNoViable;
-      } else {
-        payload = {
-          solicitudv3: {
-            idproductoscc: 299,
-            idtipoorden: 14,
-            idpersonafisica: -1,
-            idvendedor: 18088,
-          },
-        };
-        const { data, error } = await nuevaOrden.iniciarNuevaSolicitud(payload);
+      error = await iniciarSolicitud();
+      if (error) break;
 
-        if (!error) {
-          idsolicitud = data.solicitudcredito.idsolicitud;
-        }
-      }
+      error = await registrarInfoPersonal();
+      break;
+    case 3:
+      error = await registrarContrasenia();
+      break;
+    case 4:
+      error = await registrarDatosIdentificacion();
+      break;
+    case 5:
+      error = await guardarInfoLaboral();
+      if (error) break;
 
-      // GUARDAR DATOS PERSONALES
-      payload = {
-        datos01infopersonal: getFormStepValues(4),
-        solicitudv3: { idsolicitud },
-      };
-
-      const responseAux = await nuevaOrden.guardarInfoPersonal(payload);
-      error = responseAux.error;
-
+      error = await registrarCentroTrabajo();
       break;
     case 6:
-      const { password } = getFormStepValues(6);
-      const step4Values = getFormStepValues(4);
-      payload = {
-        password,
-        rfc: step4Values.rfc,
-      };
+      error = await guardarDomicilio();
+      if (error) break;
 
-      const response6 = await nuevaOrden.registrarContrasena(payload);
-      error = response6.error;
+      // TODO: hacerlo async, usando Promise.all()
+      const { celular, correo } = getFormStepValues(1);
+      const response1 = await registrarContacto(celular, 1302);
+      const response2 = await registrarContacto(correo, 1305);
+      const response3 = await registrarContacto("2281238597", 1301);
+
+      const {
+        listaEmailsPersonales,
+        listaTelefonosCasa,
+        listaTelefonosCelular,
+      } = response3.data.contactos;
+
+      error = await guardarInfoContactos(
+        listaTelefonosCelular[0].id,
+        listaTelefonosCasa[0].id,
+        listaEmailsPersonales[0].id
+      );
       break;
     case 7:
-      payload = {
-        datos02datosidentificacion: getFormStepValues(7),
-        solicitudv3: { idsolicitud },
-      };
-
-      const response7 = await nuevaOrden.guardarDatosIdentificacion(payload);
-      error = response7.error;
-
       break;
     case 8:
       // const { codigo } = getFormStepValues(7);
@@ -518,6 +708,149 @@ async function formStepHandler(): Promise<boolean> {
       error = await apiCalls.registrarInfoDomicilio(payload);
       break;
   }
+
+  return error;
+}
+
+async function guardarInfoContactos(
+  idcontactocelular: number,
+  idcontactotelefonocasa: number,
+  idcontactoemailpersonal: number
+): Promise<boolean> {
+  const payload = {
+    datos06infocontactos: {
+      idcontactocelular,
+      idcontactotelefonocasa,
+      idcontactoemailpersonal,
+      idcontactorecados: null,
+      idcontactoemaillaboral: null,
+    },
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  };
+
+  const { error } = await nuevaOrden.guardarInfoContactos(payload);
+  return error;
+}
+
+async function registrarContacto(
+  contacto: string,
+  idtipo: number
+): Promise<any> {
+  const payload = {
+    contacto: {
+      idtipo,
+      contacto,
+      horariodespuesde: null,
+      horarioantesde: null,
+      horariodias: "",
+      contactarcualquierhorario: true,
+    },
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  };
+
+  const response = await nuevaOrden.registrarContacto(payload);
+  return response;
+}
+
+async function guardarDomicilio(): Promise<boolean> {
+  const payload = {
+    datos05domicilio: getFormStepValues(6),
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  };
+
+  const { error } = await nuevaOrden.guardarDomicilio(payload);
+  return error;
+}
+
+async function registrarCentroTrabajo(): Promise<boolean> {
+  const payload = {
+    datos04centrotrabajo: infoCentroTrabajoIpe,
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  };
+
+  const { error } = await nuevaOrden.guardarCentroTrabajo(payload);
+  return error;
+}
+
+async function guardarInfoLaboral(): Promise<boolean> {
+  const payload = {
+    datos03infolaboral: getFormStepValues(5),
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  };
+
+  const { error } = await nuevaOrden.guardarInfoLaboral(payload);
+  return error;
+}
+
+async function registrarDatosIdentificacion(): Promise<boolean> {
+  const payload = {
+    datos02datosidentificacion: getFormStepValues(4),
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  };
+
+  const { error } = await nuevaOrden.guardarDatosIdentificacion(payload);
+  return error;
+}
+
+async function registrarContrasenia(): Promise<boolean> {
+  const { password } = getFormStepValues(3);
+  const step4Values = getFormStepValues(1);
+  const payload = {
+    password,
+    rfc: step4Values.rfc,
+  };
+
+  const { error } = await nuevaOrden.registrarContrasena(payload);
+
+  return error;
+}
+
+async function registrarInfoPersonal(): Promise<boolean> {
+  const payload = {
+    datos01infopersonal: getFormStepValues(1),
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  };
+
+  const { error } = await nuevaOrden.guardarInfoPersonal(payload);
+
+  return error;
+}
+
+async function iniciarSolicitud(): Promise<boolean> {
+  const payload = {
+    solicitudv3: {
+      idproductoscc: 299,
+      idtipoorden: 14,
+      idpersonafisica: -1,
+      idvendedor: 18088,
+    },
+  };
+
+  const { error, data } = await nuevaOrden.iniciarNuevaSolicitud(payload);
+
+  if (!error) {
+    idsolicitud.value = data.solicitudcredito.idsolicitud;
+  }
+
+  return error;
+}
+
+async function registrarCreditoFlash(): Promise<boolean> {
+  const { celular, rfc } = getFormStepValues(1);
+
+  const { error } = await apiCalls.registrarSolicitudCreditoFlash({
+    celular,
+    rfc,
+  });
+
+  return error;
+}
+
+async function validarCelular(): Promise<boolean> {
+  const { codigo } = getFormStepValues(2);
+  const { rfc } = getFormStepValues(1);
+
+  const { error } = await apiCalls.validarCodigo(codigo, rfc);
 
   return error;
 }
@@ -552,17 +885,27 @@ function onSubmitCalculadora() {
 </script>
 
 <template>
-  <input
-    type="number"
-    v-model.number="currentStep"
-    class="border-2 mx-auto fixed bottom-6 right-6 px-2 py-1 border-black w-16 text-lg rounded"
-  />
+  <div class="fixed bottom-6 right-6 px-2 py-1 w-20">
+    <input
+      type="number"
+      v-model="idsolicitud"
+      class="border-2 w-full border-black text-lg rounded mb-4"
+    />
+    <input
+      type="number"
+      v-model.number="currentStep"
+      class="border-2 w-full border-black text-lg rounded"
+    />
+  </div>
   <!-- CALCULADORA -->
   <div v-if="mostrarCalculadora" class="mt-20 mb-32">
     <h3 class="text-center mb-10 text-4xl font-bold text-gray-800">
       Solicita tu crédito
     </h3>
-    <CalculadoraCredito @submit-calculadora="onSubmitCalculadora" />
+    <CalculadoraCredito
+      @submit-calculadora="onSubmitCalculadora"
+      @credito-no-viable="prospectoViable = false"
+    />
   </div>
 
   <!-- FORMULARIO SOLICITUD -->
@@ -579,5 +922,6 @@ function onSubmitCalculadora() {
     />
   </div>
 
-  <MsgCreditoNoViable v-else :msg-no-viable="msgNoViable" class="my-32" />
+  <!-- MSG CRÉDITO NO VIABLE -->
+  <MsgCreditoNoViable v-else class="my-32" />
 </template>

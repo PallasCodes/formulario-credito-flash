@@ -15,4 +15,19 @@ export const NuevaOrden = {
   registrarContrasena(payload: any) {
     return api.post(`a154/registrarcontrasena`, payload);
   },
+  guardarInfoLaboral(payload: any) {
+    return api.post(`${BASE_URL}/guardarinfolaboral`, payload);
+  },
+  guardarCentroTrabajo(payload: any) {
+    return api.post(`${BASE_URL}/guardarcentrotrabajo`, payload);
+  },
+  guardarDomicilio(payload: any) {
+    return api.post(`${BASE_URL}/guardardomicilio`, payload);
+  },
+  registrarContacto(payload: any) {
+    return api.post(`${BASE_URL}/registrarcontacto`, payload);
+  },
+  guardarInfoContactos(payload: any) {
+    return api.post(`${BASE_URL}/guardarinfocontactos`, payload);
+  },
 };

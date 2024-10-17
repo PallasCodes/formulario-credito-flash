@@ -1,14 +1,11 @@
-<script lang="ts" setup>
-defineProps<{ msgNoViable: string }>();
-</script>
-
 <template>
   <div
     class="mx-auto overflow-hidden max-w-2xl w-full rounded-lg p-6 text-lg"
     style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"
   >
     <p>
-      {{ msgNoViable }}
+      Lo sentimos, en este momento otorgamos créditos exclusivamente a
+      pensionados del IPE en el estado de Veracruz.
     </p>
     <br />
     <p>
