@@ -14,10 +14,7 @@ const { loading } = storeToRefs(appState);
 </script>
 
 <template>
-  <div
-    class="mx-auto overflow-hidden max-w-lg w-full rounded-lg"
-    style="padding: 22px"
-  >
+  <div class="mx-auto overflow-hidden max-w-lg w-full rounded-lg md:p-[22px]">
     <section>
       <div v-for="(step, i) in form">
         <transition
@@ -50,6 +47,7 @@ const { loading } = storeToRefs(appState);
                   : '',
             }"
             :disabled="loading"
+            class="md:p-8"
           >
             <div
               v-if="loading"

@@ -237,6 +237,7 @@ const form = ref<FormStep[]>([
         value: null,
       },
     ],
+    btn: "VALIDAR",
   },
   // PASO 3 - GENERACIÓN CONTRASEÑA
   {
@@ -643,7 +644,7 @@ const prospectoViable = ref(true);
 // COMPONENT STATE
 const currentStep = ref(1);
 let idProspecto: number;
-let mostrarCalculadora = ref<boolean>(false);
+let mostrarCalculadora = ref<boolean>(true);
 
 // METHODS
 async function formStepHandler(): Promise<boolean> {
@@ -914,6 +915,13 @@ function onSubmitCalculadora() {
     <h2 class="text-center text-2xl uppercase font-bold text-blue-900">
       {{ form[currentStep - 1].title }}
     </h2>
+    <span class="text-center block mt-3"
+      >¿Ya tienes cuenta?
+      <router-link to="/login" class="text-blue-600 hover:text-blue-700"
+        >Inicia sesión</router-link
+      ></span
+    >
+
     <FormBuilder
       :form="form"
       :current-step="currentStep"
