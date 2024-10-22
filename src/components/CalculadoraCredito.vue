@@ -1,64 +1,61 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue'
 
-import { currencyFormat } from "@/utils/currencyFormat";
+import { currencyFormat } from '@/utils/currencyFormat'
 
 const form = ref({
-  monto: "1000",
+  monto: '1000',
   plazos: 3,
   dependencia: undefined,
   estado: undefined,
-});
+})
 
 const catPlazos = [
   {
     value: 3,
-    label: "3 Meses",
+    label: '3 Meses',
   },
   {
     value: 6,
-    label: "6 Meses",
+    label: '6 Meses',
   },
-];
+]
 
 const catDependencias = [
-  { value: 1, label: "IPE" },
-  { value: -1, label: "Otro" },
-];
+  { value: 1, label: 'IPE' },
+  { value: -1, label: 'Otro' },
+]
 
 const catEstados = [
-  { value: 1, label: "Veracruz" },
-  { value: -1, label: "Otro" },
-];
+  { value: 1, label: 'Veracruz' },
+  { value: -1, label: 'Otro' },
+]
 
 const tasaInteres = {
   3: 29,
   6: 25,
-};
+}
 
-const emit = defineEmits(["submitCalculadora", "creditoNoViable"]);
+const emit = defineEmits(['submitCalculadora', 'creditoNoViable'])
 
 const getPagare = computed(() => {
   const interes =
-    tasaInteres[form.value.plazos as keyof typeof tasaInteres] / 100;
-  const capital = +form.value.monto;
-  const plazo = +form.value.plazos;
-  return capital * (interes * plazo) * 1.16 + capital;
-});
+    tasaInteres[form.value.plazos as keyof typeof tasaInteres] / 100
+  const capital = +form.value.monto
+  const plazo = +form.value.plazos
+  return capital * (interes * plazo) * 1.16 + capital
+})
 
 function onSubmitCalculadora() {
   if (form.value.dependencia === -1 || form.value.estado === -1) {
-    emit("creditoNoViable");
+    emit('creditoNoViable')
   }
-  emit("submitCalculadora");
+  emit('submitCalculadora')
 }
 </script>
 
 <template>
-  <div
-    style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"
-    class="max-w-lg mx-auto p-8 pb-4"
-  >
+  <div class="max-w-lg mx-auto p-8 pb-4 card-shadow rounded">
     <FormKit
       type="form"
       submit-label="SOLICITAR"

@@ -136,6 +136,126 @@ export function useNuevaOrden() {
     return response;
   }
 
+  async function guardarReferencia(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(NuevaOrden.guardarReferencia, payload);
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function guardarReferencias(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      NuevaOrden.guardarReferencias,
+      payload
+    );
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function guardarCuentaDomiciliacion(
+    payload: Object
+  ): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      NuevaOrden.guardarCuentaDomiciliacion,
+      payload
+    );
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function guardarInfoFinanciera(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      NuevaOrden.guardarInfoFinanciera,
+      payload
+    );
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function obtenerPromocionesDisponibles(
+    payload: Object
+  ): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      NuevaOrden.obtenerPromocionesDisponibles,
+      payload
+    );
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function continuarProceso(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(NuevaOrden.continuarProceso, payload);
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function seleccionarPromocion(payload: Object): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      NuevaOrden.seleccionarPromocion,
+      payload
+    );
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
+  async function guardarCondicionesOrden(
+    payload: Object
+  ): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      NuevaOrden.guardarCondicionesOrden,
+      payload
+    );
+
+    setLoading(false);
+
+    if (response.error) response.message?.display();
+
+    return response;
+  }
+
   return {
     iniciarNuevaSolicitud,
     guardarInfoPersonal,
@@ -146,5 +266,13 @@ export function useNuevaOrden() {
     guardarDomicilio,
     registrarContacto,
     guardarInfoContactos,
+    guardarReferencia,
+    guardarReferencias,
+    guardarCuentaDomiciliacion,
+    guardarInfoFinanciera,
+    obtenerPromocionesDisponibles,
+    continuarProceso,
+    seleccionarPromocion,
+    guardarCondicionesOrden,
   };
 }

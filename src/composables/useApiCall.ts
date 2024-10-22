@@ -96,11 +96,28 @@ export function useApiCall() {
     return response;
   }
 
+  async function actualizarTrainProcess(
+    payload: Object
+  ): Promise<HttpResponse> {
+    setLoading(true);
+
+    const response = await handleRequest(
+      ApiFunctions.actualizarTrainProcess,
+      payload
+    );
+
+    setLoading(false);
+    response.message?.display();
+
+    return response;
+  }
+
   return {
     registrarInfoBasicaProspecto,
     validarCodigo,
     registrarInfoDomicilio,
     getColoniasPorCP,
     registrarSolicitudCreditoFlash,
+    actualizarTrainProcess,
   };
 }

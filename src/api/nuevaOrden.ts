@@ -30,4 +30,28 @@ export const NuevaOrden = {
   guardarInfoContactos(payload: any) {
     return api.post(`${BASE_URL}/guardarinfocontactos`, payload);
   },
+  guardarReferencia(payload: any) {
+    return api.post(`${BASE_URL}/guardarreferencia`, payload);
+  },
+  guardarReferencias(payload: any) {
+    return api.post(`${BASE_URL}/guardarreferencias`, payload);
+  },
+  guardarCuentaDomiciliacion(payload: any) {
+    return api.post(`${BASE_URL}/guardarcuentadomiciliacion`, payload);
+  },
+  guardarInfoFinanciera(payload: any) {
+    return api.post(`${BASE_URL}/guardarinfofinanciera`, payload);
+  },
+  obtenerPromocionesDisponibles(payload: any) {
+    return api.post(`${BASE_URL}/obtenerpromocionesdisponibles`, payload);
+  },
+  seleccionarPromocion(payload: any) {
+    return api.post(`${BASE_URL}/seleccionarpromocion`, payload);
+  },
+  continuarProceso(payload: any) {
+    return api.post(`${BASE_URL}/continuarproceso`, payload);
+  },
+  guardarCondicionesOrden(payload: any) {
+    return api.post(`${BASE_URL}/guardarcondicionesorden`, payload);
+  },
 };

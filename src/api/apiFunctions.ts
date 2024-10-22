@@ -18,4 +18,7 @@ export const ApiFunctions = {
   registrarSolicitudCreditoFlash(payload: any) {
     return api.post(`${BASE_URL}/registrarsolicitudcreditoflash`, payload);
   },
+  actualizarTrainProcess(payload: any) {
+    return api.post(`${BASE_URL}/actualizartrainprocess`, payload);
+  },
 };

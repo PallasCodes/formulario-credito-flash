@@ -31,7 +31,7 @@ html {
   @apply border-red-700;
 }
 
-label[data-checked="true"] > .radio > span {
+label[data-checked='true'] > .radio > span {
   background-color: #2563eb !important;
 }
 
@@ -45,7 +45,7 @@ input:active {
 }
 
 header {
-  background-image: url("http://intermercado.com.mx/wp-content/uploads/2020/08/loans4-sectionbg1.png");
+  background-image: url('http://intermercado.com.mx/wp-content/uploads/2020/08/loans4-sectionbg1.png');
   background-size: cover;
   background-position: bottom;
 }
@@ -58,4 +58,8 @@ header {
 .bg-primary:hover {
   background-color: #1c2574 !important;
   border-color: #1c2574 !important;
+}
+
+.card-shadow {
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
