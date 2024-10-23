@@ -49,8 +49,9 @@ const getPagare = computed(() => {
 function onSubmitCalculadora() {
   if (form.value.dependencia === -1 || form.value.estado === -1) {
     emit('creditoNoViable')
+  } else {
+    emit('submitCalculadora')
   }
-  emit('submitCalculadora')
 }
 </script>
 

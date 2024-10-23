@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import type { Catalogo } from 'src/interfaces/Catalogo'
 import type { FormStep } from '@/interfaces/Form'
@@ -10,6 +10,7 @@ import FormBuilder from '@/components/FormBuilder.vue'
 import MsgCreditoNoViable from '@/components/MsgCreditoNoViable.vue'
 import CalculadoraCredito from '@/components/CalculadoraCredito.vue'
 import SolicitudFinalizada from '@/components/SolicitudFinalizada.vue'
+import type { Field } from '@/interfaces/FormField'
 
 const apiCalls = useApiCall()
 const nuevaOrden = useNuevaOrden()
@@ -84,6 +85,7 @@ const form = ref<FormStep[]>([
         type: 'text',
         rules: 'required',
         value: null,
+        uppercase: true,
       },
       {
         label: 'Nombre',
@@ -114,14 +116,20 @@ const form = ref<FormStep[]>([
       {
         label: 'Entidad federativa de nacimiento',
         name: 'identidadfederativanacimiento',
-        type: 'number',
+        type: 'select',
         value: 9,
+        catType: 'catvar',
+        catCode: 1003,
+        items: [],
       },
       {
         label: 'Estado civil',
         name: 'idestadocivil',
-        type: 'number',
+        type: 'select',
         value: 1102,
+        catType: 'catsis',
+        catCode: 11,
+        items: [],
       },
       {
         label: 'Género',
@@ -151,23 +159,32 @@ const form = ref<FormStep[]>([
       {
         label: 'Grado de estudios',
         name: 'idgradoestudios',
-        type: 'number',
+        type: 'select',
         rules: 'required',
         value: 5906,
+        catType: 'catsis',
+        catCode: 59,
+        items: [],
       },
       {
         label: 'Nacionalidad',
         name: 'idnacionalidad',
-        type: 'number',
+        type: 'select',
         rules: 'required',
         value: 700,
+        catType: 'catvar',
+        catCode: 1032,
+        items: [],
       },
       {
         label: 'País de nacimiento',
         name: 'idpaisnacimiento',
-        type: 'number',
+        type: 'select',
         rules: 'required',
         value: 700,
+        catType: 'catvar',
+        catCode: 1002,
+        items: [],
       },
       {
         label: 'Celular',
@@ -177,7 +194,7 @@ const form = ref<FormStep[]>([
         value: '2281237048',
       },
       {
-        label: 'Correo elctrónico',
+        label: 'Correo electrónico',
         name: 'correo',
         type: 'email',
         rules: 'required',
@@ -201,6 +218,7 @@ const form = ref<FormStep[]>([
         type: 'text',
         rules: 'required',
         value: null,
+        uppercase: true,
       },
     ],
     btn: 'VALIDAR',
@@ -242,13 +260,17 @@ const form = ref<FormStep[]>([
         type: 'text',
         rules: 'required',
         value: null,
+        uppercase: true,
       },
       {
         label: 'Identificación oficial',
         name: 'ididentificacionoficial',
-        type: 'number',
+        type: 'select',
         rules: 'required',
         value: 27301,
+        catType: 'catsis',
+        catCode: 273,
+        items: [],
       },
       {
         label: 'Fecha de expedición',
@@ -468,9 +490,12 @@ const form = ref<FormStep[]>([
       {
         label: 'Parentesco',
         name: 'idrelacion',
-        type: 'number',
+        type: 'select',
         rules: 'required',
         value: 1901,
+        catType: 'catsis',
+        catCode: 19,
+        items: [],
       },
       {
         label: 'Nombre(s)',
@@ -528,9 +553,12 @@ const form = ref<FormStep[]>([
       {
         label: 'Parentesco',
         name: 'idrelacion2',
-        type: 'number',
+        type: 'select',
         rules: 'required',
         value: 1900,
+        catType: 'catsis',
+        catCode: 19,
+        items: [],
       },
       {
         label: 'Nombre(s)',
@@ -588,9 +616,12 @@ const form = ref<FormStep[]>([
       {
         label: 'Banco',
         name: 'idbanco',
-        type: 'number',
+        type: 'select',
         rules: 'required',
         value: 3,
+        catType: 'catvar',
+        catCode: 1037,
+        items: [],
       },
       {
         label: 'CLABE interbancaria',
@@ -717,19 +748,67 @@ const form = ref<FormStep[]>([
   },
 ])
 
+onMounted(() => {
+  initStepCatalogos(0)
+})
+
+function initCatalogos(form: FormStep[]) {
+  form.forEach((step, i) => {
+    step.fields.forEach((field, j) => {
+      if (field.type === 'select' && !field.skipCat) {
+        loadCatalogo(field, i, j)
+      }
+    })
+  })
+}
+
+function initStepCatalogos(step: number) {
+  form.value[step].fields.forEach((field, i) => {
+    if (field.type === 'select' && !field.skipCat) {
+      loadCatalogo(field, step, i)
+    }
+  })
+}
+
+async function loadCatalogo(
+  field: Field,
+  stepIndex: number,
+  fieldIndex: number,
+): Promise<void> {
+  let catalogo = []
+
+  if (field.catType === 'catsis') {
+    const { data } = await apiCalls.getElementosPorTipo(field.catCode as number)
+    catalogo = data.elementos
+  }
+  if (field.catType === 'catvar') {
+    const { data } = await apiCalls.getElementosVariosPorCodigo(
+      field.catCode as number,
+    )
+    catalogo = data.elementos
+  }
+
+  form.value[stepIndex].fields[fieldIndex].items = catalogo.map(
+    (obj: { id: number; nombre: string }) => ({
+      value: obj.id,
+      label: obj.nombre,
+    }),
+  )
+}
+
 // COMPONENT STATE
 const idsolicitud = ref<number>()
-const prospectoViable = ref(true)
 const currentStep = ref<number>(1)
-const solicitudFinalizada = ref<boolean>(false)
 const solicitudcredito: object = {}
-const escenario = ref<Escenarios>(Escenarios.CALCULADORA)
+const escenario = ref<Escenarios>(Escenarios.FORMULARIO)
 
 // METHODS
-async function formStepHandler(): Promise<boolean> {
+async function formStepHandler(step: number): Promise<boolean> {
   let error: boolean = false
 
-  switch (currentStep.value) {
+  if (step < form.value.length) initStepCatalogos(step)
+
+  switch (step) {
     case 1:
       error = await registrarCreditoFlash()
       break
@@ -1079,7 +1158,7 @@ async function onSiguiente() {
   let error: boolean = false
 
   if (import.meta.env.VITE_APP_MODE === 'prod') {
-    error = await formStepHandler()
+    error = await formStepHandler(currentStep.value)
   }
 
   if (!error) currentStep.value += 1
@@ -1092,14 +1171,18 @@ function getFormStepValues(step: number): any {
     if (field.type === 'number') {
       values[field.name] = +field.value
     } else {
-      values[field.name] = field.value
+      if (field.uppercase) {
+        values[field.name] = field.value.toUpperCase()
+      } else {
+        values[field.name] = field.value
+      }
     }
   })
 
   return values
 }
 
-function onSubmitCalculadora() {
+function handleSubmitCalculadora() {
   escenario.value = Escenarios.FORMULARIO
 }
 
@@ -1133,7 +1216,7 @@ function handleCreditoNoViable() {
       Solicita tu crédito
     </h3>
     <CalculadoraCredito
-      @submit-calculadora="onSubmitCalculadora"
+      @submit-calculadora="handleSubmitCalculadora"
       @credito-no-viable="handleCreditoNoViable"
     />
   </div>

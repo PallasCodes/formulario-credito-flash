@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { FormKit } from "@formkit/vue";
-import type { FormStep } from "@/interfaces/Form";
-import { useAppState } from "@/stores/appState";
-import { storeToRefs } from "pinia";
+import { FormKit } from '@formkit/vue'
+import type { FormStep } from '@/interfaces/Form'
+import { useAppState } from '@/stores/appState'
+import { storeToRefs } from 'pinia'
 
 defineProps<{
-  form: FormStep[];
-  currentStep: number;
-}>();
+  form: FormStep[]
+  currentStep: number
+}>()
 
-const appState = useAppState();
-const { loading } = storeToRefs(appState);
+const appState = useAppState()
+const { loading } = storeToRefs(appState)
 </script>
 
 <template>
@@ -74,7 +74,7 @@ const { loading } = storeToRefs(appState);
                 :validation="field.rules"
                 :name="field.name"
                 :classes="{
-                  input: 'w-full',
+                  input: { 'w-full': true, uppercase: field.uppercase as boolean },
                   outer: 'w-full !max-w-[100%]',
                   inner: field.type === 'radio' ? 'radio' : '',
                 }"

@@ -1,115 +1,140 @@
-import { handleRequest, type HttpResponse } from "@/utils/handleRequest";
-import { ApiFunctions } from "@/api/apiFunctions";
-import { useAppState } from "@/stores/appState";
+import { handleRequest, type HttpResponse } from '@/utils/handleRequest'
+import { ApiFunctions } from '@/api/apiFunctions'
+import { useAppState } from '@/stores/appState'
 
 export function useApiCall() {
-  const { setLoading } = useAppState();
+  const { setLoading } = useAppState()
 
   async function registrarInfoBasicaProspecto(info: Object): Promise<number> {
-    let idProspecto: number = -1;
-    setLoading(true);
+    let idProspecto: number = -1
+    setLoading(true)
 
     const { data, error, message } = await handleRequest(
       ApiFunctions.registrarInfoBasica,
-      info
-    );
+      info,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
     if (error) {
-      message?.display();
+      message?.display()
     } else {
-      idProspecto = data.idprospecto;
+      idProspecto = data.idprospecto
     }
 
-    return idProspecto;
+    return idProspecto
   }
 
   async function validarCodigo(
     codigo: string,
-    rfc: string
+    rfc: string,
   ): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(ApiFunctions.validarCodigoCelular, {
       codigo,
       rfc,
-    });
+    })
 
-    setLoading(false);
-    response.message?.display();
+    setLoading(false)
+    response.message?.display()
 
-    return response;
+    return response
   }
 
   async function registrarInfoDomicilio(payload: Object) {
-    setLoading(true);
+    setLoading(true)
 
     const { error, message } = await handleRequest(
       ApiFunctions.registrarInfoDomicilio,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
-    message?.display();
+    setLoading(false)
+    message?.display()
 
-    return error;
+    return error
   }
 
   async function getColoniasPorCP(CP: number): Promise<any> {
-    setLoading(true);
+    setLoading(true)
 
     const { data, error, message } = await handleRequest(
       ApiFunctions.getColoniasPorCP,
-      { codigopostal: CP }
-    );
+      { codigopostal: CP },
+    )
 
-    setLoading(false);
+    setLoading(false)
 
     if (error) {
-      message?.display();
-      return [];
+      message?.display()
+      return []
     } else {
       const catalogo = data.colonias.map((obj: any) => ({
         value: obj.identidadfederativa,
         label: obj.colonia,
         city: obj.ciudad,
-      }));
+      }))
 
-      return catalogo;
+      return catalogo
     }
   }
 
   async function registrarSolicitudCreditoFlash(
-    payload: Object
+    payload: Object,
   ): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       ApiFunctions.registrarSolicitudCreditoFlash,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
-    response.message?.display();
+    setLoading(false)
+    response.message?.display()
 
-    return response;
+    return response
   }
 
   async function actualizarTrainProcess(
-    payload: Object
+    payload: Object,
   ): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       ApiFunctions.actualizarTrainProcess,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
-    response.message?.display();
+    setLoading(false)
+    response.message?.display()
 
-    return response;
+    return response
+  }
+
+  async function getElementosVariosPorCodigo(
+    codigo: number,
+  ): Promise<HttpResponse> {
+    setLoading(true)
+
+    const response = await handleRequest(
+      ApiFunctions.getElementosVariosPorCodigo,
+      codigo,
+    )
+
+    setLoading(false)
+
+    return response
+  }
+
+  async function getElementosPorTipo(tipo: number): Promise<HttpResponse> {
+    setLoading(true)
+
+    const response = await handleRequest(ApiFunctions.getElementosPorTipo, tipo)
+
+    setLoading(false)
+
+    return response
   }
 
   return {
@@ -119,5 +144,7 @@ export function useApiCall() {
     getColoniasPorCP,
     registrarSolicitudCreditoFlash,
     actualizarTrainProcess,
-  };
+    getElementosVariosPorCodigo,
+    getElementosPorTipo,
+  }
 }
