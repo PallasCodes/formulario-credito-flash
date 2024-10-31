@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import type { Catalogo } from 'src/interfaces/Catalogo'
 import type { FormStep } from '@/interfaces/Form'
@@ -17,6 +17,9 @@ import FormBuilder from '@/components/FormBuilder.vue'
 import MsgCreditoNoViable from '@/components/MsgCreditoNoViable.vue'
 import CalculadoraCredito from '@/components/CalculadoraCredito.vue'
 import SolicitudFinalizada from '@/components/SolicitudFinalizada.vue'
+import TheHeader from '@/components/TheHeader.vue'
+import CreditoInfo from '@/components/CreditoInfo.vue'
+import TheFooter from '@/components/TheFooter.vue'
 
 const apiCalls = useApiCall()
 const nuevaOrden = useNuevaOrden()
@@ -266,7 +269,6 @@ const form = ref<FormStep[]>([
         name: 'password',
         rules: 'required|length:6,16',
         type: 'password',
-        prefixIcon: 'password',
         suffixIcon: 'eyeClosed',
         on: {
           suffixIconClick: (node: any, e: Event) => {
@@ -283,7 +285,6 @@ const form = ref<FormStep[]>([
         name: 'password_confirm',
         rules: 'required|confirm',
         type: 'password',
-        prefixIcon: 'password',
         suffixIcon: 'eyeClosed',
         on: {
           suffixIconClick: (node: any, e: Event) => {
@@ -838,7 +839,7 @@ const form = ref<FormStep[]>([
         value: 5000,
         name: 'importesolicitado',
         type: 'number',
-        rules: 'required',
+        rules: 'required|min:2000|max:5000|number',
       },
       {
         label: 'Plazos',
@@ -1325,6 +1326,7 @@ function handleCreditoNoViable() {
 </script>
 
 <template>
+  <TheHeader />
   <div class="fixed bottom-6 right-6 px-2 py-1 w-20">
     <input
       type="text"
@@ -1390,4 +1392,7 @@ function handleCreditoNoViable() {
     v-if="escenario === Escenarios.PROSPECTO_NO_VIABLE"
     class="my-32"
   />
+
+  <CreditoInfo />
+  <TheFooter />
 </template>

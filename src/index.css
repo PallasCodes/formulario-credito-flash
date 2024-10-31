@@ -50,6 +50,12 @@ header {
   background-position: bottom;
 }
 
+#login-welcome {
+  background-image: url('http://intermercado.com.mx/wp-content/uploads/2020/08/loans4-sectionbg1.png');
+  background-size: cover;
+  background-position: top;
+}
+
 .bg-primary {
   background-color: #2b347f !important;
   border-color: #2b347f !important;
