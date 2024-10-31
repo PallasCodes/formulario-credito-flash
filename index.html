@@ -28,7 +28,7 @@
   </head>
   <body>
     <!-- HEADER -->
-    <header class="py-16 md:px-0 px-10">
+    <header class="py-16 md:px-0 px-10" id="header">
       <div class="flex align-center max-w-5xl mx-auto flex-col md:flex-row">
         <div
           class="flex h-100 justify-center flex-col text-white md:w-[45%] md:pr-32"
@@ -161,10 +161,10 @@
 </html>
 
 <script>
-  document.getElementById("year").textContent = new Date().getFullYear();
+  document.getElementById('year').textContent = new Date().getFullYear()
 
-  const goUp = document.getElementById("goUp");
-  goUp.addEventListener("click", () => {
-    window.scrollTo(0, 0);
-  });
+  const goUp = document.getElementById('goUp')
+  goUp.addEventListener('click', () => {
+    window.scrollTo(0, 0)
+  })
 </script>

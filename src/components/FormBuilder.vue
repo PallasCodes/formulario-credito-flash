@@ -11,6 +11,15 @@ defineProps<{
 
 const appState = useAppState()
 const { loading } = storeToRefs(appState)
+const emit = defineEmits(['siguiente', 'setFormDirection'])
+
+function handleSubmit(step: FormStep) {
+  if (step.errors) {
+    if (!step.errors.length) emit('siguiente')
+  } else {
+    emit('siguiente')
+  }
+}
 </script>
 
 <template>
@@ -27,7 +36,7 @@ const { loading } = storeToRefs(appState)
         >
           <FormKit
             v-if="currentStep === i + 1"
-            @submit="$emit('siguiente')"
+            @submit="() => handleSubmit(step)"
             type="form"
             :key="step.title"
             :id="`step-${i + 1}`"
@@ -48,6 +57,7 @@ const { loading } = storeToRefs(appState)
             }"
             :disabled="loading"
             class="md:p-8"
+            :errors="step.errors"
           >
             <div
               v-if="loading"
@@ -67,6 +77,7 @@ const { loading } = storeToRefs(appState)
               <FormKit
                 v-else
                 v-model="field.value"
+                v-bind="field"
                 :type="field.type"
                 :label="`${field.label}${
                   field.rules?.includes('required') ? '*' : ''
@@ -88,7 +99,7 @@ const { loading } = storeToRefs(appState)
             </div>
 
             <FormKit
-              @click="$emit('setFormDirection', 'right')"
+              @click="emit('setFormDirection', 'right')"
               type="submit"
               :label="step.btn || `SIGUIENTE`"
               :classes="{

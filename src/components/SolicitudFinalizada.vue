@@ -5,8 +5,6 @@
     </h1>
     <div class="text-center">
       <p>
-        Recibirás muy pronto un enlace en tu celular para confirmar tu crédito.
-        <br />
         Recuerda que puedes consultar el estado de tu solicitud en nuestra
         plataforma.
       </p>

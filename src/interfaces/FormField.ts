@@ -16,4 +16,8 @@ export interface Field {
   catType?: 'catvar' | 'catsis'
   catCode?: number
   uppercase?: boolean
+  prefixIcon?: string
+  suffixIcon?: string
+  validationMessages?: object
+  errors?: any
 }

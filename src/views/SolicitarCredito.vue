@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 import type { Catalogo } from 'src/interfaces/Catalogo'
 import type { FormStep } from '@/interfaces/Form'
 import { useApiCall } from '@/composables/useApiCall'
 import { useNuevaOrden } from '@/composables/useNuevaOrden'
+import type { Field } from '@/interfaces/FormField'
+import {
+  curp,
+  dateBeforeToday,
+  legalBirthDate,
+  rfc,
+} from '@/utils/inputValidations'
 
 import FormBuilder from '@/components/FormBuilder.vue'
 import MsgCreditoNoViable from '@/components/MsgCreditoNoViable.vue'
 import CalculadoraCredito from '@/components/CalculadoraCredito.vue'
 import SolicitudFinalizada from '@/components/SolicitudFinalizada.vue'
-import type { Field } from '@/interfaces/FormField'
 
 const apiCalls = useApiCall()
 const nuevaOrden = useNuevaOrden()
@@ -67,6 +73,14 @@ interface CatalogoColonias extends Catalogo {
   city?: string
 }
 
+const getValidacionFechaNacimiento = () => {
+  const currentYear = new Date().getFullYear()
+  const currentMonth = new Date().getMonth()
+  const currentDay = new Date().getDay()
+  const legalDate = new Date(currentYear - 18, currentMonth, currentDay)
+  return legalDate
+}
+
 enum Escenarios {
   CALCULADORA = 'calculadora',
   SOLICITUD_FINALIZADA = 'solicitudFinalizada',
@@ -83,9 +97,12 @@ const form = ref<FormStep[]>([
         label: 'RFC',
         name: 'rfc',
         type: 'text',
-        rules: 'required',
+        rules: [['required'], rfc],
         value: null,
         uppercase: true,
+        validationMessages: {
+          matches: 'El valor introducido no coincide con el formato de RFC',
+        },
       },
       {
         label: 'Nombre',
@@ -112,6 +129,7 @@ const form = ref<FormStep[]>([
         name: 'apellidomaterno',
         type: 'text',
         value: 'Prueba',
+        rules: 'required',
       },
       {
         label: 'Entidad federativa de nacimiento',
@@ -121,6 +139,7 @@ const form = ref<FormStep[]>([
         catType: 'catvar',
         catCode: 1003,
         items: [],
+        rules: 'required',
       },
       {
         label: 'Estado civil',
@@ -130,6 +149,7 @@ const form = ref<FormStep[]>([
         catType: 'catsis',
         catCode: 11,
         items: [],
+        rules: 'required',
       },
       {
         label: 'Género',
@@ -146,8 +166,11 @@ const form = ref<FormStep[]>([
         label: 'Fecha de nacimiento',
         name: 'fechanacimiento',
         type: 'date',
-        rules: 'required',
+        rules: [['required'], legalBirthDate()],
         value: '1997-10-24',
+        validationMessages: {
+          date_before: 'Debes ser mayor de edad',
+        },
       },
       {
         label: 'No. Dependientes',
@@ -189,15 +212,19 @@ const form = ref<FormStep[]>([
       {
         label: 'Celular',
         name: 'celular',
-        type: 'text',
-        rules: 'required',
+        type: 'tel',
+        rules: 'required|length:10,12|number',
         value: '2281237048',
+        validationMessages: {
+          number: 'El formato no es válido',
+          length: 'El formato no es válido',
+        },
       },
       {
         label: 'Correo electrónico',
         name: 'correo',
         type: 'email',
-        rules: 'required',
+        rules: 'required|email',
         value: 'prueba@gmail.com',
       },
     ],
@@ -232,7 +259,6 @@ const form = ref<FormStep[]>([
         label:
           'Por favor, genera una contraseña para tu cuenta. Es importante que la recuerdes ya que tendrás que usarla en un futuro para conocer el estado de tu solicitud.',
         name: 'msgPassword',
-        class: 'text-lg',
       },
       {
         label: 'Contraseña',
@@ -240,13 +266,33 @@ const form = ref<FormStep[]>([
         name: 'password',
         rules: 'required|length:6,16',
         type: 'password',
+        prefixIcon: 'password',
+        suffixIcon: 'eyeClosed',
+        on: {
+          suffixIconClick: (node: any, e: Event) => {
+            node.props.suffixIcon =
+              node.props.suffixIcon === 'eye' ? 'eyeClosed' : 'eye'
+            node.props.type =
+              node.props.type === 'password' ? 'text' : 'password'
+          },
+        },
       },
       {
         label: 'Repetir contraseña',
         value: null,
-        name: 'password2',
-        rules: 'required|length:6,16',
+        name: 'password_confirm',
+        rules: 'required|confirm',
         type: 'password',
+        prefixIcon: 'password',
+        suffixIcon: 'eyeClosed',
+        on: {
+          suffixIconClick: (node: any, e: Event) => {
+            node.props.suffixIcon =
+              node.props.suffixIcon === 'eye' ? 'eyeClosed' : 'eye'
+            node.props.type =
+              node.props.type === 'password' ? 'text' : 'password'
+          },
+        },
       },
     ],
   },
@@ -258,9 +304,12 @@ const form = ref<FormStep[]>([
         label: 'CURP',
         name: 'curp',
         type: 'text',
-        rules: 'required',
+        rules: [['required'], curp],
         value: null,
         uppercase: true,
+        validationMessages: {
+          matches: 'El formato introducido no coincide con el formato de CURP',
+        },
       },
       {
         label: 'Identificación oficial',
@@ -276,8 +325,12 @@ const form = ref<FormStep[]>([
         label: 'Fecha de expedición',
         name: 'fechaexpedicion',
         type: 'date',
-        rules: 'required',
+        rules: [['required'], dateBeforeToday()],
         value: null,
+        validationMessages: {
+          date_before:
+            'La fecha de expedición no puede ser mayor al día actual',
+        },
       },
       {
         label: 'Años de vigencia',
@@ -290,7 +343,7 @@ const form = ref<FormStep[]>([
         label: 'Número de identificación oficial',
         name: 'claveidentificacionoficial',
         type: 'text',
-        rules: 'required',
+        rules: 'required|length:13,13',
         value: null,
       },
     ],
@@ -329,7 +382,10 @@ const form = ref<FormStep[]>([
         name: 'fechacontratacion',
         type: 'date',
         value: null,
-        rules: 'required',
+        rules: [['required'], dateBeforeToday()],
+        validationMessages: {
+          date_before: 'La fecha de contratación debe ser actual',
+        },
       },
       {
         label: 'Teléfono del centro de trabajo',
@@ -373,7 +429,7 @@ const form = ref<FormStep[]>([
         label: 'Número exterior',
         name: 'numero',
         type: 'text',
-        rules: 'required|number',
+        rules: 'required',
         value: 269,
       },
       {
@@ -450,14 +506,14 @@ const form = ref<FormStep[]>([
         label: 'Años de residencia',
         name: 'antanios',
         type: 'number',
-        rules: 'required',
+        rules: 'required|number|min:0',
         value: 1,
       },
       {
         label: 'Meses de residencia',
         name: 'antmeses',
         type: 'number',
-        rules: 'required',
+        rules: 'required|number|min:0|max:12',
         value: 1,
       },
       {
@@ -480,6 +536,7 @@ const form = ref<FormStep[]>([
   {
     title: 'Referencias personales',
     loading: false,
+    errors: [],
     fields: [
       {
         label: 'REFERENCIA 1',
@@ -496,6 +553,20 @@ const form = ref<FormStep[]>([
         catType: 'catsis',
         catCode: 19,
         items: [],
+        errors: [],
+        on: {
+          change: () => {
+            if (
+              form.value[6].fields[1].value === form.value[6].fields[10].value
+            ) {
+              form.value[6].errors = [
+                'No puedes registrar dos referencias con el mismo parentesco',
+              ]
+            } else {
+              form.value[6].errors = []
+            }
+          },
+        },
       },
       {
         label: 'Nombre(s)',
@@ -521,15 +592,15 @@ const form = ref<FormStep[]>([
       {
         label: 'Celular',
         name: 'celular',
-        type: 'text',
-        rules: 'required',
+        type: 'tel',
+        rules: 'required|length:10,12|number',
         value: '2281237058',
       },
       {
         label: 'Años de conocerlo',
         name: 'antanios',
-        type: 'text',
-        rules: 'required',
+        type: 'number',
+        rules: 'required|number|min:1',
         value: 1,
       },
       {
@@ -559,6 +630,20 @@ const form = ref<FormStep[]>([
         catType: 'catsis',
         catCode: 19,
         items: [],
+        on: {
+          change: () => {
+            if (
+              form.value[6].fields[1].value === form.value[6].fields[10].value
+            ) {
+              form.value[6].errors = [
+                'No puedes registrar dos referencias con el mismo parentesco',
+              ]
+            } else {
+              form.value[6].errors = []
+            }
+          },
+        },
+        errors: [],
       },
       {
         label: 'Nombre(s)',
@@ -585,14 +670,14 @@ const form = ref<FormStep[]>([
         label: 'Celular',
         name: 'celular2',
         type: 'text',
-        rules: 'required',
+        rules: 'required|length:10,12|number',
         value: '2281237058',
       },
       {
         label: 'Años de conocerlo',
         name: 'antanios2',
-        type: 'text',
-        rules: 'required',
+        type: 'number',
+        rules: 'required|number|min:1',
         value: 1,
       },
       {
@@ -627,7 +712,7 @@ const form = ref<FormStep[]>([
         label: 'CLABE interbancaria',
         name: 'clabe',
         type: 'text',
-        rules: 'required',
+        rules: 'required|number|length:16,16',
         value: '012548798785469695',
       },
       {
@@ -683,15 +768,29 @@ const form = ref<FormStep[]>([
         label: 'Percepciones',
         type: 'number',
         rules: 'required',
-        value: 10000,
+        value: 0,
         name: 'q1percepciones',
+        on: {
+          input: (val: number) => calcLiquidez('q1percepciones', val),
+        },
+      },
+      {
+        label: 'Deducciones',
+        type: 'number',
+        rules: 'required',
+        value: 0,
+        name: 'q1deducciones',
+        on: {
+          input: (val: number) => calcLiquidez('q1deducciones', val),
+        },
       },
       {
         label: 'Líquido',
         type: 'number',
         rules: 'required',
-        value: 10000,
+        value: 0,
         name: 'q1liquido',
+        disabled: true,
       },
       {
         label: 'Quincena 2',
@@ -704,8 +803,21 @@ const form = ref<FormStep[]>([
         label: 'Percepciones',
         type: 'number',
         rules: 'required',
-        value: 10000,
+        value: 0,
         name: 'q2percepciones',
+        on: {
+          input: (val: number) => calcLiquidez('q2percepciones', val),
+        },
+      },
+      {
+        label: 'Deducciones',
+        type: 'number',
+        rules: 'required',
+        value: 10000,
+        name: 'q2deducciones',
+        on: {
+          input: (val: number) => calcLiquidez('q2deducciones', val),
+        },
       },
       {
         label: 'Líquido',
@@ -713,6 +825,7 @@ const form = ref<FormStep[]>([
         rules: 'required',
         value: 10000,
         name: 'q2liquido',
+        disabled: true,
       },
     ],
   },
@@ -794,6 +907,21 @@ async function loadCatalogo(
       label: obj.nombre,
     }),
   )
+}
+
+function calcLiquidez(campo: string, value: number) {
+  if (campo === 'q1deducciones') {
+    form.value[8].fields[3].value = +form.value[8].fields[1].value - +value
+  }
+  if (campo === 'q1percepciones') {
+    form.value[8].fields[3].value = +value - +form.value[8].fields[2].value
+  }
+  if (campo === 'q2deducciones') {
+    form.value[8].fields[7].value = +form.value[8].fields[5].value - +value
+  }
+  if (campo === 'q2percepciones') {
+    form.value[8].fields[7].value = +value - +form.value[8].fields[6].value
+  }
 }
 
 // COMPONENT STATE
@@ -1161,7 +1289,12 @@ async function onSiguiente() {
     error = await formStepHandler(currentStep.value)
   }
 
-  if (!error) currentStep.value += 1
+  if (!error) {
+    const formElement = document.getElementById('header') as HTMLDivElement
+    console.log(formElement.getBoundingClientRect().height)
+    window.scrollTo(0, formElement.getBoundingClientRect().height)
+    currentStep.value += 1
+  }
 }
 
 function getFormStepValues(step: number): any {
@@ -1222,7 +1355,11 @@ function handleCreditoNoViable() {
   </div>
 
   <!-- FORMULARIO SOLICITUD -->
-  <div v-if="escenario === Escenarios.FORMULARIO" class="mt-20 mb-32">
+  <div
+    v-if="escenario === Escenarios.FORMULARIO"
+    class="mt-20 mb-32"
+    id="formulario"
+  >
     <h3 class="form-step-title mt-4 !text-gray-600">Paso {{ currentStep }}</h3>
     <h2 class="text-center text-2xl uppercase font-bold text-blue-900">
       {{ form[currentStep - 1].title }}
