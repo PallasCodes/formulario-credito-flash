@@ -78,10 +78,7 @@ function handleSubmit(step: FormStep) {
                 v-else
                 v-model="field.value"
                 v-bind="field"
-                :type="field.type"
-                :label="`${field.label}${
-                  field.rules?.includes('required') ? '*' : ''
-                }`"
+                v-on="field.on || {}"
                 :validation="field.rules"
                 :name="field.name"
                 :classes="{
@@ -91,10 +88,7 @@ function handleSubmit(step: FormStep) {
                 }"
                 :options="field.items"
                 select-icon="caretDown"
-                v-on="field.on || {}"
                 :readonly="field.disabled"
-                :value="field.value"
-                :placeholder="field.placeholder"
               />
             </div>
 

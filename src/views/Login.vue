@@ -39,6 +39,7 @@ function handleSuffixIconClick(node: any, e: Event) {
           wrapperClass: '!w-full !max-w-full mt-5 block',
         }"
         submit-label="Iniciar sesión"
+        @submit="() => router.replace({ name: 'dashboard' })"
       >
         <h2 class="text-3xl font-bold text-center text-gray-900 mb-9">
           Iniciar Sesión
