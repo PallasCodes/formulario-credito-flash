@@ -89,6 +89,7 @@ function handleSubmit(step: FormStep) {
                 :options="field.items"
                 select-icon="caretDown"
                 :readonly="field.disabled"
+                validation-label="El campo"
               />
             </div>
 

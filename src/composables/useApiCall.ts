@@ -137,6 +137,21 @@ export function useApiCall() {
     return response
   }
 
+  async function registrarContrasena(payload: Object): Promise<HttpResponse> {
+    setLoading(true)
+
+    const response = await handleRequest(
+      ApiFunctions.registrarContrasena,
+      payload,
+    )
+
+    setLoading(false)
+
+    if (response.error) response.message?.display()
+
+    return response
+  }
+
   return {
     registrarInfoBasicaProspecto,
     validarCodigo,
@@ -146,5 +161,6 @@ export function useApiCall() {
     actualizarTrainProcess,
     getElementosVariosPorCodigo,
     getElementosPorTipo,
+    registrarContrasena,
   }
 }

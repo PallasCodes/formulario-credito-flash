@@ -1,57 +1,54 @@
-import { api } from "./api";
+import { api } from './api'
 
-const BASE_URL = "/a123";
+const BASE_URL = '/solicitud'
 
 export const NuevaOrden = {
   iniciarNuevaSolicitud(payload: any) {
-    return api.post(`${BASE_URL}/iniciarnuevasolicitud`, payload);
+    return api.post(`${BASE_URL}/iniciar-solicitud`, payload)
   },
   guardarInfoPersonal(payload: any) {
-    return api.post(`${BASE_URL}/guardarinfopersonal`, payload);
+    return api.post(`${BASE_URL}/guardar-info-personal`, payload)
   },
   guardarDatosIdentificacion(payload: any) {
-    return api.post(`${BASE_URL}/guardardatosidentificacion`, payload);
-  },
-  registrarContrasena(payload: any) {
-    return api.post(`a154/registrarcontrasena`, payload);
+    return api.post(`${BASE_URL}/guardar-datos-identificacion`, payload)
   },
   guardarInfoLaboral(payload: any) {
-    return api.post(`${BASE_URL}/guardarinfolaboral`, payload);
+    return api.post(`${BASE_URL}/guardar-info-laboral`, payload)
   },
   guardarCentroTrabajo(payload: any) {
-    return api.post(`${BASE_URL}/guardarcentrotrabajo`, payload);
+    return api.post(`${BASE_URL}/guardar-centro-trabajo`, payload)
   },
   guardarDomicilio(payload: any) {
-    return api.post(`${BASE_URL}/guardardomicilio`, payload);
+    return api.post(`${BASE_URL}/guardar-domicilio`, payload)
   },
   registrarContacto(payload: any) {
-    return api.post(`${BASE_URL}/registrarcontacto`, payload);
+    return api.post(`${BASE_URL}/registrar-contacto`, payload)
   },
   guardarInfoContactos(payload: any) {
-    return api.post(`${BASE_URL}/guardarinfocontactos`, payload);
+    return api.post(`${BASE_URL}/guardar-info-contactos`, payload)
   },
   guardarReferencia(payload: any) {
-    return api.post(`${BASE_URL}/guardarreferencia`, payload);
+    return api.post(`${BASE_URL}/guardar-referencia`, payload)
   },
   guardarReferencias(payload: any) {
-    return api.post(`${BASE_URL}/guardarreferencias`, payload);
+    return api.post(`${BASE_URL}/guardar-info-referencias`, payload)
   },
   guardarCuentaDomiciliacion(payload: any) {
-    return api.post(`${BASE_URL}/guardarcuentadomiciliacion`, payload);
+    return api.post(`${BASE_URL}/guardar-cuenta-domiciliacion`, payload)
   },
   guardarInfoFinanciera(payload: any) {
-    return api.post(`${BASE_URL}/guardarinfofinanciera`, payload);
+    return api.post(`${BASE_URL}/guardar-info-financiera`, payload)
   },
   obtenerPromocionesDisponibles(payload: any) {
-    return api.post(`${BASE_URL}/obtenerpromocionesdisponibles`, payload);
+    return api.post(`${BASE_URL}/obtener-promociones-disponibles`, payload)
   },
   seleccionarPromocion(payload: any) {
-    return api.post(`${BASE_URL}/seleccionarpromocion`, payload);
+    return api.post(`${BASE_URL}/seleccionar-promocion`, payload)
   },
   continuarProceso(payload: any) {
-    return api.post(`${BASE_URL}/continuarproceso`, payload);
+    return api.post(`${BASE_URL}/continuar-proceso`, payload)
   },
   guardarCondicionesOrden(payload: any) {
-    return api.post(`${BASE_URL}/guardarcondicionesorden`, payload);
+    return api.post(`${BASE_URL}/guardar-condiciones-orden`, payload)
   },
-};
+}

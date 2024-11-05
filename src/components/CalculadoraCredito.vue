@@ -98,6 +98,7 @@ function onSubmitCalculadora() {
         validation="required|min:1000|max:5000"
         help="El monto mínimo es de $1,000 y el máximo de $5,000"
         :classes="{ outer: 'w-full !max-w-[100%]' }"
+        validation-label="El campo"
       />
       <FormKit
         v-model="form.plazos"

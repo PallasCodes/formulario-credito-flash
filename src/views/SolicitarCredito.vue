@@ -39,7 +39,6 @@ const infoCentroTrabajoIpe = {
   telefono: '2281237054',
   extension: '',
   identidadfederativa: 30,
-  nuevoct: true,
 }
 
 // TODO: obtener periodo inicio
@@ -347,6 +346,12 @@ const form = ref<FormStep[]>([
         rules: 'required|length:13,13',
         value: null,
       },
+      {
+        label: 'NSS',
+        name: 'nss',
+        type: 'hidden',
+        value: null,
+      },
     ],
   },
   // PASO 5 - CONVENIO
@@ -431,13 +436,13 @@ const form = ref<FormStep[]>([
         name: 'numero',
         type: 'text',
         rules: 'required',
-        value: 269,
+        value: '269',
       },
       {
         label: 'Número interior',
         name: 'interior',
         type: 'text',
-        value: 1,
+        value: '1',
       },
       {
         label: 'Código postal',
@@ -1092,8 +1097,10 @@ async function obtenerPromocionesDisponibles(): Promise<void> {
 }
 
 async function guardarInfoFinanciera(): Promise<boolean> {
+  const { q1deducciones, q2deducciones, ...formValues } = getFormStepValues(9)
+
   const payload = {
-    datos10infofinanciera: getFormStepValues(9),
+    datos10infofinanciera: { ...formValues },
     solicitudv3: { idsolicitud: idsolicitud.value },
   }
 
@@ -1228,14 +1235,16 @@ async function registrarContrasenia(): Promise<boolean> {
     rfc: step4Values.rfc,
   }
 
-  const { error } = await nuevaOrden.registrarContrasena(payload)
+  const { error } = await apiCalls.registrarContrasena(payload)
 
   return error
 }
 
 async function registrarInfoPersonal(): Promise<boolean> {
+  const { celular, correo, ...formValues } = getFormStepValues(1)
+
   const payload = {
-    datos01infopersonal: getFormStepValues(1),
+    datos01infopersonal: { ...formValues },
     solicitudv3: { idsolicitud: idsolicitud.value },
   }
 
@@ -1257,7 +1266,7 @@ async function iniciarSolicitud(): Promise<boolean> {
   const { error, data } = await nuevaOrden.iniciarNuevaSolicitud(payload)
 
   if (!error) {
-    idsolicitud.value = data.solicitudcredito.idsolicitud
+    idsolicitud.value = data.solicitudcredito.idSolicitud
   }
 
   return error

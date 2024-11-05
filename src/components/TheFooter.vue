@@ -56,8 +56,8 @@ const year = ref(new Date().getFullYear())
       class="w-full md:max-w-[1080px] mx-auto py-[30px] text-[#8e8f9b] flex justify-between text-[15px] items-end"
     >
       <span class="font-semibold max-h-min"
-        >© {year} Intermercado es una marca de GB Plus S.A. de C.V. SOFOM E.N.R.
-        Todos los derechos reservados</span
+        >© {{ year }} Intermercado es una marca de GB Plus S.A. de C.V. SOFOM
+        E.N.R. Todos los derechos reservados</span
       >
       <div class="flex items-center gap-4">
         <i class="fa-brands fa-whatsapp"></i>

@@ -1,266 +1,244 @@
-import { handleRequest, type HttpResponse } from "@/utils/handleRequest";
-import { useAppState } from "@/stores/appState";
-import { NuevaOrden } from "@/api/nuevaOrden";
+import { handleRequest, type HttpResponse } from '@/utils/handleRequest'
+import { useAppState } from '@/stores/appState'
+import { NuevaOrden } from '@/api/nuevaOrden'
 
 export function useNuevaOrden() {
-  const { setLoading } = useAppState();
+  const { setLoading } = useAppState()
 
   async function iniciarNuevaSolicitud(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.iniciarNuevaSolicitud,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarInfoPersonal(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.guardarInfoPersonal,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarDatosIdentificacion(
-    payload: Object
+    payload: Object,
   ): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.guardarDatosIdentificacion,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
-  }
-
-  async function registrarContrasena(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
-
-    const response = await handleRequest(
-      NuevaOrden.registrarContrasena,
-      payload
-    );
-
-    setLoading(false);
-
-    if (response.error) response.message?.display();
-
-    return response;
+    return response
   }
 
   async function guardarInfoLaboral(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
-    const response = await handleRequest(
-      NuevaOrden.guardarInfoLaboral,
-      payload
-    );
+    const response = await handleRequest(NuevaOrden.guardarInfoLaboral, payload)
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarCentroTrabajo(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.guardarCentroTrabajo,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarDomicilio(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
-    const response = await handleRequest(NuevaOrden.guardarDomicilio, payload);
+    const response = await handleRequest(NuevaOrden.guardarDomicilio, payload)
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function registrarContacto(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
-    const response = await handleRequest(NuevaOrden.registrarContacto, payload);
+    const response = await handleRequest(NuevaOrden.registrarContacto, payload)
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarInfoContactos(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.guardarInfoContactos,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarReferencia(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
-    const response = await handleRequest(NuevaOrden.guardarReferencia, payload);
+    const response = await handleRequest(NuevaOrden.guardarReferencia, payload)
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarReferencias(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
-    const response = await handleRequest(
-      NuevaOrden.guardarReferencias,
-      payload
-    );
+    const response = await handleRequest(NuevaOrden.guardarReferencias, payload)
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarCuentaDomiciliacion(
-    payload: Object
+    payload: Object,
   ): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.guardarCuentaDomiciliacion,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarInfoFinanciera(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.guardarInfoFinanciera,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function obtenerPromocionesDisponibles(
-    payload: Object
+    payload: Object,
   ): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.obtenerPromocionesDisponibles,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function continuarProceso(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
-    const response = await handleRequest(NuevaOrden.continuarProceso, payload);
+    const response = await handleRequest(NuevaOrden.continuarProceso, payload)
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function seleccionarPromocion(payload: Object): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.seleccionarPromocion,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   async function guardarCondicionesOrden(
-    payload: Object
+    payload: Object,
   ): Promise<HttpResponse> {
-    setLoading(true);
+    setLoading(true)
 
     const response = await handleRequest(
       NuevaOrden.guardarCondicionesOrden,
-      payload
-    );
+      payload,
+    )
 
-    setLoading(false);
+    setLoading(false)
 
-    if (response.error) response.message?.display();
+    if (response.error) response.message?.display()
 
-    return response;
+    return response
   }
 
   return {
     iniciarNuevaSolicitud,
     guardarInfoPersonal,
     guardarDatosIdentificacion,
-    registrarContrasena,
     guardarInfoLaboral,
     guardarCentroTrabajo,
     guardarDomicilio,
@@ -274,5 +252,5 @@ export function useNuevaOrden() {
     continuarProceso,
     seleccionarPromocion,
     guardarCondicionesOrden,
-  };
+  }
 }
