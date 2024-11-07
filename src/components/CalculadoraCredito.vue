@@ -50,7 +50,10 @@ function onSubmitCalculadora() {
   if (form.value.dependencia === -1 || form.value.estado === -1) {
     emit('creditoNoViable')
   } else {
-    emit('submitCalculadora')
+    emit('submitCalculadora', {
+      importeSolicitado: Number(form.value.monto),
+      idPromocion: form.value.plazos,
+    })
   }
 }
 </script>

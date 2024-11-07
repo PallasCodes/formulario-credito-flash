@@ -927,6 +927,8 @@ const idsolicitud = ref<number>()
 const currentStep = ref<number>(1)
 const solicitudcredito: object = {}
 const escenario = ref<Escenarios>(Escenarios.CALCULADORA)
+const importeSolicitado = ref<number>()
+const idPromocion = ref<number>()
 
 // METHODS
 async function formStepHandler(step: number): Promise<boolean> {
@@ -1272,6 +1274,8 @@ async function registrarCreditoFlash(): Promise<boolean> {
   const { error } = await apiCalls.registrarSolicitudCreditoFlash({
     celular,
     rfc,
+    importeSolicitado: importeSolicitado.value,
+    idPromocion: idPromocion.value,
   })
 
   return error
@@ -1317,8 +1321,13 @@ function getFormStepValues(step: number): any {
   return values
 }
 
-function handleSubmitCalculadora() {
+function handleSubmitCalculadora(payload: {
+  idPromocion: number
+  importeSolicitado: number
+}) {
   escenario.value = Escenarios.FORMULARIO
+  idPromocion.value = payload.idPromocion
+  importeSolicitado.value = payload.importeSolicitado
 }
 
 function handleCreditoNoViable() {
