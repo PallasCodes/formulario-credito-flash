@@ -1295,9 +1295,7 @@ async function validarCelular(): Promise<boolean> {
 async function onSiguiente() {
   let error: boolean = false
 
-  if (import.meta.env.VITE_APP_MODE === 'prod') {
-    error = await formStepHandler(currentStep.value)
-  }
+  error = await formStepHandler(currentStep.value)
 
   if (!error) {
     const formElement = document.getElementById('header') as HTMLDivElement
