@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { RouterView } from "vue-router";
-import ToastsBuilder from "@/components/ToastsBuilder.vue";
-
-onMounted(() => {
-  // const username = window.prompt("Nombre de usuario");
-  // console.log(username);
-  // const password = window.prompt("Contraseña");
-  // console.log(password);
-});
+import { onMounted } from 'vue'
+import { RouterView } from 'vue-router'
+import ToastsBuilder from '@/components/ToastsBuilder.vue'
 </script>
 
 <template>
@@ -20,6 +13,6 @@ onMounted(() => {
 
 <style>
 #vue-app {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 </style>

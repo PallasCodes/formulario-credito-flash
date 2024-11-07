@@ -75,14 +75,6 @@ interface CatalogoColonias extends Catalogo {
   city?: string
 }
 
-const getValidacionFechaNacimiento = () => {
-  const currentYear = new Date().getFullYear()
-  const currentMonth = new Date().getMonth()
-  const currentDay = new Date().getDay()
-  const legalDate = new Date(currentYear - 18, currentMonth, currentDay)
-  return legalDate
-}
-
 enum Escenarios {
   CALCULADORA = 'calculadora',
   SOLICITUD_FINALIZADA = 'solicitudFinalizada',
@@ -934,7 +926,7 @@ function calcLiquidez(campo: string, value: number) {
 const idsolicitud = ref<number>()
 const currentStep = ref<number>(1)
 const solicitudcredito: object = {}
-const escenario = ref<Escenarios>(Escenarios.FORMULARIO)
+const escenario = ref<Escenarios>(Escenarios.CALCULADORA)
 
 // METHODS
 async function formStepHandler(step: number): Promise<boolean> {
@@ -1226,6 +1218,8 @@ async function registrarDatosIdentificacion(): Promise<boolean> {
   const { error } = await nuevaOrden.guardarDatosIdentificacion(payload)
   return error
 }
+
+// TODO: falta agregar un catálogo
 
 async function registrarContrasenia(): Promise<boolean> {
   const { password } = getFormStepValues(3)
