@@ -1,34 +1,29 @@
-import { api3 } from './api'
-
-const BASE_URL = '/a154'
+import { api } from './api'
 
 export const ApiFunctions = {
-  registrarInfoBasica(payload: any) {
-    return api3.post(`${BASE_URL}/registrarinfobasica`, payload)
-  },
   validarCodigoCelular(payload: any) {
-    return api3.post(`${BASE_URL}/validarcodigocelular`, payload)
+    return api.post('solicitud-flash/validar-codigo-celular', payload)
   },
-  registrarInfoDomicilio(payload: any) {
-    return api3.post(`${BASE_URL}/registrarinfodomicilio`, payload)
-  },
-
   registrarSolicitudCreditoFlash(payload: any) {
-    return api3.post(`${BASE_URL}/registrarsolicitudcreditoflash`, payload)
+    return api.post('solicitud-flash/registrar-solicitud-flash', payload)
   },
   actualizarTrainProcess(payload: any) {
-    return api3.post(`${BASE_URL}/actualizartrainprocess`, payload)
+    return api.post('/solicitud/actualizar-train-process', payload)
   },
-  getElementosPorTipo(tipo: number) {
-    return api3.post('/catalogos/getelementosportipo', { tipo })
+  getElementosPorTipo(codigo: number) {
+    return api.get('/catalogos/get-elementos-por-tipo', { params: { codigo } })
   },
   getElementosVariosPorCodigo(codigo: number) {
-    return api3.post('/catalogos/getelementosvariosporcodigo', { codigo })
+    return api.get('/catalogos/get-elementos-varios-por-codigo', {
+      params: { codigo },
+    })
   },
-  getColoniasPorCP(payload: any) {
-    return api3.post('/catalogos/getcoloniasporcodigopostal', payload)
+  getColoniasPorCP(cp: number) {
+    return api.get('/catalogos/get-colonias-por-codigo-postal', {
+      params: { cp },
+    })
   },
   registrarContrasena(payload: any) {
-    return api3.post(`${BASE_URL}/registrar-contrasena`, payload)
+    return api.post('solicitud-flash/registrar-contrasena', payload)
   },
 }

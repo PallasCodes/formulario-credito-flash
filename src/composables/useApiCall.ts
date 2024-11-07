@@ -5,26 +5,6 @@ import { useAppState } from '@/stores/appState'
 export function useApiCall() {
   const { setLoading } = useAppState()
 
-  async function registrarInfoBasicaProspecto(info: Object): Promise<number> {
-    let idProspecto: number = -1
-    setLoading(true)
-
-    const { data, error, message } = await handleRequest(
-      ApiFunctions.registrarInfoBasica,
-      info,
-    )
-
-    setLoading(false)
-
-    if (error) {
-      message?.display()
-    } else {
-      idProspecto = data.idprospecto
-    }
-
-    return idProspecto
-  }
-
   async function validarCodigo(
     codigo: string,
     rfc: string,
@@ -42,26 +22,12 @@ export function useApiCall() {
     return response
   }
 
-  async function registrarInfoDomicilio(payload: Object) {
-    setLoading(true)
-
-    const { error, message } = await handleRequest(
-      ApiFunctions.registrarInfoDomicilio,
-      payload,
-    )
-
-    setLoading(false)
-    message?.display()
-
-    return error
-  }
-
-  async function getColoniasPorCP(CP: number): Promise<any> {
+  async function getColoniasPorCP(cp: number): Promise<any> {
     setLoading(true)
 
     const { data, error, message } = await handleRequest(
       ApiFunctions.getColoniasPorCP,
-      { codigopostal: CP },
+      cp,
     )
 
     setLoading(false)
@@ -153,9 +119,7 @@ export function useApiCall() {
   }
 
   return {
-    registrarInfoBasicaProspecto,
     validarCodigo,
-    registrarInfoDomicilio,
     getColoniasPorCP,
     registrarSolicitudCreditoFlash,
     actualizarTrainProcess,
