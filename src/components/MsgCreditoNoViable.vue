@@ -1,7 +1,6 @@
 <template>
   <div
-    class="mx-auto overflow-hidden max-w-2xl w-full rounded-lg p-6 text-lg"
-    style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"
+    class="mx-auto overflow-hidden max-w-2xl w-full rounded-lg p-6 text-base sm:text-lg card-shadow"
   >
     <p>
       Lo sentimos, en este momento otorgamos créditos exclusivamente a

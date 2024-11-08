@@ -40,24 +40,11 @@ function handleSubmit(step: FormStep) {
             type="form"
             :key="step.title"
             :id="`step-${i + 1}`"
-            style="
-              width: 100%;
-              flex-grow: 0;
-              flex-shrink: 0;
-              padding: 1rem 2rem 12px 2rem;
-              height: min-content;
-              position: relative;
-            "
             :actions="false"
-            :style="{
-              'box-shadow':
-                currentStep === i + 1
-                  ? 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px'
-                  : '',
-            }"
             :disabled="loading"
             class="md:p-8"
             :errors="step.errors"
+            :classes="{ form: 'card-shadow form-solicitud' }"
           >
             <div
               v-if="loading"

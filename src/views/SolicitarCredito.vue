@@ -1356,8 +1356,13 @@ function handleCreditoNoViable() {
   </div>
 
   <!-- CALCULADORA -->
-  <div v-if="escenario === Escenarios.CALCULADORA" class="mt-20 mb-32">
-    <h3 class="text-center mb-10 text-4xl font-bold text-gray-800">
+  <div
+    v-if="escenario === Escenarios.CALCULADORA"
+    class="mt-10 sm:mt-20 sm:mb-32"
+  >
+    <h3
+      class="text-center sm:mb-10 text-[25px] sm:text-4xl font-bold text-gray-800"
+    >
       Solicita tu crédito
     </h3>
     <CalculadoraCredito
@@ -1369,14 +1374,16 @@ function handleCreditoNoViable() {
   <!-- FORMULARIO SOLICITUD -->
   <div
     v-if="escenario === Escenarios.FORMULARIO"
-    class="mt-20 mb-32"
+    class="mt-10 sm:mt-20 sm:mb-32"
     id="formulario"
   >
     <h3 class="form-step-title mt-4 !text-gray-600">Paso {{ currentStep }}</h3>
-    <h2 class="text-center text-2xl uppercase font-bold text-blue-900">
+    <h2
+      class="text-center text-[20px] sm:text-2xl uppercase font-bold text-blue-900"
+    >
       {{ form[currentStep - 1].title }}
     </h2>
-    <span class="text-center block mt-3"
+    <span class="text-center block mt-2 sm:mt-3 text-sm sm:text-base"
       >¿Ya tienes cuenta?
       <router-link to="/login" class="text-blue-600 hover:text-blue-700"
         >Inicia sesión</router-link
@@ -1394,13 +1401,13 @@ function handleCreditoNoViable() {
   <!-- SOLICITUD FINALIZADA -->
   <SolicitudFinalizada
     v-if="escenario === Escenarios.SOLICITUD_FINALIZADA"
-    class="my-32"
+    class="mt-12 mb-2 sm:my-32"
   />
 
   <!-- MSG CRÉDITO NO VIABLE -->
   <MsgCreditoNoViable
     v-if="escenario === Escenarios.PROSPECTO_NO_VIABLE"
-    class="my-32"
+    class="mt-12 mb-2 sm:my-32"
   />
 
   <CreditoInfo />

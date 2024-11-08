@@ -1,5 +1,7 @@
 <template>
-  <section class="mx-auto max-w-5xl mb-24 flex mt-8 flex-col md:flex-row">
+  <section
+    class="mx-auto max-w-5xl mb-16 sm:mb-24 flex md-6 sm:mt-8 flex-col md:flex-row"
+  >
     <div class="md:w-1/3">
       <img
         src="https://intermercado.com.mx/wp-content/uploads/elementor/thumbs/icono_respuesta-p9cb3h8y623q544bwrch1l5n9ohqxnycq5dbkw1fjc.png"

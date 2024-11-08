@@ -19,7 +19,7 @@ html {
 }
 
 .form-step-title {
-  @apply font-bold text-lg uppercase text-blue-900 text-center;
+  @apply font-bold text-sm sm:text-lg uppercase text-blue-900 text-center;
 }
 
 .step-wrapper {
@@ -68,4 +68,23 @@ header {
 
 .card-shadow {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.form-solicitud {
+  width: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 1rem 2rem 12px 2rem;
+  height: min-content;
+  position: relative;
+}
+
+@media only screen and (max-width: 500px) {
+  .card-shadow {
+    box-shadow: none;
+  }
+
+  .form-solicitud {
+    padding: 4px 1.5rem;
+  }
 }
