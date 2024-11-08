@@ -1333,11 +1333,13 @@ function handleSubmitCalculadora(payload: {
 function handleCreditoNoViable() {
   escenario.value = Escenarios.PROSPECTO_NO_VIABLE
 }
+
+const appMode = import.meta.env.VITE_APP_MODE
 </script>
 
 <template>
   <TheHeader />
-  <div class="fixed bottom-6 right-6 px-2 py-1 w-20">
+  <div v-if="appMode === 'dev'" class="fixed bottom-6 right-6 px-2 py-1 w-20">
     <input
       type="text"
       v-model="escenario"
