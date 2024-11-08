@@ -1221,8 +1221,6 @@ async function registrarDatosIdentificacion(): Promise<boolean> {
   return error
 }
 
-// TODO: falta agregar un catálogo
-
 async function registrarContrasenia(): Promise<boolean> {
   const { password } = getFormStepValues(3)
   const step4Values = getFormStepValues(1)
