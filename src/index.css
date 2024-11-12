@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 .form-field {
   @apply border-2 border-gray-400 rounded-sm block w-full px-2 py-1 text-sm text-gray-600;
 }
@@ -15,7 +19,7 @@
 }
 
 .form-step-title {
-  @apply font-bold text-lg uppercase text-blue-900 text-center;
+  @apply font-bold text-sm sm:text-lg uppercase text-blue-900 text-center;
 }
 
 .step-wrapper {
@@ -27,7 +31,7 @@
   @apply border-red-700;
 }
 
-label[data-checked="true"] > .radio > span {
+label[data-checked='true'] > .radio > span {
   background-color: #2563eb !important;
 }
 
@@ -38,4 +42,49 @@ label[data-checked="true"] > .radio > span {
 
 input:active {
   background-color: transparent !important;
+}
+
+header {
+  background-image: url('http://intermercado.com.mx/wp-content/uploads/2020/08/loans4-sectionbg1.png');
+  background-size: cover;
+  background-position: bottom;
+}
+
+#login-welcome {
+  background-image: url('http://intermercado.com.mx/wp-content/uploads/2020/08/loans4-sectionbg1.png');
+  background-size: cover;
+  background-position: top;
+}
+
+.bg-primary {
+  background-color: #2b347f !important;
+  border-color: #2b347f !important;
+}
+
+.bg-primary:hover {
+  background-color: #1c2574 !important;
+  border-color: #1c2574 !important;
+}
+
+.card-shadow {
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.form-solicitud {
+  width: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 1rem 2rem 12px 2rem;
+  height: min-content;
+  position: relative;
+}
+
+@media only screen and (max-width: 500px) {
+  .card-shadow {
+    box-shadow: none;
+  }
+
+  .form-solicitud {
+    padding: 4px 1.5rem;
+  }
 }

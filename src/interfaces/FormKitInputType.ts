@@ -23,4 +23,5 @@ export type FieldType =
   | "text"
   | "time"
   | "url"
+  | "readonly"
   | "week";
