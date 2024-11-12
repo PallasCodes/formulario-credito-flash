@@ -119,9 +119,14 @@ async function formStepHandler(step: number): Promise<boolean> {
 
       // TODO: hacerlo async, usando Promise.all()
       const { celular, correo } = getFormStepValues(1)
-      const response1 = await registrarContacto(celular, 1302)
-      const response2 = await registrarContacto(correo, 1305)
-      const response3 = await registrarContacto('2281238597', 1301)
+      const [response3] = await Promise.all([
+        registrarContacto('2281238597', 1301),
+        registrarContacto(celular, 1302),
+        registrarContacto(correo, 1305),
+      ])
+      // const response1 = await registrarContacto(celular, 1302)
+      // const response2 = await registrarContacto(correo, 1305)
+      // const response3 = await registrarContacto('2281238597', 1301)
 
       const {
         listaEmailsPersonales,
