@@ -8,7 +8,13 @@ const form = ref({
   plazos: 3,
   dependencia: undefined,
   estado: undefined,
+  clientePrevio: undefined,
 })
+
+const catSiNo = [
+  { value: true, label: 'Si' },
+  { value: false, label: 'No' },
+]
 
 const catPlazos = [
   {
@@ -36,7 +42,11 @@ const tasaInteres = {
   6: 25,
 }
 
-const emit = defineEmits(['submitCalculadora', 'creditoNoViable'])
+const emit = defineEmits([
+  'submitCalculadora',
+  'creditoNoViable',
+  'clientePrevio',
+])
 
 const getPagare = computed(() => {
   const interes =
@@ -49,6 +59,8 @@ const getPagare = computed(() => {
 function onSubmitCalculadora() {
   if (form.value.dependencia === -1 || form.value.estado === -1) {
     emit('creditoNoViable')
+  } else if (form.value.clientePrevio) {
+    emit('clientePrevio')
   } else {
     emit('submitCalculadora', {
       importeSolicitado: Number(form.value.monto),
@@ -112,6 +124,17 @@ function onSubmitCalculadora() {
         select-icon="caretDown"
         placeholder="Selecciona una opción"
         validation="required"
+      />
+
+      <FormKit
+        v-model="form.clientePrevio"
+        type="radio"
+        label="¿Ya eres cliente intermercado?"
+        :classes="{ outer: 'w-full !max-w-[100%]', input: 'radio' }"
+        :options="catSiNo"
+        validation="required"
+        horizontal
+        class="radio"
       />
 
       <section class="text-sm sm:text-base">

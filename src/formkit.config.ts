@@ -26,7 +26,7 @@ function addAsteriskPlugin(node: any) {
     }
 
     const schemaFn = node.props.definition.schema
-    node.props.definition.schema = (sectionsSchema = {}) => {
+    node.props.definition.schema = (sectionsSchema: any = {}) => {
       sectionsSchema[legendOrLabel] = {
         children: [
           '$label',

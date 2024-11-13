@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import type { FormStep } from '@/interfaces/Form'
 import { useApiCall } from '@/composables/useApiCall'
 import { useNuevaOrden } from '@/composables/useNuevaOrden'
+import { useFormSolicitud } from '@/composables/useFormSolicitud'
 
 import FormBuilder from '@/components/FormBuilder.vue'
 import MsgCreditoNoViable from '@/components/MsgCreditoNoViable.vue'
@@ -12,7 +12,7 @@ import SolicitudFinalizada from '@/components/SolicitudFinalizada.vue'
 import TheHeader from '@/components/TheHeader.vue'
 import CreditoInfo from '@/components/CreditoInfo.vue'
 import TheFooter from '@/components/TheFooter.vue'
-import { useFormSolicitud } from '@/composables/useFormSolicitud'
+import LoginModal from '@/components/LoginModal.vue'
 
 // COMPOSABLES
 const apiCalls = useApiCall()
@@ -81,6 +81,7 @@ const currentStep = ref<number>(1)
 const escenario = ref<Escenarios>(Escenarios.CALCULADORA)
 const importeSolicitado = ref<number>()
 const idPromocion = ref<number>()
+const isModalLoginOpen = ref<boolean>(false)
 
 // METHODS
 async function formStepHandler(step: number): Promise<boolean> {
@@ -476,6 +477,10 @@ function handleCreditoNoViable() {
   escenario.value = Escenarios.PROSPECTO_NO_VIABLE
 }
 
+function handleClientePrevio() {
+  isModalLoginOpen.value = true
+}
+
 const appMode = import.meta.env.VITE_APP_MODE
 </script>
 
@@ -512,6 +517,7 @@ const appMode = import.meta.env.VITE_APP_MODE
     <CalculadoraCredito
       @submit-calculadora="handleSubmitCalculadora"
       @credito-no-viable="handleCreditoNoViable"
+      @cliente-previo="handleClientePrevio"
     />
   </div>
 
@@ -552,6 +558,11 @@ const appMode = import.meta.env.VITE_APP_MODE
   <MsgCreditoNoViable
     v-if="escenario === Escenarios.PROSPECTO_NO_VIABLE"
     class="mt-12 mb-2 sm:my-32"
+  />
+
+  <LoginModal
+    :is-modal-open="isModalLoginOpen"
+    @close="() => (isModalLoginOpen = false)"
   />
 
   <CreditoInfo />
