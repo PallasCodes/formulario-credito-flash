@@ -481,6 +481,11 @@ function handleClientePrevio() {
   isModalLoginOpen.value = true
 }
 
+function handleSesionIniciada() {
+  isModalLoginOpen.value = false
+  escenario.value = Escenarios.FORMULARIO
+}
+
 const appMode = import.meta.env.VITE_APP_MODE
 </script>
 
@@ -563,6 +568,7 @@ const appMode = import.meta.env.VITE_APP_MODE
   <LoginModal
     :is-modal-open="isModalLoginOpen"
     @close="() => (isModalLoginOpen = false)"
+    @sesion-iniciada="handleSesionIniciada"
   />
 
   <CreditoInfo />

@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { setJWT } from '@/api/api'
+import { handleRequestByEndpoint } from '@/utils/handleRequest'
+import { ref, watch } from 'vue'
 
 interface ModalProps {
   isModalOpen: boolean
 }
-
 const props = defineProps<ModalProps>()
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'sesionIniciada'])
+
+// STATE
+const form = ref({ rfc: '', contrasena: '' })
 
 function closeModal() {
   emit('close')
@@ -22,6 +26,23 @@ watch(
     }
   },
 )
+
+async function handleLogin() {
+  const { error, data, message } = await handleRequestByEndpoint(
+    'POST',
+    '/auth/login',
+    { ...form.value },
+  )
+
+  message?.display()
+
+  if (error) return
+
+  if (data.token && typeof data.token === 'string') {
+    setJWT(data.token)
+    emit('sesionIniciada')
+  }
+}
 
 function register() {
   console.log('register')
@@ -52,14 +73,21 @@ function register() {
 
           <!-- Modal Body -->
           <div>
-            <FormKit type="form" :actions="false" :classes="{ form: 'mb-6' }">
+            <FormKit
+              type="form"
+              :actions="false"
+              :classes="{ form: 'mb-6' }"
+              @submit="handleLogin"
+            >
               <FormKit
+                v-model="form.rfc"
                 type="text"
                 label="RFC"
                 validation="required"
                 :classes="{ outer: 'w-full !max-w-[100%]' }"
               />
               <FormKit
+                v-model="form.contrasena"
                 type="password"
                 label="Contraseña"
                 :classes="{ outer: 'w-full !max-w-[100%]' }"
@@ -70,9 +98,10 @@ function register() {
 
           <p class="text-sm text-gray-800 mt-4">
             ¿Ya eres cliente Intermercado pero aún no estás registrado en
-            nuestra plataforma de Crédito Flash? da click
+            nuestra plataforma de Crédito Flash? Registrate en nuestra
+            plataforma dando
             <button class="text-blue-600 font-bold" @click="register">
-              aquí
+              click aquí
             </button>
           </p>
 
@@ -82,6 +111,7 @@ function register() {
               Cancelar
             </button>
             <button
+              @click="handleLogin"
               class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
             >
               Iniciar sesión
