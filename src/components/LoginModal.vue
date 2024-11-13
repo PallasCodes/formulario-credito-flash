@@ -22,45 +22,74 @@ watch(
     }
   },
 )
+
+function register() {
+  console.log('register')
+}
 </script>
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="isModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      id="modal-login"
+    <transition
+      enter-active-class="duration-500 ease-out"
+      enter-from-class="transform opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="duration-100 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="transform opacity-0"
     >
-      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold">Modal Title</h3>
-          <button @click="closeModal" class="text-gray-500 hover:text-gray-700">
-            &times;
-          </button>
-        </div>
+      <div
+        v-if="isModalOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        id="modal-login"
+      >
+        <div class="bg-white py-6 px-8 rounded-lg shadow-lg w-full max-w-lg">
+          <!-- Header -->
+          <div class="mb-4">
+            <h3 class="text-xl font-bold mb-1">Inicio de sesión requerido</h3>
+            <p>Para continuar es necesario que inicies sesión.</p>
+          </div>
 
-        <!-- Modal Body -->
-        <div>
-          <p>This is the modal content.</p>
-        </div>
+          <!-- Modal Body -->
+          <div>
+            <FormKit type="form" :actions="false" :classes="{ form: 'mb-6' }">
+              <FormKit
+                type="text"
+                label="RFC"
+                validation="required"
+                :classes="{ outer: 'w-full !max-w-[100%]' }"
+              />
+              <FormKit
+                type="password"
+                label="Contraseña"
+                :classes="{ outer: 'w-full !max-w-[100%]' }"
+                validation="required"
+              />
+            </FormKit>
+          </div>
 
-        <!-- Footer -->
-        <div class="flex justify-end mt-4">
-          <button
-            @click="closeModal"
-            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-          >
-            Close
-          </button>
-          <button
-            class="bg-blue-500 text-white px-4 py-2 rounded ml-2 hover:bg-blue-600"
-          >
-            Save
-          </button>
+          <p class="text-sm text-gray-800 mt-4">
+            ¿Ya eres cliente Intermercado pero aún no estás registrado en
+            nuestra plataforma de Crédito Flash? da click
+            <button class="text-blue-600 font-bold" @click="register">
+              aquí
+            </button>
+          </p>
+
+          <!-- Footer -->
+          <div class="flex justify-end mt-6">
+            <button @click="closeModal" class="text-gray-500 font-bold mr-3">
+              Cancelar
+            </button>
+            <button
+              class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
+            >
+              Iniciar sesión
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
   </Teleport>
 </template>
 
