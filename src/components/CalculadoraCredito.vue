@@ -60,7 +60,10 @@ function onSubmitCalculadora() {
   if (form.value.dependencia === -1 || form.value.estado === -1) {
     emit('creditoNoViable')
   } else if (form.value.clientePrevio) {
-    emit('clientePrevio')
+    emit('clientePrevio', {
+      importeSolicitado: Number(form.value.monto),
+      idPromocion: form.value.plazos,
+    })
   } else {
     emit('submitCalculadora', {
       importeSolicitado: Number(form.value.monto),

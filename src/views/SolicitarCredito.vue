@@ -13,6 +13,10 @@ import TheHeader from '@/components/TheHeader.vue'
 import CreditoInfo from '@/components/CreditoInfo.vue'
 import TheFooter from '@/components/TheFooter.vue'
 import LoginModal from '@/components/LoginModal.vue'
+import { useAppState } from '@/stores/appState'
+
+// STORES
+const { user } = useAppState()
 
 // COMPOSABLES
 const apiCalls = useApiCall()
@@ -118,16 +122,12 @@ async function formStepHandler(step: number): Promise<boolean> {
       error = await guardarDomicilio()
       if (error) break
 
-      // TODO: hacerlo async, usando Promise.all()
       const { celular, correo } = getFormStepValues(1)
       const [response3] = await Promise.all([
         registrarContacto('2281238597', 1301),
         registrarContacto(celular, 1302),
         registrarContacto(correo, 1305),
       ])
-      // const response1 = await registrarContacto(celular, 1302)
-      // const response2 = await registrarContacto(correo, 1305)
-      // const response3 = await registrarContacto('2281238597', 1301)
 
       const {
         listaEmailsPersonales,
@@ -392,6 +392,12 @@ async function registrarInfoPersonal(): Promise<boolean> {
   return error
 }
 
+const Trainprocess = {
+  1: 1,
+  2: 4,
+  3: 5,
+}
+
 async function iniciarSolicitud(): Promise<boolean> {
   const payload = {
     solicitudv3: {
@@ -406,6 +412,12 @@ async function iniciarSolicitud(): Promise<boolean> {
 
   if (!error) {
     idsolicitud.value = data.solicitudcredito.idSolicitud
+
+    console.log(user, data)
+
+    if (user) {
+      // currentStep.value = Trainprocess[data.solicitudcredito?.trainprocess] || 1
+    }
   }
 
   return error
@@ -477,8 +489,13 @@ function handleCreditoNoViable() {
   escenario.value = Escenarios.PROSPECTO_NO_VIABLE
 }
 
-function handleClientePrevio() {
+function handleClientePrevio(payload: {
+  idPromocion: number
+  importeSolicitado: number
+}) {
   isModalLoginOpen.value = true
+  idPromocion.value = payload.idPromocion
+  importeSolicitado.value = payload.importeSolicitado
 }
 
 function handleSesionIniciada() {

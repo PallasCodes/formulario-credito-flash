@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { setJWT } from '@/api/api'
+import { useAppState } from '@/stores/appState'
 import { handleRequestByEndpoint } from '@/utils/handleRequest'
 import { ref, watch } from 'vue'
 
@@ -11,6 +12,8 @@ const emit = defineEmits(['close', 'sesionIniciada'])
 
 // STATE
 const form = ref({ rfc: '', contrasena: '' })
+
+const { setUser } = useAppState()
 
 function closeModal() {
   emit('close')
@@ -40,6 +43,7 @@ async function handleLogin() {
 
   if (data.token && typeof data.token === 'string') {
     setJWT(data.token)
+    setUser(data)
     emit('sesionIniciada')
   }
 }
