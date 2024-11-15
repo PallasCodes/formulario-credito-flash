@@ -22,11 +22,12 @@ export interface HttpResponse {
   statusText: string
 }
 
-export async function handleRequest2(
-  _endpoint: string,
+export async function handleRequestByEndpoint(
+  method: string,
+  endpoint: string,
   ...args: any
 ): Promise<HttpResponse> {
-  if (!_endpoint) throw new Error('No endpoint was given')
+  if (!endpoint) throw new Error('No endpoint was given')
 
   const responseObj: HttpResponse = {
     data: {},
@@ -39,13 +40,18 @@ export async function handleRequest2(
   const startTime = new Date()
 
   try {
-    const [method, endpoint] = _endpoint.split('|')
     let response
 
-    if (method) {
-      response = await api.post(endpoint, ...args)
-    } else {
-      response = await api(_endpoint, ...args)
+    switch (method) {
+      case 'GET':
+        response = await api.get(endpoint)
+        break
+      case 'POST':
+        response = await api.post(endpoint, ...args)
+        break
+      default:
+        response = await api.post(endpoint, ...args)
+        break
     }
 
     const endTime = new Date()

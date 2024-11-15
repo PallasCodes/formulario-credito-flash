@@ -777,6 +777,7 @@ export function useFormSolicitud() {
     // PASO 10 - SELECCIONAR PROMOCIÓN
     {
       title: 'Confirmar solicitud de crédito',
+      btn: 'FINALIZAR',
       fields: [
         {
           label: 'Importe',
