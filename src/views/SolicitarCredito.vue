@@ -1,497 +1,595 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from 'vue'
 
-import type { Catalogo } from "src/interfaces/Catalogo";
-import FormBuilder from "@/components/FormBuilder.vue";
-import { curpRegex } from "@/utils/curp";
-import type { FormStep } from "@/interfaces/Form";
-import { useApiCall } from "@/composables/useApiCall";
+import { useApiCall } from '@/composables/useApiCall'
+import { useNuevaOrden } from '@/composables/useNuevaOrden'
+import { useFormSolicitud } from '@/composables/useFormSolicitud'
 
-const apiCalls = useApiCall();
+import FormBuilder from '@/components/FormBuilder.vue'
+import MsgCreditoNoViable from '@/components/MsgCreditoNoViable.vue'
+import CalculadoraCredito from '@/components/CalculadoraCredito.vue'
+import SolicitudFinalizada from '@/components/SolicitudFinalizada.vue'
+import TheHeader from '@/components/TheHeader.vue'
+import CreditoInfo from '@/components/CreditoInfo.vue'
+import TheFooter from '@/components/TheFooter.vue'
+import AuthModal from '@/components/authModal/AuthModal.vue'
+import { useAppState } from '@/stores/appState'
+import { storeToRefs } from 'pinia'
 
-interface CatalogoColonias extends Catalogo {
-  city?: string;
+// STORES
+const appState = useAppState()
+const { user } = storeToRefs(appState)
+
+// COMPOSABLES
+const apiCalls = useApiCall()
+const nuevaOrden = useNuevaOrden()
+const { form, initStepCatalogos, idsolicitud, catPromociones } =
+  useFormSolicitud()
+
+const infoCentroTrabajoIpe = {
+  idcentrotrabajo: -1,
+  idtipo: 1800,
+  clavecentrotrabajo: null,
+  nombre: 'OFICINA IPE',
+  idmunicipio: 4603,
+  domicilio: null,
+  numero: null,
+  interior: null,
+  colonia: 'CENTRO',
+  cp: '91000',
+  ciudad: 'Xalapa',
+  telefono: '2281237054',
+  extension: '',
+  identidadfederativa: 30,
 }
 
-// CATÁLOGOS
-const catEntidad = [
-  { value: 0, label: "IPE (Instituto de Pensiones del Estado de Veracruz)" },
-  { value: 1, label: "UV (Universidad Veracruzana)" },
-  { value: 2, label: "Gobierno del Estado de Veracruz" },
-  { value: 3, label: "Congreso del Estado de Veracruz" },
-  { value: 4, label: "Magisterio Estatal de Veracruz" },
-  {
-    value: -1,
-    label: "Ninguna de las mencionadas",
+// TODO: obtener periodo inicio
+const payloadInfoCreditoWeb = {
+  idseguro: null,
+  idbeneficiario: null,
+  deudaexterna: {
+    idbanco: null,
+    idempresa: null,
+    referencia: null,
+    periodostransito: null,
+    folio: null,
+    fechaventa: null,
+    plazo: null,
+    descuento: null,
+    idtipoperiodo: null,
   },
-];
-const catFrecuenciaPago = [
-  { value: 0, label: "Quincenal" },
-  { value: 1, label: "Mensual" },
-];
-const catParentesco = [
-  { value: 0, label: "Padre" },
-  { value: 1, label: "Hermano/a" },
-];
+  fechafirma: new Date().toISOString().split('T')[0],
+  idvendedor: 18088,
+  identidadfederativafirma: 30,
+  idmunicipiofirma: 4603,
+  idmedioentero: 16412,
+  otromedio: 'crédito web',
+  iddestinocredito: 17009,
+  otrodestino: 'crédito web',
+  comentario: 'crédito web',
+  periodoinicio: '202411',
+  periodofin: null,
+}
 
-const catEntidadFederativa = [
-  {
-    value: 1,
-    label: "Veracruz",
-  },
-  {
-    value: 2,
-    label: "Guanajuato",
-  },
-  {
-    value: 3,
-    label: "Puebla",
-  },
-  {
-    value: 4,
-    label: "Guerrero",
-  },
-  {
-    value: 5,
-    label: "Zacatecas",
-  },
-  {
-    value: 6,
-    label: "Oaxaca",
-  },
-  {
-    value: 7,
-    label: "Otro",
-  },
-];
+enum Escenarios {
+  CALCULADORA = 'calculadora',
+  SOLICITUD_FINALIZADA = 'solicitudFinalizada',
+  PROSPECTO_NO_VIABLE = 'prospectoNoViable',
+  FORMULARIO = 'formulario',
+}
 
-const catContrato = [
-  { value: -1, label: "Eventual/Interinato" },
-  {
-    value: 0,
-    label: "Base/Plaza",
-  },
-  {
-    value: 1,
-    label: "Personal de contrato/Confianza",
-  },
-  {
-    value: 2,
-    label: "Pensionado",
-  },
-];
+onMounted(() => {
+  initStepCatalogos(0)
+})
 
-let catColonias: CatalogoColonias[] = [];
-
-const form = ref<FormStep[]>([
-  {
-    title: "Entidad Federativa",
-    fields: [
-      {
-        label: "¿En qué estado de la República Mexicana laboras?",
-        rules: "required",
-        name: "entidadfederativa",
-        value: null,
-        type: "select",
-        placeholder: "Seleccionar entidad federativa",
-        items: catEntidadFederativa,
-      },
-    ],
-  },
-  {
-    title: "Empresa",
-    fields: [
-      {
-        label:
-          "¿Laboras en alguna de las siguientes empresas, dependencias o sindicatos en Veracruz?",
-        rules: "required",
-        name: "entidad",
-        value: null,
-        type: "radio",
-        placeholder: "Seleccionar empresa",
-        items: catEntidad,
-      },
-    ],
-  },
-  {
-    title: "Contratio",
-    fields: [
-      {
-        label: "¿Qué tipo de contrato tienes?",
-        rules: "required",
-        name: "tipocontrato",
-        value: null,
-        type: "radio",
-        placeholder: "Seleccionar empresa",
-        items: catContrato,
-      },
-    ],
-  },
-  {
-    title: "Datos de contacto",
-    fields: [
-      {
-        label: "Nombre",
-        name: "nombre1",
-        type: "text",
-        rules: "required",
-        value: null,
-      },
-      {
-        label: "Segundo nombre",
-        name: "nombre2",
-        type: "text",
-        value: null,
-      },
-      {
-        label: "Apellido paterno",
-        name: "apellidoPaterno",
-        type: "text",
-        rules: "required",
-        value: null,
-      },
-      {
-        label: "Apellido materno",
-        name: "apellidoMaterno",
-        type: "text",
-        value: null,
-      },
-      {
-        label: "Género",
-        name: "genero",
-        type: "radio",
-        rules: "required",
-        items: [
-          { value: "H", label: "Hombre" },
-          { value: "M", label: "Mujer" },
-        ],
-        value: null,
-      },
-      {
-        label: "Correo electrónico",
-        name: "correo",
-        type: "email",
-        rules: "required|email",
-        value: null,
-      },
-      {
-        label: "Celular",
-        name: "celular",
-        type: "tel",
-        rules: "required|number|length:10,10",
-        value: null,
-      },
-      {
-        label: "CURP*",
-        name: "curp",
-        type: "text",
-        rules: [[`required`], [`matches`, curpRegex]],
-        value: null,
-      },
-    ],
-  },
-  {
-    title: "Información de empleo",
-    fields: [
-      {
-        label: "Salario neto mensual",
-        name: "salarioNetoMensual",
-        type: "number",
-        rules: "required|min:1|number",
-        value: null,
-      },
-      {
-        label: "Entidad",
-        name: "entidad",
-        type: "select",
-        rules: "required",
-        items: catEntidad,
-        value: null,
-        placeholder: "Seleccionar entidad",
-      },
-      {
-        label: "Teléfono entidad",
-        name: "telefonoEntidad",
-        type: "text",
-        rules: "required|mobileNumber",
-        value: null,
-      },
-      {
-        label: "Frecuencia de pago",
-        name: "frecuenciaPago",
-        type: "select",
-        rules: "required",
-        items: catFrecuenciaPago,
-        value: null,
-        placeholder: "Seleccionar frecuencia de pago",
-      },
-    ],
-  },
-  {
-    title: "Validación de celular",
-    fields: [
-      {
-        label: "Código de verificación",
-        name: "codigo",
-        type: "text",
-        rules: "required",
-        value: null,
-      },
-    ],
-    btn: "VALIDAR",
-  },
-  {
-    title: "Información de domicilio",
-    loading: false,
-    fields: [
-      {
-        label: "Código postal",
-        name: "cp",
-        type: "text",
-        rules: "required|number|length:5,5",
-        on: {
-          change: async (event: {
-            srcElement: { _value: String | Number };
-          }) => {
-            const catalogo = await apiCalls.getColoniasPorCP(
-              +event.srcElement._value
-            );
-            catColonias = catalogo;
-            form.value[3].fields[3].items = catalogo;
-          },
-        },
-        value: null,
-      },
-      {
-        label: "Estado",
-        name: "estado",
-        type: "text",
-        rules: "required",
-        value: null,
-      },
-      {
-        label: "Municipio",
-        name: "municipio",
-        type: "text",
-        rules: "required",
-        disabled: true,
-        value: null,
-      },
-      {
-        label: "Colonia",
-        name: "colonia",
-        type: "select",
-        rules: "required",
-        items: catColonias,
-        on: {
-          change: (
-            event: { srcElement: { _value: String | Number } },
-            x: any
-          ) => {
-            const value = catColonias.find(
-              (obj: any) => obj.__original === form.value[3].fields[3].value
-            );
-            form.value[3].fields[2].value = value?.city;
-          },
-        },
-        value: null,
-        placeholder: "Seleccionar colonia",
-      },
-      {
-        label: "Calle",
-        name: "calle",
-        type: "text",
-        rules: "required",
-        value: null,
-      },
-      {
-        label: "Número",
-        name: "numexterior",
-        type: "number",
-        rules: "required|number",
-        value: null,
-      },
-      {
-        label: "Número interior",
-        name: "numinterior",
-        type: "text",
-        value: null,
-      },
-    ],
-  },
-  {
-    title: "Referencias personales",
-    loading: false,
-    fields: [
-      {
-        label: "Parentesco",
-        name: "parentesco",
-        type: "select",
-        rules: "required",
-        value: null,
-        items: catParentesco,
-      },
-      {
-        label: "Nombre(s)",
-        name: "referenciaNombres",
-        type: "text",
-        rules: "required",
-        value: null,
-      },
-      {
-        label: "Apellido(s)",
-        name: "referenciaApellidos",
-        type: "text",
-        rules: "required",
-        value: null,
-      },
-    ],
-  },
-  {
-    title: "Carga de documentos adicionales",
-    loading: false,
-    fields: [
-      {
-        label: "Comprobante de domicilio",
-        name: "comprobanteDocimilio",
-        type: "file",
-        rules: "required",
-        value: null,
-      },
-    ],
-  },
-  {
-    title: "Oferta",
-    loading: false,
-    fields: [],
-  },
-]);
-
-const msgNoViable = ref<string>("");
-const entidadNoViable =
-  "Lo sentimos, en este momento otorgamos créditos exclusivamente a trabajadores del sector público en los estados de Guanajuato, Puebla, Veracruz, Zacatecas y Oaxaca, donde contemos con un convenio activo con la entidad.";
-const contratoNoViable =
-  "Lo sentimos, en este momento otorgamos créditos exclusivamente a trabajadores del sector público con base/plaza, o personal de confianza/contrato con más de 3 años de antiguedad o bien pensionados, que laboran en las dependencias mencionadas.";
-
-const prospectoViable = ref(true);
-
-// COMPONENT STATE
-const currentStep = ref(1);
-const formDirection = ref<string>("right");
-let idProspecto: number;
+// STATE
+const currentStep = ref<number>(1)
+const escenario = ref<Escenarios>(Escenarios.CALCULADORA)
+const formCalculadora = ref<{
+  importeSolicitado: number
+  idEntidad: number
+  idPromocion: number
+}>({ importeSolicitado: 0, idEntidad: 0, idPromocion: 0 })
+const isModalLoginOpen = ref<boolean>(false)
 
 // METHODS
-function onSetFormDirection(direction: string) {
-  formDirection.value = direction;
-}
+async function formStepHandler(step: number): Promise<boolean> {
+  let error: boolean = false
 
-async function formStepHandler(): Promise<Boolean> {
-  let error: Boolean = false;
-  let payload;
+  if (step < form.value.length) initStepCatalogos(step)
 
-  switch (currentStep.value) {
+  switch (step) {
     case 1:
-      const { entidadfederativa } = getFormStepValues(1);
-      if (entidadfederativa === 7) {
-        error = true;
-        prospectoViable.value = false;
-        msgNoViable.value = entidadNoViable;
-      }
-      break;
+      error = await registrarCreditoFlash()
+      break
     case 2:
-      const { entidad } = getFormStepValues(2);
-      if (entidad === -1) {
-        error = true;
-        prospectoViable.value = false;
-        msgNoViable.value = entidadNoViable;
-      }
-      break;
-    case 3:
-      const { tipocontrato } = getFormStepValues(3);
-      if (tipocontrato === -1) {
-        error = true;
-        prospectoViable.value = false;
-        msgNoViable.value = contratoNoViable;
-      }
-      break;
-    case 5:
-      payload = { ...getFormStepValues(4), ...getFormStepValues(5) };
-      const idProspectoAux = await apiCalls.registrarInfoBasicaProspecto(
-        payload
-      );
+      error = await validarCelular()
+      if (error) break
 
-      if (idProspectoAux >= 0) {
-        idProspecto = idProspectoAux;
-      } else {
-        error = true;
-      }
-      break;
+      error = await iniciarSolicitud()
+      if (error) break
+
+      error = await registrarInfoPersonal()
+      break
+    case 3:
+      error = await registrarContrasenia()
+      break
+    case 4:
+      error = await registrarDatosIdentificacion()
+      break
+    case 5:
+      error = await guardarInfoLaboral()
+      if (error) break
+
+      error = await registrarCentroTrabajo()
+      break
     case 6:
-      const { codigo } = getFormStepValues(6);
-      error = await apiCalls.validarCodigo(codigo, idProspecto);
-      break;
+      error = await guardarDomicilio()
+      if (error) break
+
+      if (!user.value) {
+        const { celular, correo } = getFormStepValues(1)
+        const [response3] = await Promise.all([
+          registrarContacto('2281238597', 1301),
+          registrarContacto(celular, 1302),
+          registrarContacto(correo, 1305),
+        ])
+
+        const {
+          listaEmailsPersonales,
+          listaTelefonosCasa,
+          listaTelefonosCelular,
+        } = response3.data.contactos
+
+        error = await guardarInfoContactos(
+          listaTelefonosCelular[0].id,
+          listaTelefonosCasa[0].id,
+          listaEmailsPersonales[0].id,
+        )
+      }
+      break
     case 7:
-      payload = { ...getFormStepValues(7), idprospecto: idProspecto };
-      error = await apiCalls.registrarInfoDomicilio(payload);
-      break;
+      const formData = getFormStepValues(7)
+      const payload1 = {
+        idreferencia: formData.idreferencia,
+        nombre: formData.nombre,
+        apellidopaterno: formData.apellidopaterno,
+        apellidomaterno: formData.apellidomaterno,
+        idrelacion: formData.idrelacion,
+        celular: formData.celular,
+        antanios: formData.antanios,
+        antmeses: formData.antmeses,
+      }
+      const payload2 = {
+        idreferencia: formData.idreferencia2,
+        nombre: formData.nombre2,
+        apellidopaterno: formData.apellidopaterno2,
+        apellidomaterno: formData.apellidomaterno2,
+        idrelacion: formData.idrelacion2,
+        celular: formData.celular2,
+        antanios: formData.antanios2,
+        antmeses: formData.antmeses2,
+      }
+      await guardarReferencia(payload1)
+      const { data: ref } = await guardarReferencia(payload2)
+
+      error = await guardarReferencias(
+        ref.referencias[0].id,
+        ref.referencias[1].id,
+      )
+
+      break
+    case 8:
+      error = await guardarCuentaDomiciliacion()
+      break
+    case 9:
+      error = await guardarInfoFinanciera()
+      if (!error) {
+        await obtenerPromocionesDisponibles()
+      }
+      break
+    case 10:
+      error = await actualizarTrainProcess(11)
+      if (!error) {
+        error = await guardarCondicionesOrden()
+      }
+      if (!error) {
+        escenario.value = Escenarios.SOLICITUD_FINALIZADA
+      }
+      break
+    default:
+      error = true
+      break
   }
 
-  return error;
+  return error
+}
+
+async function actualizarTrainProcess(trainprocess: number): Promise<boolean> {
+  const payload = {
+    idsolicitud: idsolicitud.value,
+    trainprocess,
+  }
+
+  const { error } = await apiCalls.actualizarTrainProcess(payload)
+
+  return error
+}
+
+async function guardarCondicionesOrden(): Promise<boolean> {
+  const payload = {
+    datos11condiciones: { ...payloadInfoCreditoWeb, ...getFormStepValues(10) },
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarCondicionesOrden(payload)
+
+  return error
+}
+
+async function obtenerPromocionesDisponibles(): Promise<void> {
+  const payload = {
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { data } = await nuevaOrden.obtenerPromocionesDisponibles(payload)
+
+  catPromociones.value = data.promociones.map(
+    (promo: { id: number; nombre: string }) => ({
+      value: promo.id,
+      label: promo.nombre,
+    }),
+  )
+}
+
+async function guardarInfoFinanciera(): Promise<boolean> {
+  const { q1deducciones, q2deducciones, ...formValues } = getFormStepValues(9)
+
+  const payload = {
+    datos10infofinanciera: { ...formValues },
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarInfoFinanciera(payload)
+
+  return error
+}
+
+async function guardarCuentaDomiciliacion(): Promise<boolean> {
+  const payload = {
+    datos08cuenta01: getFormStepValues(8),
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarCuentaDomiciliacion(payload)
+
+  return error
+}
+
+async function guardarReferencias(
+  idreferencia1: number,
+  idreferencia2: number,
+): Promise<boolean> {
+  const payload = {
+    datos07inforeferencias: {
+      idreferencia1,
+      idreferencia2,
+    },
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarReferencias(payload)
+
+  return error
+}
+
+async function guardarReferencia(referencia: object): Promise<any> {
+  const payload = {
+    referencia,
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const response = await nuevaOrden.guardarReferencia(payload)
+  return response
+}
+
+async function guardarInfoContactos(
+  idcontactocelular: number,
+  idcontactotelefonocasa: number,
+  idcontactoemailpersonal: number,
+): Promise<boolean> {
+  const payload = {
+    datos06infocontactos: {
+      idcontactocelular,
+      idcontactotelefonocasa,
+      idcontactoemailpersonal,
+      idcontactorecados: null,
+      idcontactoemaillaboral: null,
+    },
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarInfoContactos(payload)
+  return error
+}
+
+async function registrarContacto(
+  contacto: string,
+  idtipo: number,
+): Promise<any> {
+  const payload = {
+    contacto: {
+      idtipo,
+      contacto,
+      horariodespuesde: null,
+      horarioantesde: null,
+      horariodias: '',
+      contactarcualquierhorario: true,
+    },
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const response = await nuevaOrden.registrarContacto(payload)
+  return response
+}
+
+async function guardarDomicilio(): Promise<boolean> {
+  const payload = {
+    datos05domicilio: getFormStepValues(6),
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarDomicilio(payload)
+  return error
+}
+
+async function registrarCentroTrabajo(): Promise<boolean> {
+  const payload = {
+    datos04centrotrabajo: infoCentroTrabajoIpe,
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarCentroTrabajo(payload)
+  return error
+}
+
+async function guardarInfoLaboral(): Promise<boolean> {
+  const payload = {
+    datos03infolaboral: getFormStepValues(5),
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarInfoLaboral(payload)
+  return error
+}
+
+async function registrarDatosIdentificacion(): Promise<boolean> {
+  const payload = {
+    datos02datosidentificacion: getFormStepValues(4),
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarDatosIdentificacion(payload)
+  return error
+}
+
+async function registrarContrasenia(): Promise<boolean> {
+  const { password } = getFormStepValues(3)
+  const step4Values = getFormStepValues(1)
+  const payload = {
+    password,
+    rfc: step4Values.rfc,
+  }
+
+  const { error } = await apiCalls.registrarContrasena(payload)
+
+  return error
+}
+
+async function registrarInfoPersonal(): Promise<boolean> {
+  const { celular, correo, ...formValues } = getFormStepValues(1)
+
+  const payload = {
+    datos01infopersonal: { ...formValues },
+    solicitudv3: { idsolicitud: idsolicitud.value },
+  }
+
+  const { error } = await nuevaOrden.guardarInfoPersonal(payload)
+
+  return error
+}
+
+async function iniciarSolicitud(): Promise<boolean> {
+  const payload = {
+    solicitudv3: {
+      idproductoscc: 299,
+      idtipoorden: 14,
+      idpersonafisica: -1,
+      idvendedor: 18088,
+    },
+    identidad: user.value ? formCalculadora.value.idEntidad : undefined,
+  }
+
+  const { error, data } = await nuevaOrden.iniciarNuevaSolicitud(payload)
+
+  if (!error) {
+    idsolicitud.value = data.solicitudcredito.idSolicitud
+
+    if (user.value) {
+      currentStep.value = data.convenioRegistrado ? 6 : 5
+    }
+  }
+
+  return error
+}
+
+async function registrarCreditoFlash(): Promise<boolean> {
+  const { celular, rfc } = getFormStepValues(1)
+
+  const { error } = await apiCalls.registrarSolicitudCreditoFlash({
+    celular,
+    rfc,
+    importeSolicitado: formCalculadora.value.importeSolicitado,
+    idPromocion: formCalculadora.value.idPromocion,
+  })
+
+  return error
+}
+
+async function validarCelular(): Promise<boolean> {
+  const { codigo } = getFormStepValues(2)
+  const { rfc } = getFormStepValues(1)
+
+  const { error } = await apiCalls.validarCodigo(codigo, rfc)
+
+  return error
 }
 
 async function onSiguiente() {
-  if (formDirection.value === "right") {
-    const error = await formStepHandler();
-    if (!error) currentStep.value += 1;
-  } else {
-    currentStep.value -= 1;
+  let error: boolean = false
+
+  error = await formStepHandler(currentStep.value)
+
+  if (!error) {
+    const formElement = document.getElementById('header') as HTMLDivElement
+    console.log(formElement.getBoundingClientRect().height)
+    window.scrollTo(0, formElement.getBoundingClientRect().height)
+
+    if (user.value && currentStep.value == 6) {
+      // saltar registro de referencias si el usuario ya es cliente previo
+      await initStepCatalogos(8)
+      currentStep.value = 8
+    } else {
+      currentStep.value += 1
+    }
   }
 }
 
 function getFormStepValues(step: number): any {
-  const values: any = {};
+  const values: any = {}
 
   form.value[step - 1].fields.forEach((field) => {
-    if (field.type === "number") {
-      values[field.name] = +field.value;
+    if (field.type === 'number') {
+      values[field.name] = +field.value
     } else {
-      values[field.name] = field.value;
+      if (field.uppercase) {
+        values[field.name] = field.value.toUpperCase()
+      } else {
+        values[field.name] = field.value
+      }
     }
-  });
+  })
 
-  return values;
+  return values
 }
+
+function handleSubmitCalculadora(payload: any) {
+  escenario.value = Escenarios.FORMULARIO
+  formCalculadora.value = payload
+}
+
+function handleCreditoNoViable() {
+  escenario.value = Escenarios.PROSPECTO_NO_VIABLE
+}
+
+function handleClientePrevio(payload: any) {
+  isModalLoginOpen.value = true
+  formCalculadora.value = payload
+}
+
+async function handleSesionIniciada() {
+  const error = await iniciarSolicitud()
+  if (!error) escenario.value = Escenarios.FORMULARIO
+  isModalLoginOpen.value = false
+}
+
+const appMode = import.meta.env.VITE_APP_MODE
 </script>
 
 <template>
-  <h2 class="text-5xl font-bold text-center mt-16">Solicitar Crédito Flash</h2>
-  <div v-if="prospectoViable">
-    <h3 class="form-step-title mt-4">Paso {{ currentStep }}</h3>
-    <h2 class="text-center text-2xl uppercase font-bold text-blue-900">
+  <TheHeader />
+  <div v-if="appMode === 'dev'" class="fixed bottom-6 right-6 px-2 py-1 w-20">
+    <input
+      type="text"
+      v-model="escenario"
+      class="border-2 w-full border-black text-lg rounded mb-4"
+    />
+    <input
+      type="number"
+      v-model="idsolicitud"
+      class="border-2 w-full border-black text-lg rounded mb-4"
+    />
+    <input
+      type="number"
+      v-model.number="currentStep"
+      class="border-2 w-full border-black text-lg rounded"
+    />
+  </div>
+
+  <!-- CALCULADORA -->
+  <div
+    v-if="escenario === Escenarios.CALCULADORA"
+    class="mt-10 sm:mt-20 sm:mb-32"
+  >
+    <h3
+      class="text-center sm:mb-10 text-[25px] sm:text-4xl font-bold text-gray-800"
+    >
+      Solicita tu crédito
+    </h3>
+    <CalculadoraCredito
+      @submit-calculadora="handleSubmitCalculadora"
+      @credito-no-viable="handleCreditoNoViable"
+      @cliente-previo="handleClientePrevio"
+    />
+  </div>
+
+  <!-- FORMULARIO SOLICITUD -->
+  <div
+    v-if="escenario === Escenarios.FORMULARIO"
+    class="mt-10 sm:mt-20 sm:mb-32"
+    id="formulario"
+  >
+    <h2
+      class="text-center text-[20px] sm:text-2xl uppercase font-bold text-blue-900"
+    >
       {{ form[currentStep - 1].title }}
     </h2>
-    <section class="relative">
-      <FormBuilder
-        :form="form"
-        :current-step="currentStep"
-        @siguiente="onSiguiente"
-        @set-form-direction="onSetFormDirection"
-        class="mt-8"
-      />
-    </section>
+    <span class="text-center block mt-2 sm:mt-3 text-sm sm:text-base"
+      >¿Ya tienes cuenta?
+      <button
+        @click="() => (isModalLoginOpen = true)"
+        class="text-blue-600 hover:text-blue-700"
+      >
+        Inicia sesión
+      </button></span
+    >
+
+    <FormBuilder
+      :form="form"
+      :current-step="currentStep"
+      @siguiente="onSiguiente"
+      class="mt-4"
+    />
   </div>
-  <div
-    v-else
-    class="mx-auto overflow-hidden max-w-2xl w-full rounded-lg mt-8 p-6"
-    style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"
-  >
-    <p>
-      {{ msgNoViable }}
-    </p>
-    <br />
-    <p>
-      Te invitamos a seguirnos en Facebook para no perderte nuestras próximas
-      aperturas de convenios.
-    </p>
-  </div>
+
+  <!-- SOLICITUD FINALIZADA -->
+  <SolicitudFinalizada
+    v-if="escenario === Escenarios.SOLICITUD_FINALIZADA"
+    class="mt-12 mb-2 sm:my-32"
+  />
+
+  <!-- MSG CRÉDITO NO VIABLE -->
+  <MsgCreditoNoViable
+    v-if="escenario === Escenarios.PROSPECTO_NO_VIABLE"
+    class="mt-12 mb-2 sm:my-32"
+  />
+
+  <AuthModal
+    :is-modal-open="isModalLoginOpen"
+    @close="() => (isModalLoginOpen = false)"
+    @sesion-iniciada="handleSesionIniciada"
+  />
+
+  <CreditoInfo />
+  <TheFooter />
 </template>
