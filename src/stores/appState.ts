@@ -1,12 +1,18 @@
-import { ref, readonly } from "vue";
-import { defineStore } from "pinia";
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
 
-export const useAppState = defineStore("appState", () => {
-  let loading = ref<boolean>(false);
+export const useAppState = defineStore('appState', () => {
+  const loading = ref<boolean>(false)
+  const user = ref(null)
 
   function setLoading(loadingState: boolean) {
-    loading.value = loadingState;
+    loading.value = loadingState
+  }
+  // TODO: user interface
+
+  function setUser(userState: any) {
+    user.value = userState
   }
 
-  return { loading, setLoading };
-});
+  return { loading, setLoading, setUser, user }
+})

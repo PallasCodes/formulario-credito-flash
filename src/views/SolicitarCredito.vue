@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import type { FormStep } from '@/interfaces/Form'
 import { useApiCall } from '@/composables/useApiCall'
 import { useNuevaOrden } from '@/composables/useNuevaOrden'
+import { useFormSolicitud } from '@/composables/useFormSolicitud'
 
 import FormBuilder from '@/components/FormBuilder.vue'
 import MsgCreditoNoViable from '@/components/MsgCreditoNoViable.vue'
@@ -12,7 +12,13 @@ import SolicitudFinalizada from '@/components/SolicitudFinalizada.vue'
 import TheHeader from '@/components/TheHeader.vue'
 import CreditoInfo from '@/components/CreditoInfo.vue'
 import TheFooter from '@/components/TheFooter.vue'
-import { useFormSolicitud } from '@/composables/useFormSolicitud'
+import AuthModal from '@/components/authModal/AuthModal.vue'
+import { useAppState } from '@/stores/appState'
+import { storeToRefs } from 'pinia'
+
+// STORES
+const appState = useAppState()
+const { user } = storeToRefs(appState)
 
 // COMPOSABLES
 const apiCalls = useApiCall()
@@ -76,11 +82,15 @@ onMounted(() => {
   initStepCatalogos(0)
 })
 
-// COMPONENT STATE
+// STATE
 const currentStep = ref<number>(1)
 const escenario = ref<Escenarios>(Escenarios.CALCULADORA)
-const importeSolicitado = ref<number>()
-const idPromocion = ref<number>()
+const formCalculadora = ref<{
+  importeSolicitado: number
+  idEntidad: number
+  idPromocion: number
+}>({ importeSolicitado: 0, idEntidad: 0, idPromocion: 0 })
+const isModalLoginOpen = ref<boolean>(false)
 
 // METHODS
 async function formStepHandler(step: number): Promise<boolean> {
@@ -117,28 +127,26 @@ async function formStepHandler(step: number): Promise<boolean> {
       error = await guardarDomicilio()
       if (error) break
 
-      // TODO: hacerlo async, usando Promise.all()
-      const { celular, correo } = getFormStepValues(1)
-      const [response3] = await Promise.all([
-        registrarContacto('2281238597', 1301),
-        registrarContacto(celular, 1302),
-        registrarContacto(correo, 1305),
-      ])
-      // const response1 = await registrarContacto(celular, 1302)
-      // const response2 = await registrarContacto(correo, 1305)
-      // const response3 = await registrarContacto('2281238597', 1301)
+      if (!user.value) {
+        const { celular, correo } = getFormStepValues(1)
+        const [response3] = await Promise.all([
+          registrarContacto('2281238597', 1301),
+          registrarContacto(celular, 1302),
+          registrarContacto(correo, 1305),
+        ])
 
-      const {
-        listaEmailsPersonales,
-        listaTelefonosCasa,
-        listaTelefonosCelular,
-      } = response3.data.contactos
+        const {
+          listaEmailsPersonales,
+          listaTelefonosCasa,
+          listaTelefonosCelular,
+        } = response3.data.contactos
 
-      error = await guardarInfoContactos(
-        listaTelefonosCelular[0].id,
-        listaTelefonosCasa[0].id,
-        listaEmailsPersonales[0].id,
-      )
+        error = await guardarInfoContactos(
+          listaTelefonosCelular[0].id,
+          listaTelefonosCasa[0].id,
+          listaEmailsPersonales[0].id,
+        )
+      }
       break
     case 7:
       const formData = getFormStepValues(7)
@@ -399,12 +407,17 @@ async function iniciarSolicitud(): Promise<boolean> {
       idpersonafisica: -1,
       idvendedor: 18088,
     },
+    identidad: user.value ? formCalculadora.value.idEntidad : undefined,
   }
 
   const { error, data } = await nuevaOrden.iniciarNuevaSolicitud(payload)
 
   if (!error) {
     idsolicitud.value = data.solicitudcredito.idSolicitud
+
+    if (user.value) {
+      currentStep.value = data.convenioRegistrado ? 6 : 5
+    }
   }
 
   return error
@@ -416,8 +429,8 @@ async function registrarCreditoFlash(): Promise<boolean> {
   const { error } = await apiCalls.registrarSolicitudCreditoFlash({
     celular,
     rfc,
-    importeSolicitado: importeSolicitado.value,
-    idPromocion: idPromocion.value,
+    importeSolicitado: formCalculadora.value.importeSolicitado,
+    idPromocion: formCalculadora.value.idPromocion,
   })
 
   return error
@@ -441,7 +454,14 @@ async function onSiguiente() {
     const formElement = document.getElementById('header') as HTMLDivElement
     console.log(formElement.getBoundingClientRect().height)
     window.scrollTo(0, formElement.getBoundingClientRect().height)
-    currentStep.value += 1
+
+    if (user.value && currentStep.value == 6) {
+      // saltar registro de referencias si el usuario ya es cliente previo
+      await initStepCatalogos(8)
+      currentStep.value = 8
+    } else {
+      currentStep.value += 1
+    }
   }
 }
 
@@ -463,17 +483,24 @@ function getFormStepValues(step: number): any {
   return values
 }
 
-function handleSubmitCalculadora(payload: {
-  idPromocion: number
-  importeSolicitado: number
-}) {
+function handleSubmitCalculadora(payload: any) {
   escenario.value = Escenarios.FORMULARIO
-  idPromocion.value = payload.idPromocion
-  importeSolicitado.value = payload.importeSolicitado
+  formCalculadora.value = payload
 }
 
 function handleCreditoNoViable() {
   escenario.value = Escenarios.PROSPECTO_NO_VIABLE
+}
+
+function handleClientePrevio(payload: any) {
+  isModalLoginOpen.value = true
+  formCalculadora.value = payload
+}
+
+async function handleSesionIniciada() {
+  const error = await iniciarSolicitud()
+  if (!error) escenario.value = Escenarios.FORMULARIO
+  isModalLoginOpen.value = false
 }
 
 const appMode = import.meta.env.VITE_APP_MODE
@@ -512,6 +539,7 @@ const appMode = import.meta.env.VITE_APP_MODE
     <CalculadoraCredito
       @submit-calculadora="handleSubmitCalculadora"
       @credito-no-viable="handleCreditoNoViable"
+      @cliente-previo="handleClientePrevio"
     />
   </div>
 
@@ -521,7 +549,6 @@ const appMode = import.meta.env.VITE_APP_MODE
     class="mt-10 sm:mt-20 sm:mb-32"
     id="formulario"
   >
-    <h3 class="form-step-title mt-4 !text-gray-600">Paso {{ currentStep }}</h3>
     <h2
       class="text-center text-[20px] sm:text-2xl uppercase font-bold text-blue-900"
     >
@@ -529,9 +556,12 @@ const appMode = import.meta.env.VITE_APP_MODE
     </h2>
     <span class="text-center block mt-2 sm:mt-3 text-sm sm:text-base"
       >¿Ya tienes cuenta?
-      <router-link to="/login" class="text-blue-600 hover:text-blue-700"
-        >Inicia sesión</router-link
-      ></span
+      <button
+        @click="() => (isModalLoginOpen = true)"
+        class="text-blue-600 hover:text-blue-700"
+      >
+        Inicia sesión
+      </button></span
     >
 
     <FormBuilder
@@ -552,6 +582,12 @@ const appMode = import.meta.env.VITE_APP_MODE
   <MsgCreditoNoViable
     v-if="escenario === Escenarios.PROSPECTO_NO_VIABLE"
     class="mt-12 mb-2 sm:my-32"
+  />
+
+  <AuthModal
+    :is-modal-open="isModalLoginOpen"
+    @close="() => (isModalLoginOpen = false)"
+    @sesion-iniciada="handleSesionIniciada"
   />
 
   <CreditoInfo />

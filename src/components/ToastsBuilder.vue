@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { MessageColorHex, MessageType } from "@/utils/message";
-import { useToastsStore } from "@/stores/toasts";
+import { MessageColorHex, MessageType } from '@/utils/message'
+import { useToastsStore } from '@/stores/toasts'
 
-const toastsStore = useToastsStore();
+const toastsStore = useToastsStore()
 </script>
 
 <template>
-  <section id="messages">
+  <section id="messages" class="z-50">
     <div
       v-for="(message, i) in toastsStore.toasts"
       :key="message.id"
