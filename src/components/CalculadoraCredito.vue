@@ -28,7 +28,7 @@ const catPlazos = [
 ]
 
 const catDependencias = [
-  { value: 1, label: 'IPE' },
+  { value: 127, label: 'IPE' },
   { value: -1, label: 'Otro' },
 ]
 
@@ -63,11 +63,13 @@ function onSubmitCalculadora() {
     emit('clientePrevio', {
       importeSolicitado: Number(form.value.monto),
       idPromocion: form.value.plazos,
+      idEntidad: form.value.dependencia,
     })
   } else {
     emit('submitCalculadora', {
       importeSolicitado: Number(form.value.monto),
       idPromocion: form.value.plazos,
+      idEntidad: form.value.dependencia,
     })
   }
 }
