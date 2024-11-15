@@ -29,8 +29,11 @@ watch(
   (open) => {
     if (open) {
       document.body.classList.add('overflow-hidden')
+      showForm.value = 'login'
     } else {
       document.body.classList.remove('overflow-hidden')
+      form.value.contrasena = ''
+      form.value.rfc = ''
     }
   },
 )
@@ -51,6 +54,20 @@ async function handleLogin() {
     setUser(data)
     emit('sesionIniciada')
   }
+}
+
+async function handleSignup() {
+  const { error, data, message } = await handleRequestByEndpoint(
+    'POST',
+    '/auth/signup-by-rfc',
+    { rfc: form.value.rfc },
+  )
+
+  message?.display()
+
+  if (error) return
+
+  console.log(data)
 }
 
 function register() {
@@ -101,15 +118,23 @@ function register() {
           />
 
           <!-- Footer -->
-          <div class="flex justify-end mt-6">
+          <div class="flex justify-end mt-6 text-sm">
             <button @click="closeModal" class="text-gray-500 font-bold mr-3">
               Cancelar
             </button>
             <button
+              v-if="showForm === 'login'"
               @click="handleLogin"
               class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
             >
-              {{ showForm === 'login' ? 'Iniciar sesión' : 'Enviar SMS' }}
+              Iniciar sesión
+            </button>
+            <button
+              v-if="showForm === 'signup'"
+              @click="handleSignup"
+              class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
+            >
+              Enviar SMS
             </button>
           </div>
         </div>
