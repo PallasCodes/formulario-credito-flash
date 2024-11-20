@@ -15,6 +15,7 @@ import TheFooter from '@/components/TheFooter.vue'
 import AuthModal from '@/components/authModal/AuthModal.vue'
 import { useAppState } from '@/stores/appState'
 import { storeToRefs } from 'pinia'
+import { handleRequestByEndpoint } from '@/utils/handleRequest'
 
 // STORES
 const appState = useAppState()
@@ -103,18 +104,19 @@ async function formStepHandler(step: number): Promise<boolean> {
       error = await registrarCreditoFlash()
       break
     case 2:
-      error = await validarCelular()
-      if (error) break
-
       error = await iniciarSolicitud()
       if (error) break
 
       error = await registrarInfoPersonal()
+      if (error) break
+
+      error = await registrarUsuario()
       break
     case 3:
-      error = await registrarContrasenia()
+      error = await validarCelular()
       break
     case 4:
+      console.log('paso 4')
       error = await registrarDatosIdentificacion()
       break
     case 5:
@@ -373,15 +375,16 @@ async function registrarDatosIdentificacion(): Promise<boolean> {
   return error
 }
 
-async function registrarContrasenia(): Promise<boolean> {
-  const { password } = getFormStepValues(3)
-  const step4Values = getFormStepValues(1)
-  const payload = {
-    password,
-    rfc: step4Values.rfc,
-  }
+async function registrarUsuario(): Promise<boolean> {
+  const { password } = getFormStepValues(2)
+  const { rfc, celular } = getFormStepValues(1)
+  const payload = { contrasena: password, rfc, celular }
 
-  const { error } = await apiCalls.registrarContrasena(payload)
+  const { error } = await handleRequestByEndpoint(
+    'POST',
+    '/auth/signup',
+    payload,
+  )
 
   return error
 }
@@ -424,11 +427,7 @@ async function iniciarSolicitud(): Promise<boolean> {
 }
 
 async function registrarCreditoFlash(): Promise<boolean> {
-  const { celular, rfc } = getFormStepValues(1)
-
   const { error } = await apiCalls.registrarSolicitudCreditoFlash({
-    celular,
-    rfc,
     importeSolicitado: formCalculadora.value.importeSolicitado,
     idPromocion: formCalculadora.value.idPromocion,
   })
@@ -437,7 +436,7 @@ async function registrarCreditoFlash(): Promise<boolean> {
 }
 
 async function validarCelular(): Promise<boolean> {
-  const { codigo } = getFormStepValues(2)
+  const { codigo } = getFormStepValues(3)
   const { rfc } = getFormStepValues(1)
 
   const { error } = await apiCalls.validarCodigo(codigo, rfc)

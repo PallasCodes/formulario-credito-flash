@@ -5,6 +5,7 @@ interface LoginFormProps {
     rfc: string
   }
   handleLogin: () => Promise<void>
+  login: () => void
 }
 
 defineProps<LoginFormProps>()
@@ -28,8 +29,14 @@ defineProps<LoginFormProps>()
     </FormKit>
   </div>
 
-  <p class="text-sm text-gray-800 mt-4">
+  <div class="text-sm text-gray-800 mt-4">
+    ¿Ya tienes cuenta en nuestro portal de Crédito Web?
+    <button class="font-bold text-blue-600" @click="login">
+      Iniciar sesión
+    </button>
+  </div>
+  <!-- <p class="text-sm text-gray-800 mt-4">
     Si no tienes acceso al número de celular con el que te registraste
     comunicate con nosotros al correo ayuda@intermercado.com.mx
-  </p>
+  </p> -->
 </template>

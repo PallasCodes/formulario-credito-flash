@@ -11,11 +11,15 @@ import { useApiCall } from './useApiCall'
 import type { Catalogo } from '@/interfaces/Catalogo'
 import { useNuevaOrden } from './useNuevaOrden'
 import type { Field } from '@/interfaces/FormField'
+import { useAppState } from '@/stores/appState'
+import { storeToRefs } from 'pinia'
 
 export function useFormSolicitud() {
   // COMPOSABLES
   const apiCalls = useApiCall()
   const nuevaOrden = useNuevaOrden()
+  const appState = useAppState()
+  const { user } = storeToRefs(appState)
 
   // STATE
   const solicitudcredito: object = {}
@@ -43,6 +47,7 @@ export function useFormSolicitud() {
           validationMessages: {
             matches: 'El valor introducido no coincide con el formato de RFC',
           },
+          disabled: user.value !== null,
         },
         {
           label: 'Nombre',
@@ -169,28 +174,7 @@ export function useFormSolicitud() {
         },
       ],
     },
-    // PASO 2 - VALIDACIÓN CELULAR
-    {
-      title: 'Validación de celular',
-      fields: [
-        {
-          name: 'msgValidacion',
-          type: 'readonly',
-          label: 'Introduce el código que se ha enviado a tu celular',
-          class: 'text-[17px] font-medium mb-6 block text-center',
-        },
-        {
-          label: 'Código',
-          name: 'codigo',
-          type: 'text',
-          rules: 'required',
-          value: null,
-          uppercase: true,
-        },
-      ],
-      btn: 'VALIDAR',
-    },
-    // PASO 3 - GENERACIÓN CONTRASEÑA
+    // PASO 2 - REGISTRAR USUARIO
     {
       title: 'Registro de contraseña',
       fields: [
@@ -233,6 +217,28 @@ export function useFormSolicitud() {
           },
         },
       ],
+    },
+
+    // PASO 3 - VALIDAR CELULAR
+    {
+      title: 'Validación de celular',
+      fields: [
+        {
+          name: 'msgValidacion',
+          type: 'readonly',
+          label: 'Introduce el código que se ha enviado a tu celular',
+          class: 'text-[17px] font-medium mb-6 block text-center',
+        },
+        {
+          label: 'Código',
+          name: 'codigo',
+          type: 'text',
+          rules: 'required',
+          value: null,
+          uppercase: true,
+        },
+      ],
+      btn: 'VALIDAR',
     },
     // PASO 4 - DATOS IDENTIFICACIÓN
     {

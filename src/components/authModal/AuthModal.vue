@@ -73,6 +73,10 @@ async function handleSignup() {
 function register() {
   showForm.value = 'signup'
 }
+
+function login() {
+  showForm.value = 'login'
+}
 </script>
 
 <template>
@@ -113,8 +117,8 @@ function register() {
           <SignupForm
             v-if="showForm === 'signup'"
             :form="form"
-            :register="register"
             :handle-login="handleLogin"
+            :login="login"
           />
 
           <!-- Footer -->
