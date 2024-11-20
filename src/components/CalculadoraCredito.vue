@@ -193,3 +193,9 @@ function onSubmitCalculadora() {
     </FormKit>
   </div>
 </template>
+
+<style>
+ul .formkit-options {
+  display: flex !important;
+}
+</style>
