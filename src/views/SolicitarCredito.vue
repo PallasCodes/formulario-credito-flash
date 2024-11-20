@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 import { useApiCall } from '@/composables/useApiCall'
 import { useNuevaOrden } from '@/composables/useNuevaOrden'
@@ -93,11 +93,18 @@ const formCalculadora = ref<{
 }>({ importeSolicitado: 0, idEntidad: 0, idPromocion: 0 })
 const isModalLoginOpen = ref<boolean>(false)
 
+// WATCHERS
+watch(
+  () => currentStep.value,
+  (val) => {
+    console.log(val)
+    initStepCatalogos(val)
+  },
+)
+
 // METHODS
 async function formStepHandler(step: number): Promise<boolean> {
   let error: boolean = false
-
-  if (step < form.value.length) initStepCatalogos(step)
 
   switch (step) {
     case 1:
@@ -456,7 +463,6 @@ async function onSiguiente() {
 
     if (user.value && currentStep.value == 6) {
       // saltar registro de referencias si el usuario ya es cliente previo
-      await initStepCatalogos(8)
       currentStep.value = 8
     } else {
       currentStep.value += 1
@@ -497,7 +503,8 @@ function handleClientePrevio(payload: any) {
 }
 
 async function handleSesionIniciada() {
-  const error = await iniciarSolicitud()
+  let error = await registrarCreditoFlash()
+  if (!error) error = await iniciarSolicitud()
   if (!error) escenario.value = Escenarios.FORMULARIO
   isModalLoginOpen.value = false
 }

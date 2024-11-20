@@ -218,7 +218,6 @@ export function useFormSolicitud() {
         },
       ],
     },
-
     // PASO 3 - VALIDAR CELULAR
     {
       title: 'Validación de celular',
