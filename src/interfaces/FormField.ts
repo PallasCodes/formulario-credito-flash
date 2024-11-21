@@ -20,4 +20,6 @@ export interface Field {
   suffixIcon?: string
   validationMessages?: object
   errors?: any
+  accept?: string
+  'file-item-icon'?: string
 }

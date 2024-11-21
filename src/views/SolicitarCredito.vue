@@ -17,6 +17,7 @@ import AuthModal from '@/components/authModal/AuthModal.vue'
 import { useAppState } from '@/stores/appState'
 import { handleRequestByEndpoint } from '@/utils/handleRequest'
 import { setJWT } from '@/api/api'
+import { Message, MessageType } from '@/utils/message'
 
 // STORES
 const appState = useAppState()
@@ -218,21 +219,35 @@ async function formStepHandler(step: number): Promise<boolean> {
 }
 
 async function cargarArchivos(): Promise<boolean> {
-  const payload = new FormData()
-  // console.log(form.value[9].fields)
-  // return true
-  payload.set('ine', form.value[9].fields[1].value[0].file)
-  payload.set('comprobante', form.value[9].fields[0].value[0].file)
+  const ine = form.value[9].fields[1].value[0].file
+  const comprobante = form.value[9].fields[0].value[0].file
 
-  const { error, message, data } = await handleRequestByEndpoint(
+  if (ine.size > 5_000_000) {
+    Message.displayToast(
+      'El archivo de INE debe ser menor a 1MB',
+      MessageType.ERROR,
+    )
+    return true
+  }
+  if (comprobante.size > 5_000_000) {
+    Message.displayToast(
+      'El archivo de comprobante de domicilio debe ser menor a 1MB',
+      MessageType.ERROR,
+    )
+    return true
+  }
+
+  const payload = new FormData()
+  payload.set('ine', ine)
+  payload.set('comprobante', comprobante)
+
+  const { error, message } = await handleRequestByEndpoint(
     'POST',
     '/s3/upload',
     payload,
   )
 
   message?.display()
-
-  console.log(data)
 
   return error
 }
@@ -272,10 +287,6 @@ async function obtenerPromocionesDisponibles(): Promise<void> {
       value: promo.id,
       label: promo.nombre,
     }),
-  )
-  console.log(
-    '🚀 ~ obtenerPromocionesDisponibles ~ catPromociones.value:',
-    catPromociones.value,
   )
 }
 

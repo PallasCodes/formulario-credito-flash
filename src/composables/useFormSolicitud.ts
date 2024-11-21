@@ -789,6 +789,13 @@ export function useFormSolicitud() {
           name: 'comprobanteDomicilio',
           type: 'file',
           rules: 'required',
+          accept: 'image/png, image/jpeg, image/jpg, application/pdf',
+          suffixIcon: 'fileDoc',
+          on: {
+            change: () => {
+              console.log(form.value[9].fields[0])
+            },
+          },
         },
         {
           label: 'INE',
@@ -796,6 +803,8 @@ export function useFormSolicitud() {
           name: 'ine',
           type: 'file',
           rules: 'required',
+          accept: 'image/png, image/jpeg, image/jpg, application/pdf',
+          suffixIcon: 'fileDoc',
         },
       ],
     },
