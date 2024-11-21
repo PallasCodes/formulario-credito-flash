@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import { useApiCall } from '@/composables/useApiCall'
 import { useNuevaOrden } from '@/composables/useNuevaOrden'
@@ -14,8 +15,8 @@ import CreditoInfo from '@/components/CreditoInfo.vue'
 import TheFooter from '@/components/TheFooter.vue'
 import AuthModal from '@/components/authModal/AuthModal.vue'
 import { useAppState } from '@/stores/appState'
-import { storeToRefs } from 'pinia'
 import { handleRequestByEndpoint } from '@/utils/handleRequest'
+import { setJWT } from '@/api/api'
 
 // STORES
 const appState = useAppState()
@@ -97,8 +98,7 @@ const isModalLoginOpen = ref<boolean>(false)
 watch(
   () => currentStep.value,
   (val) => {
-    console.log(val)
-    initStepCatalogos(val)
+    initStepCatalogos(val - 1)
   },
 )
 
@@ -193,11 +193,14 @@ async function formStepHandler(step: number): Promise<boolean> {
       break
     case 9:
       error = await guardarInfoFinanciera()
+      break
+    case 10:
+      error = await cargarArchivos()
       if (!error) {
         await obtenerPromocionesDisponibles()
       }
       break
-    case 10:
+    case 11:
       error = await actualizarTrainProcess(11)
       if (!error) {
         error = await guardarCondicionesOrden()
@@ -210,6 +213,26 @@ async function formStepHandler(step: number): Promise<boolean> {
       error = true
       break
   }
+
+  return error
+}
+
+async function cargarArchivos(): Promise<boolean> {
+  const payload = new FormData()
+  // console.log(form.value[9].fields)
+  // return true
+  payload.set('ine', form.value[9].fields[1].value[0].file)
+  payload.set('comprobante', form.value[9].fields[0].value[0].file)
+
+  const { error, message, data } = await handleRequestByEndpoint(
+    'POST',
+    '/s3/upload',
+    payload,
+  )
+
+  message?.display()
+
+  console.log(data)
 
   return error
 }
@@ -227,7 +250,7 @@ async function actualizarTrainProcess(trainprocess: number): Promise<boolean> {
 
 async function guardarCondicionesOrden(): Promise<boolean> {
   const payload = {
-    datos11condiciones: { ...payloadInfoCreditoWeb, ...getFormStepValues(10) },
+    datos11condiciones: { ...payloadInfoCreditoWeb, ...getFormStepValues(11) },
     solicitudv3: { idsolicitud: idsolicitud.value },
   }
 
@@ -242,12 +265,17 @@ async function obtenerPromocionesDisponibles(): Promise<void> {
   }
 
   const { data } = await nuevaOrden.obtenerPromocionesDisponibles(payload)
+  console.log(data)
 
   catPromociones.value = data.promociones.map(
     (promo: { id: number; nombre: string }) => ({
       value: promo.id,
       label: promo.nombre,
     }),
+  )
+  console.log(
+    '🚀 ~ obtenerPromocionesDisponibles ~ catPromociones.value:',
+    catPromociones.value,
   )
 }
 
@@ -387,11 +415,16 @@ async function registrarUsuario(): Promise<boolean> {
   const { rfc, celular } = getFormStepValues(1)
   const payload = { contrasena: password, rfc, celular }
 
-  const { error } = await handleRequestByEndpoint(
+  const { error, data } = await handleRequestByEndpoint(
     'POST',
     '/auth/signup',
     payload,
   )
+
+  if (data.token && typeof data.token === 'string') {
+    setJWT(data.token)
+    appState.setUser(data)
+  }
 
   return error
 }

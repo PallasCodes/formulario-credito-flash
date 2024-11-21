@@ -135,11 +135,13 @@ function onSubmitCalculadora() {
         v-model="form.clientePrevio"
         type="radio"
         label="¿Ya eres cliente intermercado?"
-        :classes="{ outer: 'w-full !max-w-[100%]', input: 'radio' }"
+        :classes="{
+          outer: 'w-full !max-w-[100%]',
+          inner: 'radio',
+        }"
         :options="catSiNo"
         validation="required"
         horizontal
-        class="radio"
       />
 
       <section class="text-sm sm:text-base">

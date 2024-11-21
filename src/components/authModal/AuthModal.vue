@@ -66,8 +66,6 @@ async function handleSignup() {
   message?.display()
 
   if (error) return
-
-  console.log(data)
 }
 
 function register() {
