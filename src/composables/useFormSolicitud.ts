@@ -105,7 +105,7 @@ export function useFormSolicitud() {
             { value: 'M', label: 'Masculino' },
             { value: 'F', label: 'Femenino' },
           ],
-          value: null,
+          value: 'M',
         },
         {
           label: 'Fecha de nacimiento',
@@ -186,7 +186,7 @@ export function useFormSolicitud() {
         },
         {
           label: 'Contraseña',
-          value: null,
+          value: '.Password123',
           name: 'password',
           rules: 'required|length:6,16',
           type: 'password',
@@ -202,7 +202,7 @@ export function useFormSolicitud() {
         },
         {
           label: 'Repetir contraseña',
-          value: null,
+          value: '.Password123',
           name: 'password_confirm',
           rules: 'required|confirm',
           type: 'password',
@@ -248,7 +248,7 @@ export function useFormSolicitud() {
           name: 'curp',
           type: 'text',
           rules: [['required'], curp],
-          value: null,
+          value: 'TOMB971024HDFRDR00',
           uppercase: true,
           validationMessages: {
             matches:
@@ -270,7 +270,7 @@ export function useFormSolicitud() {
           name: 'fechaexpedicion',
           type: 'date',
           rules: [['required'], dateBeforeToday()],
-          value: null,
+          value: '2024-10-10',
           validationMessages: {
             date_before:
               'La fecha de expedición no puede ser mayor al día actual',
@@ -288,7 +288,7 @@ export function useFormSolicitud() {
           name: 'claveidentificacionoficial',
           type: 'text',
           rules: 'required|length:13,13',
-          value: null,
+          value: '0747116375842',
         },
         {
           label: 'NSS',
@@ -306,7 +306,7 @@ export function useFormSolicitud() {
           label: 'Número de personal',
           name: 'ndp',
           type: 'text',
-          value: null,
+          value: '2560',
           rules: 'required',
         },
         {
@@ -331,7 +331,7 @@ export function useFormSolicitud() {
           label: 'Fecha de contratación',
           name: 'fechacontratacion',
           type: 'date',
-          value: null,
+          value: '2018-10-10',
           rules: [['required'], dateBeforeToday()],
           validationMessages: {
             date_before: 'La fecha de contratación debe ser actual',
@@ -408,7 +408,7 @@ export function useFormSolicitud() {
               form.value[5].fields[4].items = catalogo
             },
           },
-          value: null,
+          value: '91000',
         },
         {
           label: 'Colonia',
@@ -663,7 +663,7 @@ export function useFormSolicitud() {
           name: 'clabe',
           type: 'text',
           rules: 'required|number|length:16,16',
-          value: '012548798785469695',
+          value: '0125487987854696',
         },
         {
           label: 'Categoría',
@@ -718,7 +718,7 @@ export function useFormSolicitud() {
           label: 'Percepciones',
           type: 'number',
           rules: 'required',
-          value: 0,
+          value: 9999,
           name: 'q1percepciones',
           on: {
             input: (val: number) => calcLiquidez('q1percepciones', val),
@@ -753,7 +753,7 @@ export function useFormSolicitud() {
           label: 'Percepciones',
           type: 'number',
           rules: 'required',
-          value: 0,
+          value: 9999,
           name: 'q2percepciones',
           on: {
             input: (val: number) => calcLiquidez('q2percepciones', val),
@@ -763,7 +763,7 @@ export function useFormSolicitud() {
           label: 'Deducciones',
           type: 'number',
           rules: 'required',
-          value: 10000,
+          value: 0,
           name: 'q2deducciones',
           on: {
             input: (val: number) => calcLiquidez('q2deducciones', val),
@@ -779,7 +779,36 @@ export function useFormSolicitud() {
         },
       ],
     },
-    // PASO 10 - SELECCIONAR PROMOCIÓN
+    // PASO 10 - CARGAR ARCHIVOS
+    {
+      title: 'Carga de archivos',
+      fields: [
+        {
+          label: 'Comprobante de domicilio',
+          value: null,
+          name: 'comprobanteDomicilio',
+          type: 'file',
+          rules: 'required',
+          accept: 'image/png, image/jpeg, image/jpg, application/pdf',
+          suffixIcon: 'fileDoc',
+          on: {
+            change: () => {
+              console.log(form.value[9].fields[0])
+            },
+          },
+        },
+        {
+          label: 'INE',
+          value: null,
+          name: 'ine',
+          type: 'file',
+          rules: 'required',
+          accept: 'image/png, image/jpeg, image/jpg, application/pdf',
+          suffixIcon: 'fileDoc',
+        },
+      ],
+    },
+    // PASO 11 - SELECCIONAR PROMOCIÓN
     {
       title: 'Confirmar solicitud de crédito',
       btn: 'FINALIZAR',
@@ -802,7 +831,7 @@ export function useFormSolicitud() {
           on: {
             change: (e: any) => {
               seleccionarPromocion(
-                form.value[9].fields[1].value,
+                form.value[10].fields[1].value,
                 idsolicitud.value as number,
               )
             },
@@ -873,6 +902,7 @@ export function useFormSolicitud() {
   }
 
   function initStepCatalogos(step: number) {
+    console.log(step)
     form.value[step].fields.forEach((field, i) => {
       if (field.type === 'select' && !field.skipCat) {
         loadCatalogo(field, step, i)
