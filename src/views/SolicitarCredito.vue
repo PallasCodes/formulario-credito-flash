@@ -21,6 +21,7 @@ import { Message, MessageType } from '@/utils/message'
 
 // STORES
 const appState = useAppState()
+const { setLoading } = appState
 const { user } = storeToRefs(appState)
 
 // COMPOSABLES
@@ -116,32 +117,56 @@ async function formStepHandler(step: number): Promise<boolean> {
     case 1:
       break
     case 2:
+      setLoading(true)
       error = await iniciarSolicitud()
-      if (error) break
+      if (error) {
+        setLoading(false)
+        break
+      }
 
       error = await registrarInfoPersonal()
-      if (error) break
+      if (error) {
+        setLoading(false)
+        break
+      }
 
       error = await registrarUsuario()
-      if (error) break
+      if (error) {
+        setLoading(false)
+        break
+      }
       error = await registrarCreditoFlash()
 
+      setLoading(false)
       break
     case 3:
+      setLoading(true)
       error = await validarCelular()
+      setLoading(false)
       break
     case 4:
+      setLoading(true)
       error = await registrarDatosIdentificacion()
+      setLoading(false)
       break
     case 5:
+      setLoading(true)
       error = await guardarInfoLaboral()
-      if (error) break
+      if (error) {
+        setLoading(false)
+        break
+      }
 
       error = await registrarCentroTrabajo()
+      setLoading(false)
       break
     case 6:
+      setLoading(true)
       error = await guardarDomicilio()
-      if (error) break
+      if (error) {
+        setLoading(false)
+        break
+      }
 
       if (!user.value) {
         const { celular, correo } = getFormStepValues(1)
@@ -162,9 +187,11 @@ async function formStepHandler(step: number): Promise<boolean> {
           listaTelefonosCasa[0].id,
           listaEmailsPersonales[0].id,
         )
+        setLoading(false)
       }
       break
     case 7:
+      setLoading(true)
       const formData = getFormStepValues(7)
       const payload1 = {
         idreferencia: formData.idreferencia,
@@ -193,31 +220,50 @@ async function formStepHandler(step: number): Promise<boolean> {
         ref.referencias[0].id,
         ref.referencias[1].id,
       )
-
+      setLoading(false)
       break
     case 8:
+      setLoading(true)
       error = await guardarCuentaDomiciliacion()
+      setLoading(false)
       break
     case 9:
+      setLoading(true)
       error = await guardarInfoFinanciera()
+      setLoading(false)
       break
     case 10:
+      setLoading(true)
       error = await cargarArchivos()
-      if (!error) {
-        await obtenerPromocionesDisponibles()
+      if (error) {
+        setLoading(false)
+        break
       }
+      await obtenerPromocionesDisponibles()
+      setLoading(false)
       break
     case 11:
+      setLoading(true)
       error = await seleccionarPromocion()
-      if (error) break
+      if (error) {
+        setLoading(false)
+        break
+      }
 
       error = await actualizarTrainProcess(11)
-      if (error) break
+      if (error) {
+        setLoading(false)
+        break
+      }
 
       error = await guardarCondicionesOrden()
-      if (error) break
+      if (error) {
+        setLoading(false)
+        break
+      }
 
       escenario.value = Escenarios.SOLICITUD_FINALIZADA
+      setLoading(false)
       break
     default:
       error = true
@@ -499,7 +545,6 @@ async function onSiguiente() {
 
   if (!error) {
     const formElement = document.getElementById('header') as HTMLDivElement
-    console.log(formElement.getBoundingClientRect().height)
     window.scrollTo(0, formElement.getBoundingClientRect().height)
 
     if (user.value && currentStep.value == 6) {
@@ -532,6 +577,8 @@ function getFormStepValues(step: number): any {
 function handleSubmitCalculadora(payload: any) {
   escenario.value = Escenarios.FORMULARIO
   formCalculadora.value = payload
+  const formElement = document.getElementById('header') as HTMLDivElement
+  window.scrollTo(0, formElement.getBoundingClientRect().height)
 }
 
 function handleCreditoNoViable() {
@@ -546,7 +593,11 @@ function handleClientePrevio(payload: any) {
 async function handleSesionIniciada() {
   let error = await registrarCreditoFlash()
   if (!error) error = await iniciarSolicitud()
-  if (!error) escenario.value = Escenarios.FORMULARIO
+  if (!error) {
+    escenario.value = Escenarios.FORMULARIO
+    const formElement = document.getElementById('header') as HTMLDivElement
+    window.scrollTo(0, formElement.getBoundingClientRect().height)
+  }
   isModalLoginOpen.value = false
 }
 

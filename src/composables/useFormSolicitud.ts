@@ -916,7 +916,7 @@ export function useFormSolicitud() {
   }
 
   function initStepCatalogos(step: number) {
-    form.value[step].fields.forEach((field, i) => {
+    form.value[step]?.fields?.forEach((field, i) => {
       if (field.type === 'select' && !field.skipCat) {
         loadCatalogo(field, step, i)
       }
