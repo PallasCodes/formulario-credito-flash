@@ -47,7 +47,6 @@ export function useFormSolicitud() {
           validationMessages: {
             matches: 'El valor introducido no coincide con el formato de RFC',
           },
-          disabled: user.value !== null,
         },
         {
           label: 'Nombre',
@@ -662,8 +661,8 @@ export function useFormSolicitud() {
           label: 'CLABE interbancaria',
           name: 'clabe',
           type: 'text',
-          rules: 'required|number|length:16,16',
-          value: '0125487987854696',
+          rules: 'required|number|length:16,19',
+          value: '638180000168328657',
         },
         {
           label: 'Categoría',
@@ -828,20 +827,36 @@ export function useFormSolicitud() {
           rules: 'required',
           items: catPromociones,
           placeholder: 'Selecciona los plazos',
-          on: {
-            change: (e: any) => {
-              seleccionarPromocion(
-                form.value[10].fields[1].value,
-                idsolicitud.value as number,
-              )
-            },
-          },
+          skipCat: true,
+          // on: {
+          //   change: (e: any) => {
+          //     seleccionarPromocion(
+          //       form.value[10].fields[1].value,
+          //       idsolicitud.value as number,
+          //     )
+          //   },
+          // },
         },
       ],
     },
   ])
 
   // METHODS
+  async function obtenerPromocionesDisponibles(): Promise<void> {
+    const payload = {
+      solicitudv3: { idsolicitud: idsolicitud.value },
+    }
+
+    const { data } = await nuevaOrden.obtenerPromocionesDisponibles(payload)
+
+    catPromociones.value = data.promociones.map(
+      (promo: { id: number; nombre: string }) => ({
+        value: promo.id,
+        label: promo.nombre,
+      }),
+    )
+  }
+
   function calcLiquidez(campo: string, value: number) {
     if (campo === 'q1deducciones') {
       form.value[8].fields[3].value = +form.value[8].fields[1].value - +value
@@ -857,13 +872,10 @@ export function useFormSolicitud() {
     }
   }
 
-  async function seleccionarPromocion(
-    idpromocion: number,
-    idsolicitud: number,
-  ) {
+  async function seleccionarPromocion(): Promise<boolean> {
     const payload = {
-      promocion: { idpromocion },
-      solicitudv3: { idsolicitud },
+      promocion: { idpromocion: form.value[10].fields[1].value },
+      solicitudv3: { idsolicitud: idsolicitud.value },
     }
 
     const { data, error } = await nuevaOrden.seleccionarPromocion(payload)
@@ -871,6 +883,8 @@ export function useFormSolicitud() {
     if (!error) {
       Object.assign(solicitudcredito, data.solicitudcredito)
     }
+
+    return error
   }
 
   async function loadCatalogo(
@@ -902,7 +916,6 @@ export function useFormSolicitud() {
   }
 
   function initStepCatalogos(step: number) {
-    console.log(step)
     form.value[step].fields.forEach((field, i) => {
       if (field.type === 'select' && !field.skipCat) {
         loadCatalogo(field, step, i)
@@ -910,5 +923,11 @@ export function useFormSolicitud() {
     })
   }
 
-  return { form, initStepCatalogos, idsolicitud, catPromociones }
+  return {
+    form,
+    initStepCatalogos,
+    idsolicitud,
+    obtenerPromocionesDisponibles,
+    seleccionarPromocion,
+  }
 }

@@ -26,8 +26,13 @@ const { user } = storeToRefs(appState)
 // COMPOSABLES
 const apiCalls = useApiCall()
 const nuevaOrden = useNuevaOrden()
-const { form, initStepCatalogos, idsolicitud, catPromociones } =
-  useFormSolicitud()
+const {
+  form,
+  initStepCatalogos,
+  idsolicitud,
+  obtenerPromocionesDisponibles,
+  seleccionarPromocion,
+} = useFormSolicitud()
 
 const infoCentroTrabajoIpe = {
   idcentrotrabajo: -1,
@@ -109,7 +114,6 @@ async function formStepHandler(step: number): Promise<boolean> {
 
   switch (step) {
     case 1:
-      error = await registrarCreditoFlash()
       break
     case 2:
       error = await iniciarSolicitud()
@@ -119,12 +123,14 @@ async function formStepHandler(step: number): Promise<boolean> {
       if (error) break
 
       error = await registrarUsuario()
+      if (error) break
+      error = await registrarCreditoFlash()
+
       break
     case 3:
       error = await validarCelular()
       break
     case 4:
-      console.log('paso 4')
       error = await registrarDatosIdentificacion()
       break
     case 5:
@@ -202,13 +208,16 @@ async function formStepHandler(step: number): Promise<boolean> {
       }
       break
     case 11:
+      error = await seleccionarPromocion()
+      if (error) break
+
       error = await actualizarTrainProcess(11)
-      if (!error) {
-        error = await guardarCondicionesOrden()
-      }
-      if (!error) {
-        escenario.value = Escenarios.SOLICITUD_FINALIZADA
-      }
+      if (error) break
+
+      error = await guardarCondicionesOrden()
+      if (error) break
+
+      escenario.value = Escenarios.SOLICITUD_FINALIZADA
       break
     default:
       error = true
@@ -272,22 +281,6 @@ async function guardarCondicionesOrden(): Promise<boolean> {
   const { error } = await nuevaOrden.guardarCondicionesOrden(payload)
 
   return error
-}
-
-async function obtenerPromocionesDisponibles(): Promise<void> {
-  const payload = {
-    solicitudv3: { idsolicitud: idsolicitud.value },
-  }
-
-  const { data } = await nuevaOrden.obtenerPromocionesDisponibles(payload)
-  console.log(data)
-
-  catPromociones.value = data.promociones.map(
-    (promo: { id: number; nombre: string }) => ({
-      value: promo.id,
-      label: promo.nombre,
-    }),
-  )
 }
 
 async function guardarInfoFinanciera(): Promise<boolean> {
@@ -478,10 +471,14 @@ async function iniciarSolicitud(): Promise<boolean> {
 }
 
 async function registrarCreditoFlash(): Promise<boolean> {
-  const { error } = await apiCalls.registrarSolicitudCreditoFlash({
+  const payload = {
     importeSolicitado: formCalculadora.value.importeSolicitado,
     idPromocion: formCalculadora.value.idPromocion,
-  })
+    idSolicitudV3: idsolicitud.value,
+    idUsuarioCreditoFlash: user.value?.id,
+  }
+
+  const { error } = await apiCalls.registrarSolicitudCreditoFlash(payload)
 
   return error
 }
