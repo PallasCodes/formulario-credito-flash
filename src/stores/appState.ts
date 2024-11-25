@@ -1,9 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
+import type { User } from '@/interfaces/user.interface'
+
 export const useAppState = defineStore('appState', () => {
   const loading = ref<boolean>(false)
-  const user = ref(null)
+  const user = ref<User>()
 
   function setLoading(loadingState: boolean) {
     loading.value = loadingState

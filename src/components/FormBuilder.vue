@@ -47,13 +47,6 @@ function handleSubmit(step: FormStep) {
             :classes="{ form: 'card-shadow form-solicitud' }"
           >
             <div
-              v-if="loading"
-              class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-white opacity-40 z-10"
-            >
-              <img src="/loading.gif" class="block w-28 h-28 z-10" />
-            </div>
-
-            <div
               v-for="field in step.fields"
               class="form-control"
               :key="field.name"
