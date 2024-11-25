@@ -18,7 +18,7 @@ const emit = defineEmits(['close', 'sesionIniciada'])
 const form = ref({ rfc: '', contrasena: '' })
 const showForm = ref<'login' | 'signup'>('login')
 
-const { setUser } = useAppState()
+const { setUser, setLoading } = useAppState()
 
 function closeModal() {
   emit('close')
@@ -39,11 +39,13 @@ watch(
 )
 
 async function handleLogin() {
+  setLoading(true)
   const { error, data, message } = await handleRequestByEndpoint(
     'POST',
     '/auth/login',
     { ...form.value },
   )
+  setLoading(false)
 
   message?.display()
 
@@ -57,11 +59,13 @@ async function handleLogin() {
 }
 
 async function handleSignup() {
-  const { error, data, message } = await handleRequestByEndpoint(
+  setLoading(true)
+  const { error, message } = await handleRequestByEndpoint(
     'POST',
     '/auth/signup-by-rfc',
     { rfc: form.value.rfc },
   )
+  setLoading(false)
 
   message?.display()
 
@@ -89,7 +93,7 @@ function login() {
     >
       <div
         v-if="isModalOpen"
-        class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50"
+        class="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50"
         id="modal-login"
       >
         <div class="bg-white py-6 px-8 rounded-lg shadow-lg w-full max-w-lg">

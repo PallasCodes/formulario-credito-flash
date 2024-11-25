@@ -591,13 +591,17 @@ function handleClientePrevio(payload: any) {
 }
 
 async function handleSesionIniciada() {
-  let error = await registrarCreditoFlash()
-  if (!error) error = await iniciarSolicitud()
+  setLoading(true)
+  let error = await iniciarSolicitud()
+  if (!error) {
+    error = await registrarCreditoFlash()
+  }
   if (!error) {
     escenario.value = Escenarios.FORMULARIO
     const formElement = document.getElementById('header') as HTMLDivElement
     window.scrollTo(0, formElement.getBoundingClientRect().height)
   }
+  setLoading(false)
   isModalLoginOpen.value = false
 }
 

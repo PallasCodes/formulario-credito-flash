@@ -9,6 +9,11 @@ interface LoginFormProps {
 }
 
 defineProps<LoginFormProps>()
+
+function showPassword(node: any, e: Event) {
+  node.props.suffixIcon = node.props.suffixIcon === 'eye' ? 'eyeClosed' : 'eye'
+  node.props.type = node.props.type === 'password' ? 'text' : 'password'
+}
 </script>
 
 <template>
@@ -32,6 +37,8 @@ defineProps<LoginFormProps>()
         label="Contraseña"
         :classes="{ outer: 'w-full !max-w-[100%]' }"
         validation="required"
+        suffix-icon="eyeClosed"
+        @suffixIconClick="showPassword"
       />
     </FormKit>
   </div>
