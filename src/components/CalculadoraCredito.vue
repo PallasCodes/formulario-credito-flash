@@ -134,7 +134,7 @@ function onSubmitCalculadora() {
       <FormKit
         v-model="form.clientePrevio"
         type="radio"
-        label="¿Ya eres cliente intermercado?"
+        label="¿Ya eres cliente Intermercado?"
         :classes="{
           outer: 'w-full !max-w-[100%]',
           inner: 'radio',
@@ -142,6 +142,7 @@ function onSubmitCalculadora() {
         :options="catSiNo"
         validation="required"
         horizontal
+        id="radio-cliente-previo"
       />
 
       <section class="text-sm sm:text-base">

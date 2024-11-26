@@ -88,3 +88,7 @@ header {
     padding: 4px 1.5rem;
   }
 }
+
+#radio-cliente-previo ul {
+  @apply flex gap-4;
+}
