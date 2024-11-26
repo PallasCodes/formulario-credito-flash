@@ -4,15 +4,7 @@
       Solicitud finalizada
     </h1>
     <div class="text-center">
-      <p>
-        Recuerda que puedes consultar el estado de tu solicitud en nuestra
-        plataforma.
-      </p>
-      <router-link
-        to="/login"
-        class="text-sm sm:text-base bg-primary rounded text-white py-2 px-4 mt-6 inline-block"
-        >Iniciar sesión</router-link
-      >
+      <p>Te informaremos en menos de 24h sobre el estado de tu solicitud.</p>
     </div>
   </div>
 </template>

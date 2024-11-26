@@ -119,7 +119,6 @@ async function formStepHandler(step: number): Promise<boolean> {
 
   switch (step) {
     case 1:
-      // error = await checkRfc()
       break
     case 2:
       setLoading(true)
@@ -595,12 +594,41 @@ function handleClientePrevio(payload: any) {
   formCalculadora.value = payload
 }
 
+interface SolicitudFlash {
+  trainProcess: number
+  idSolicitudV3: number
+}
+
+async function getSolicitudActiva(): Promise<SolicitudFlash> {
+  const { data, error, message } = await handleRequestByEndpoint(
+    'GET',
+    '/solicitud-flash/get-solicitud-activa',
+  )
+
+  if (error) message?.display()
+
+  return data.solicitudActiva
+}
+
 async function handleSesionIniciada() {
   setLoading(true)
-  let error = await iniciarSolicitud()
-  if (!error) {
-    error = await registrarCreditoFlash()
+
+  const solicitudActiva = await getSolicitudActiva()
+  let error = false
+
+  if (!solicitudActiva) {
+    error = await iniciarSolicitud()
+    if (!error) {
+      error = await registrarCreditoFlash()
+    }
+  } else {
+    idsolicitud.value = solicitudActiva.idSolicitudV3
+    form.value[0].disabled = false
+    form.value[0].errors = []
+    form.value[0].fields[0].errors = []
+    currentStep.value = solicitudActiva.trainProcess
   }
+
   if (!error) {
     escenario.value = Escenarios.FORMULARIO
     const formElement = document.getElementById('header') as HTMLDivElement
@@ -661,15 +689,6 @@ const appMode = import.meta.env.VITE_APP_MODE
     >
       {{ form[currentStep - 1].title }}
     </h2>
-    <span class="text-center block mt-2 sm:mt-3 text-sm sm:text-base"
-      >¿Ya tienes cuenta?
-      <button
-        @click="() => (isModalLoginOpen = true)"
-        class="text-blue-600 hover:text-blue-700"
-      >
-        Inicia sesión
-      </button></span
-    >
 
     <FormBuilder
       :form="form"

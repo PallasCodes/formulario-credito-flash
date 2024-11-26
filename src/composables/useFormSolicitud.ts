@@ -12,6 +12,8 @@ import type { Catalogo } from '@/interfaces/Catalogo'
 import { useNuevaOrden } from './useNuevaOrden'
 import type { Field } from '@/interfaces/FormField'
 import { handleRequestByEndpoint } from '@/utils/handleRequest'
+import { useAppState } from '@/stores/appState'
+import { storeToRefs } from 'pinia'
 
 export function useFormSolicitud(showAuthModal: () => void) {
   // COMPOSABLES
@@ -21,6 +23,8 @@ export function useFormSolicitud(showAuthModal: () => void) {
   // STATE
   const solicitudcredito: object = {}
   const idsolicitud = ref<number>()
+  const appState = useAppState()
+  const { user } = storeToRefs(appState)
 
   // CATÁLOGOS
   interface CatalogoColonias extends Catalogo {
@@ -50,8 +54,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           },
           on: {
             input: (text: string) => {
-              console.log(text)
-              if (text.length === 13) {
+              if (text.length === 13 && !user.value) {
                 checkRfc(text.toUpperCase())
               }
             },
