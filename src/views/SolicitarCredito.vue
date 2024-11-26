@@ -115,6 +115,7 @@ async function formStepHandler(step: number): Promise<boolean> {
 
   switch (step) {
     case 1:
+      // error = await checkRfc()
       break
     case 2:
       setLoading(true)

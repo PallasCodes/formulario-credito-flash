@@ -13,6 +13,7 @@ import { useNuevaOrden } from './useNuevaOrden'
 import type { Field } from '@/interfaces/FormField'
 import { useAppState } from '@/stores/appState'
 import { storeToRefs } from 'pinia'
+import { handleRequestByEndpoint } from '@/utils/handleRequest'
 
 export function useFormSolicitud() {
   // COMPOSABLES
@@ -36,16 +37,28 @@ export function useFormSolicitud() {
     // PASO 1 - INFO PERSONAL
     {
       title: 'Información personal',
+      loading: false,
+      errors: [],
       fields: [
         {
+          // loading: true,
           label: 'RFC',
           name: 'rfc',
           type: 'text',
           rules: [['required'], rfc],
           value: null,
           uppercase: true,
+          errors: [],
           validationMessages: {
             matches: 'El valor introducido no coincide con el formato de RFC',
+          },
+          on: {
+            input: (text: string) => {
+              console.log(text)
+              if (text.length === 13) {
+                checkRfc(text.toUpperCase())
+              }
+            },
           },
         },
         {
@@ -842,6 +855,37 @@ export function useFormSolicitud() {
   ])
 
   // METHODS
+  async function checkRfc(rfc: string): Promise<void> {
+    form.value[0].fields[0].loading = true
+    form.value[0].fields[0].disabled = true
+    form.value[0].disabled = true
+
+    const { data, error, message } = await handleRequestByEndpoint(
+      'POST',
+      '/auth/check-rfc',
+      { rfc },
+    )
+
+    form.value[0].fields[0].loading = false
+    form.value[0].fields[0].disabled = false
+
+    if (error) message?.display()
+
+    if (!data.user && !data.userFlash) {
+      form.value[0].disabled = false
+      form.value[0].errors = []
+      form.value[0].fields[0].errors = []
+    } else {
+      form.value[0].errors.push(
+        'El RFC ya está registrado, debes iniciar sesión',
+      )
+      form.value[0].fields[0].errors?.push(
+        'El RFC ya está registrado, debes iniciar sesión',
+      )
+      window.alert('Debes iniciar sesión')
+    }
+  }
+
   async function obtenerPromocionesDisponibles(): Promise<void> {
     const payload = {
       solicitudv3: { idsolicitud: idsolicitud.value },

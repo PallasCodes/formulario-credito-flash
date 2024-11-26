@@ -15,7 +15,7 @@ html {
 }
 
 .form-control {
-  @apply w-full mt-3;
+  @apply w-full mt-3 relative;
 }
 
 .form-step-title {
@@ -92,3 +92,34 @@ header {
 #radio-cliente-previo ul {
   @apply flex gap-4;
 }
+
+.progress-bar-container {
+  height: 4px;       
+  background-color: #e2e8f0; 
+  position: absolute;
+  bottom: 0;          
+  left: 1px;
+  width: calc(100% - 2px);
+  overflow: hidden;  
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.progress-bar {
+  height: 100%;     
+  background-color: #2563eb; 
+  width: 100%;      
+  position: absolute;
+  left: -100%;       
+  animation: loadingBar 1s linear infinite; 
+}
+
+@keyframes loadingBar {
+  0% {
+    left: -100%;     
+  }
+  100% {
+    left: 100%;      
+  }
+}
+

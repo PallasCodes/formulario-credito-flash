@@ -22,4 +22,6 @@ export interface Field {
   errors?: any
   accept?: string
   'file-item-icon'?: string
+  loading?: boolean
+  errorMessages?: string[]
 }

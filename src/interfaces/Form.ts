@@ -6,4 +6,5 @@ export interface FormStep {
   loading?: Boolean
   btn?: string
   errors?: any
+  disabled?: boolean
 }
