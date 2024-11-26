@@ -306,7 +306,9 @@ async function cargarArchivos(): Promise<boolean> {
     payload,
   )
 
-  message?.display()
+  if (error) {
+    message?.display()
+  }
 
   return error
 }
@@ -469,11 +471,13 @@ async function registrarUsuario(): Promise<boolean> {
   const { rfc, celular } = getFormStepValues(1)
   const payload = { contrasena: password, rfc, celular }
 
-  const { error, data } = await handleRequestByEndpoint(
+  const { error, data, message } = await handleRequestByEndpoint(
     'POST',
     '/auth/signup',
     payload,
   )
+
+  if (error) message?.display()
 
   if (data.token && typeof data.token === 'string') {
     setJWT(data.token)

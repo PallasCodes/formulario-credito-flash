@@ -57,7 +57,9 @@ export function useApiCall() {
     )
 
     setLoading(false)
-    response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -73,7 +75,9 @@ export function useApiCall() {
     )
 
     setLoading(false)
-    response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -113,7 +117,9 @@ export function useApiCall() {
 
     setLoading(false)
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }

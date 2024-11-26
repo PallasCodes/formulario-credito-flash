@@ -8,8 +8,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
-
+    if (response.error) {
+      response.message?.display()
+    }
     return response
   }
 
@@ -19,7 +20,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -32,7 +35,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -40,7 +45,9 @@ export function useNuevaOrden() {
   async function guardarInfoLaboral(payload: Object): Promise<HttpResponse> {
     const response = await handleRequest(NuevaOrden.guardarInfoLaboral, payload)
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -51,7 +58,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -59,16 +68,18 @@ export function useNuevaOrden() {
   async function guardarDomicilio(payload: Object): Promise<HttpResponse> {
     const response = await handleRequest(NuevaOrden.guardarDomicilio, payload)
 
-    if (response.error) response.message?.display()
-
+    if (response.error) {
+      response.message?.display()
+    }
     return response
   }
 
   async function registrarContacto(payload: Object): Promise<HttpResponse> {
     const response = await handleRequest(NuevaOrden.registrarContacto, payload)
 
-    if (response.error) response.message?.display()
-
+    if (response.error) {
+      response.message?.display()
+    }
     return response
   }
 
@@ -78,7 +89,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -86,7 +99,9 @@ export function useNuevaOrden() {
   async function guardarReferencia(payload: Object): Promise<HttpResponse> {
     const response = await handleRequest(NuevaOrden.guardarReferencia, payload)
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -94,7 +109,9 @@ export function useNuevaOrden() {
   async function guardarReferencias(payload: Object): Promise<HttpResponse> {
     const response = await handleRequest(NuevaOrden.guardarReferencias, payload)
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -107,7 +124,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -118,7 +137,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -131,7 +152,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -139,7 +162,9 @@ export function useNuevaOrden() {
   async function continuarProceso(payload: Object): Promise<HttpResponse> {
     const response = await handleRequest(NuevaOrden.continuarProceso, payload)
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -150,7 +175,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
@@ -163,7 +190,9 @@ export function useNuevaOrden() {
       payload,
     )
 
-    if (response.error) response.message?.display()
+    if (response.error) {
+      response.message?.display()
+    }
 
     return response
   }
