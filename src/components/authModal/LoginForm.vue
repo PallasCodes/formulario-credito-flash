@@ -29,7 +29,7 @@ function showPassword(node: any, e: Event) {
         type="text"
         label="RFC"
         validation="required"
-        :classes="{ outer: 'w-full !max-w-[100%]' }"
+        :classes="{ outer: 'w-full !max-w-[100%]', input: 'uppercase' }"
       />
       <FormKit
         v-model="form.contrasena"

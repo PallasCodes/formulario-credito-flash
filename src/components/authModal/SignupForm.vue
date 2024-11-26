@@ -24,7 +24,7 @@ defineProps<LoginFormProps>()
         type="text"
         label="RFC"
         validation="required"
-        :classes="{ outer: 'w-full !max-w-[100%]' }"
+        :classes="{ outer: 'w-full !max-w-[100%]', input: 'uppercase' }"
       />
     </FormKit>
   </div>

@@ -11,16 +11,12 @@ import { useApiCall } from './useApiCall'
 import type { Catalogo } from '@/interfaces/Catalogo'
 import { useNuevaOrden } from './useNuevaOrden'
 import type { Field } from '@/interfaces/FormField'
-import { useAppState } from '@/stores/appState'
-import { storeToRefs } from 'pinia'
 import { handleRequestByEndpoint } from '@/utils/handleRequest'
 
-export function useFormSolicitud() {
+export function useFormSolicitud(showAuthModal: () => void) {
   // COMPOSABLES
   const apiCalls = useApiCall()
   const nuevaOrden = useNuevaOrden()
-  const appState = useAppState()
-  const { user } = storeToRefs(appState)
 
   // STATE
   const solicitudcredito: object = {}
@@ -882,7 +878,7 @@ export function useFormSolicitud() {
       form.value[0].fields[0].errors?.push(
         'El RFC ya está registrado, debes iniciar sesión',
       )
-      window.alert('Debes iniciar sesión')
+      showAuthModal()
     }
   }
 

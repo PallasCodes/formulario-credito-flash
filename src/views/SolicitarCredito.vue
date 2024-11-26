@@ -33,7 +33,7 @@ const {
   idsolicitud,
   obtenerPromocionesDisponibles,
   seleccionarPromocion,
-} = useFormSolicitud()
+} = useFormSolicitud(showAuthModal)
 
 const infoCentroTrabajoIpe = {
   idcentrotrabajo: -1,
@@ -110,6 +110,10 @@ watch(
 )
 
 // METHODS
+function showAuthModal() {
+  isModalLoginOpen.value = true
+}
+
 async function formStepHandler(step: number): Promise<boolean> {
   let error: boolean = false
 

@@ -63,7 +63,7 @@ async function handleSignup() {
   const { error, message } = await handleRequestByEndpoint(
     'POST',
     '/auth/signup-by-rfc',
-    { rfc: form.value.rfc },
+    { rfc: form.value.rfc.toUpperCase() },
   )
   setLoading(false)
 
