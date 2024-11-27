@@ -139,9 +139,15 @@ function msToHours(millisencods: number): string {
 }
 
 function handleRequestError(error: any) {
+  let mensaje = error?.response?.data?.mensaje?.mensaje
+  mensaje =
+    typeof mensaje === 'string'
+      ? mensaje
+      : 'Ocurrió un error, inténtalo más tarde'
+
   const message = new Message({
     mostrar: MessageComponent.TOAST,
-    mensaje: 'Ocurrió un error, inténtalo más tarde',
+    mensaje,
     dialogTitle: 'Error',
     tipo: MessageType.ERROR,
   })
