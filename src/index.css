@@ -56,12 +56,12 @@ html {
   background-position: top;
 }
 
-#vue-app .bg-primary {
+.bg-primary {
   background-color: #2b347f !important;
   border-color: #2b347f !important;
 }
 
-#vue-app .bg-primary:hover {
+.bg-primary:hover {
   background-color: #1c2574 !important;
   border-color: #1c2574 !important;
 }
