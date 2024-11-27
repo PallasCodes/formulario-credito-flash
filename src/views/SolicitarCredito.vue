@@ -100,6 +100,7 @@ const formCalculadora = ref<{
   idPromocion: number
 }>({ importeSolicitado: 0, idEntidad: 0, idPromocion: 0 })
 const isModalLoginOpen = ref<boolean>(false)
+const convenioActivo = ref<any>(null)
 
 // WATCHERS
 watch(
@@ -151,6 +152,13 @@ async function formStepHandler(step: number): Promise<boolean> {
     case 4:
       setLoading(true)
       error = await registrarDatosIdentificacion()
+
+      if (error) {
+        setLoading(false)
+        break
+      }
+
+      error = await checkConvenioActivo()
       setLoading(false)
       break
     case 5:
@@ -386,6 +394,27 @@ async function guardarReferencia(referencia: object): Promise<any> {
   return response
 }
 
+async function checkConvenioActivo(): Promise<boolean> {
+  const payload = {
+    idEntidad: formCalculadora.value.idEntidad,
+    idSolicitud: idsolicitud.value,
+  }
+
+  const { data, error, message } = await handleRequestByEndpoint(
+    'POST',
+    '/solicitud-flash/check-convenio-activo',
+    payload,
+  )
+
+  if (error) {
+    message?.display()
+  }
+
+  convenioActivo.value = data.convenioActivo
+
+  return error
+}
+
 async function guardarInfoContactos(
   idcontactocelular: number,
   idcontactotelefonocasa: number,
@@ -558,6 +587,9 @@ async function onSiguiente() {
     if (user.value && currentStep.value == 6) {
       // saltar registro de referencias si el usuario ya es cliente previo
       currentStep.value = 8
+    } else if (convenioActivo.value && currentStep.value === 4) {
+      // saltar registro de convenio si el usario ya tiene un convenio activo
+      currentStep.value += 5
     } else {
       currentStep.value += 1
     }
