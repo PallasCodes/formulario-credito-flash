@@ -646,7 +646,7 @@ const appMode = import.meta.env.VITE_APP_MODE
 </script>
 
 <template>
-  <TheHeader />
+  <!-- <TheHeader /> -->
   <div v-if="appMode === 'dev'" class="fixed bottom-6 right-6 px-2 py-1 w-20">
     <input
       type="text"
@@ -720,6 +720,6 @@ const appMode = import.meta.env.VITE_APP_MODE
     @sesion-iniciada="handleSesionIniciada"
   />
 
-  <CreditoInfo />
-  <TheFooter />
+  <!-- <CreditoInfo /> -->
+  <!-- <TheFooter /> -->
 </template>

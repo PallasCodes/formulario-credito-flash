@@ -6,71 +6,71 @@ html {
   scroll-behavior: smooth;
 }
 
-.form-field {
+#vue-app .form-field {
   @apply border-2 border-gray-400 rounded-sm block w-full px-2 py-1 text-sm text-gray-600;
 }
 
-.form-label {
+#vue-app .form-label {
   @apply block w-full font-medium mb-1;
 }
 
-.form-control {
+#vue-app .form-control {
   @apply w-full mt-3 relative;
 }
 
-.form-step-title {
+#vue-app .form-step-title {
   @apply font-bold text-sm sm:text-lg uppercase text-blue-900 text-center;
 }
 
-.step-wrapper {
+#vue-app .step-wrapper {
   @apply w-full flex-shrink-0 flex-grow-0 p-6;
   height: min-content;
 }
 
-.invalid-form {
+#vue-app .invalid-form {
   @apply border-red-700;
 }
 
-label[data-checked='true'] > .radio > span {
+#vue-app label[data-checked='true'] > .radio > span {
   background-color: #2563eb !important;
 }
 
-.radio > span {
+#vue-app .radio > span {
   width: 14px;
   height: 14px;
 }
 
-input:active {
+#vue-app input:active {
   background-color: transparent !important;
 }
 
-header {
+#vue-app header {
   background-image: url('http://intermercado.com.mx/wp-content/uploads/2020/08/loans4-sectionbg1.png');
   background-size: cover;
   background-position: bottom;
 }
 
-#login-welcome {
+#vue-app #login-welcome {
   background-image: url('http://intermercado.com.mx/wp-content/uploads/2020/08/loans4-sectionbg1.png');
   background-size: cover;
   background-position: top;
 }
 
-.bg-primary {
+#vue-app .bg-primary {
   background-color: #2b347f !important;
   border-color: #2b347f !important;
 }
 
-.bg-primary:hover {
+#vue-app .bg-primary:hover {
   background-color: #1c2574 !important;
   border-color: #1c2574 !important;
 }
 
-.card-shadow {
+#vue-app .card-shadow {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
-.form-solicitud {
+#vue-app .form-solicitud {
   width: 100%;
   flex-grow: 0;
   flex-shrink: 0;
@@ -80,46 +80,45 @@ header {
 }
 
 @media only screen and (max-width: 500px) {
-  .card-shadow {
+  #vue-app .card-shadow {
     box-shadow: none;
   }
 
-  .form-solicitud {
+  #vue-app .form-solicitud {
     padding: 4px 1.5rem;
   }
 }
 
-#radio-cliente-previo ul {
+#vue-app #radio-cliente-previo ul {
   @apply flex gap-4;
 }
 
-.progress-bar-container {
-  height: 4px;       
-  background-color: #e2e8f0; 
+#vue-app .progress-bar-container {
+  height: 4px;
+  background-color: #e2e8f0;
   position: absolute;
-  bottom: 0;          
+  bottom: 0;
   left: 1px;
   width: calc(100% - 2px);
-  overflow: hidden;  
+  overflow: hidden;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
 }
 
-.progress-bar {
-  height: 100%;     
-  background-color: #2563eb; 
-  width: 100%;      
+#vue-app .progress-bar {
+  height: 100%;
+  background-color: #2563eb;
+  width: 100%;
   position: absolute;
-  left: -100%;       
-  animation: loadingBar 1s linear infinite; 
+  left: -100%;
+  animation: loadingBar 1s linear infinite;
 }
 
 @keyframes loadingBar {
   0% {
-    left: -100%;     
+    left: -100%;
   }
   100% {
-    left: 100%;      
+    left: 100%;
   }
 }
-
