@@ -89,7 +89,18 @@ enum Escenarios {
 
 onMounted(() => {
   initStepCatalogos(0)
+  if (import.meta.env.VITE_APP_MODE !== 'dev') {
+    resetFormValues()
+  }
 })
+
+function resetFormValues() {
+  form.value.forEach((step, i) => {
+    step.fields.forEach((field, j) => {
+      form.value[i].fields[j].value = null
+    })
+  })
+}
 
 // STATE
 const currentStep = ref<number>(1)
