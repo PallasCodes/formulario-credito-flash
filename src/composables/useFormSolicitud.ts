@@ -30,7 +30,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
   interface CatalogoColonias extends Catalogo {
     city?: string
   }
-  let catColonias: CatalogoColonias[] = []
+  let catColonias: any[] = []
   const catPromociones = ref([])
 
   const form = ref<FormStep[]>([
@@ -411,12 +411,14 @@ export function useFormSolicitud(showAuthModal: () => void) {
               const catalogo = await apiCalls.getColoniasPorCP(
                 +event.srcElement._value,
               )
-              catColonias = catalogo.map((obj: any) => ({
+              console.log(catalogo)
+              const cat = catalogo.map((obj: any) => ({
                 ...obj,
-                value: obj.nombre,
-                label: obj.nombre,
+                value: obj.colonia,
+                label: obj.colonia,
               }))
-              form.value[5].fields[4].items = catalogo
+              catColonias = cat
+              form.value[5].fields[4].items = cat
             },
           },
           value: '91000',
@@ -428,14 +430,25 @@ export function useFormSolicitud(showAuthModal: () => void) {
           rules: 'required',
           items: catColonias,
           on: {
-            change: (
-              event: { srcElement: { _value: string | number } },
-              x: any,
-            ) => {
-              //   const value = catColonias.find(
-              //     (obj: any) => obj.__original === form.value[3].fields[3].value
-              //   );
-              //   form.value[3].fields[8].value = value?.city;
+            input: async (x: string) => {
+              const colonia = catColonias.find((col) => col.label === x)
+              console.log(colonia)
+              form.value[5].fields[5].value = colonia?.identidadfederativa
+              form.value[5].fields[7].value = colonia?.ciudad
+
+              const { data, error } = await handleRequestByEndpoint(
+                'GET',
+                `/catalogos/get-elementos-varios-por-codigo?codigo=1004&idFiltro=${colonia?.identidadfederativa}`,
+              )
+
+              if (!error) {
+                form.value[5].fields[6].items = data.elementos.map(
+                  (obj: any) => ({
+                    label: obj.nombre,
+                    value: obj.id,
+                  }),
+                )
+              }
             },
           },
           value: 'Centro',
@@ -444,23 +457,29 @@ export function useFormSolicitud(showAuthModal: () => void) {
         {
           label: 'Entidad federativa',
           name: 'identidadfederativa',
-          type: 'number',
+          type: 'select',
           rules: 'required',
           value: 30,
+          catCode: 1003,
+          catType: 'catvar',
+          items: [],
+          disabled: true,
         },
         {
           label: 'Municipio',
           name: 'idmunicipio',
-          type: 'number',
+          type: 'select',
           rules: 'required',
-          disabled: true,
           value: 4603,
+          items: [],
+          skipCat: true,
         },
         {
           label: 'Ciudad',
           name: 'ciudad',
           type: 'text',
           rules: 'required',
+          disabled: true,
           value: 'Xalapa',
         },
         {

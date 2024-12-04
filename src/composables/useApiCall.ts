@@ -36,13 +36,7 @@ export function useApiCall() {
       message?.display()
       return []
     } else {
-      const catalogo = data.colonias.map((obj: any) => ({
-        value: obj.identidadfederativa,
-        label: obj.colonia,
-        city: obj.ciudad,
-      }))
-
-      return catalogo
+      return data.colonias
     }
   }
 

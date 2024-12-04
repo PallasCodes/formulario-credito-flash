@@ -97,7 +97,13 @@ onMounted(() => {
 function resetFormValues() {
   form.value.forEach((step, i) => {
     step.fields.forEach((field, j) => {
-      form.value[i].fields[j].value = null
+      if (field.type !== 'hidden' && field.type !== 'readonly') {
+        form.value[i].fields[j].value = null
+      }
+
+      if (field.type === 'select') {
+        form.value[i].fields[j].placeholder = 'Selecciona una opción'
+      }
     })
   })
 }
