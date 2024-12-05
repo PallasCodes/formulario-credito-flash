@@ -27,8 +27,15 @@ const catPlazos = [
   },
 ]
 
+const entidades = {
+  ipe: {
+    '3': 295,
+    '6': 296,
+  },
+}
+
 const catDependencias = [
-  { value: 127, label: 'IPE' },
+  { value: 'ipe', label: 'IPE' },
   { value: -1, label: 'Otro' },
 ]
 
@@ -40,6 +47,11 @@ const catEstados = [
 const tasaInteres = {
   3: 29,
   6: 25,
+}
+
+const sindicatos = {
+  '296': 994,
+  '295': 995,
 }
 
 const emit = defineEmits([
@@ -60,16 +72,20 @@ function onSubmitCalculadora() {
   if (form.value.dependencia === -1 || form.value.estado === -1) {
     emit('creditoNoViable')
   } else if (form.value.clientePrevio) {
+    const idEntidad = entidades[form.value.dependencia][`${form.value.plazos}`]
     emit('clientePrevio', {
       importeSolicitado: Number(form.value.monto),
       idPromocion: form.value.plazos,
-      idEntidad: form.value.dependencia,
+      idSindicato: sindicatos[`${idEntidad}` as keyof typeof sindicatos],
+      idEntidad,
     })
   } else {
+    const idEntidad = entidades[form.value.dependencia][`${form.value.plazos}`]
     emit('submitCalculadora', {
       importeSolicitado: Number(form.value.monto),
       idPromocion: form.value.plazos,
-      idEntidad: form.value.dependencia,
+      idSindicato: sindicatos[`${idEntidad}` as keyof typeof sindicatos],
+      idEntidad,
     })
   }
 }

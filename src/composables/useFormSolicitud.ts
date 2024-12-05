@@ -32,6 +32,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
   }
   let catColonias: any[] = []
   const catPromociones = ref([])
+  // TODO: pedir celular de casa para registro en lugar del que está hardcodeado
 
   const form = ref<FormStep[]>([
     // PASO 1 - INFO PERSONAL
@@ -314,7 +315,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
       title: 'Información laboral',
       fields: [
         {
-          label: 'Número de personal',
+          label: 'Número de pensión',
           name: 'ndp',
           type: 'text',
           value: '2560',
@@ -336,7 +337,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           label: 'Sindicato/Entidad',
           name: 'idsindicato',
           type: 'hidden',
-          value: 506,
+          value: 994,
         },
         {
           label: 'Fecha de contratación',
@@ -370,7 +371,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           label: 'Entidad',
           name: 'identidad',
           type: 'hidden',
-          value: 127,
+          value: 296,
         },
       ],
     },

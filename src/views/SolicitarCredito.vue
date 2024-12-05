@@ -76,7 +76,7 @@ const payloadInfoCreditoWeb = {
   iddestinocredito: 17009,
   otrodestino: 'crédito web',
   comentario: 'crédito web',
-  periodoinicio: '202411',
+  periodoinicio: '202412',
   periodofin: null,
 }
 
@@ -115,7 +115,8 @@ const formCalculadora = ref<{
   importeSolicitado: number
   idEntidad: number
   idPromocion: number
-}>({ importeSolicitado: 0, idEntidad: 0, idPromocion: 0 })
+  idSindicato: number
+}>({ importeSolicitado: 0, idEntidad: 0, idPromocion: 0, idSindicato: 0 })
 const isModalLoginOpen = ref<boolean>(false)
 const convenioActivo = ref<any>(null)
 
@@ -494,7 +495,11 @@ async function registrarCentroTrabajo(): Promise<boolean> {
 
 async function guardarInfoLaboral(): Promise<boolean> {
   const payload = {
-    datos03infolaboral: getFormStepValues(5),
+    datos03infolaboral: {
+      ...getFormStepValues(5),
+      identidad: formCalculadora.value.idEntidad,
+      idsindicato: formCalculadora.value.idSindicato,
+    },
     solicitudv3: { idsolicitud: idsolicitud.value },
   }
 
