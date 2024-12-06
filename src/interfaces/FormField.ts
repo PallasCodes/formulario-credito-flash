@@ -24,4 +24,5 @@ export interface Field {
   'file-item-icon'?: string
   loading?: boolean
   errorMessages?: string[]
+  skipInit?: boolean
 }

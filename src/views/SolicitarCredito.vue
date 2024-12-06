@@ -97,7 +97,11 @@ onMounted(() => {
 function resetFormValues() {
   form.value.forEach((step, i) => {
     step.fields.forEach((field, j) => {
-      if (field.type !== 'hidden' && field.type !== 'readonly') {
+      if (
+        field.type !== 'hidden' &&
+        field.type !== 'readonly' &&
+        !field.skipInit
+      ) {
         form.value[i].fields[j].value = null
       }
 
@@ -639,6 +643,7 @@ function getFormStepValues(step: number): any {
 function handleSubmitCalculadora(payload: any) {
   escenario.value = Escenarios.FORMULARIO
   formCalculadora.value = payload
+  form.value[10].fields[0].value = payload.importeSolicitado
   const formElement = document.getElementById('header') as HTMLDivElement
   window.scrollTo(0, formElement.getBoundingClientRect().height)
 }
@@ -650,6 +655,7 @@ function handleCreditoNoViable() {
 function handleClientePrevio(payload: any) {
   isModalLoginOpen.value = true
   formCalculadora.value = payload
+  form.value[10].fields[0].value = payload.importeSolicitado
 }
 
 interface SolicitudFlash {

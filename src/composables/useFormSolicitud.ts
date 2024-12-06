@@ -151,10 +151,11 @@ export function useFormSolicitud(showAuthModal: () => void) {
           name: 'idnacionalidad',
           type: 'select',
           rules: 'required',
-          value: 700,
+          value: 771,
           catType: 'catvar',
           catCode: 1032,
           items: [],
+          skipInit: true,
         },
         {
           label: 'País de nacimiento',
@@ -165,6 +166,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           catType: 'catvar',
           catCode: 1002,
           items: [],
+          skipInit: true,
         },
         {
           label: 'Celular',
@@ -340,7 +342,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           value: 994,
         },
         {
-          label: 'Fecha de contratación',
+          label: 'Fecha de inicio de pensión',
           name: 'fechacontratacion',
           type: 'date',
           value: '2018-10-10',
