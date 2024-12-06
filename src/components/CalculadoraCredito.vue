@@ -34,6 +34,11 @@ const entidades = {
   },
 }
 
+const catalogoCat = {
+  3: '5,213.8%',
+  6: '3,463.8%',
+}
+
 const catDependencias = [
   { value: 'ipe', label: 'IPE' },
   { value: -1, label: 'Otro' },
@@ -72,6 +77,7 @@ function onSubmitCalculadora() {
   if (form.value.dependencia === -1 || form.value.estado === -1) {
     emit('creditoNoViable')
   } else if (form.value.clientePrevio) {
+    // @ts-ignore
     const idEntidad = entidades[form.value.dependencia][`${form.value.plazos}`]
     emit('clientePrevio', {
       importeSolicitado: Number(form.value.monto),
@@ -80,6 +86,7 @@ function onSubmitCalculadora() {
       idEntidad,
     })
   } else {
+    // @ts-ignore
     const idEntidad = entidades[form.value.dependencia][`${form.value.plazos}`]
     emit('submitCalculadora', {
       importeSolicitado: Number(form.value.monto),
@@ -163,9 +170,9 @@ function onSubmitCalculadora() {
 
       <section class="text-sm sm:text-base">
         <div class="text-center mt-6 block">
-          <span class="text-lg font-semibold">Tu pago quincenal sería de</span>
+          <span class="text-lg font-semibold">Tu pago mensual sería de</span>
           <h3 class="text-2xl text-orange-600 font-bold">
-            {{ currencyFormat.format(getPagare / (+form.plazos * 2)) }}
+            {{ currencyFormat.format((getPagare / (+form.plazos * 2)) * 2) }}
           </h3>
         </div>
 
@@ -202,7 +209,11 @@ function onSubmitCalculadora() {
             <span class="block text-sm"> Mensual sin IVA </span>
           </div>
           <div class="w-1/2">
-            <span class="block font-semibold">CAT <br />84.8%</span>
+            <span class="block font-semibold"
+              >CAT <br />{{
+                catalogoCat[form.plazos as keyof typeof catalogoCat]
+              }}</span
+            >
             <span class="block text-sm">
               Promedio sin IVA, para fines informativos y de comparación
             </span>
