@@ -61,14 +61,11 @@ export function useApiCall() {
   async function actualizarTrainProcess(
     payload: Object,
   ): Promise<HttpResponse> {
-    setLoading(true)
-
     const response = await handleRequest(
       ApiFunctions.actualizarTrainProcess,
       payload,
     )
 
-    setLoading(false)
     if (response.error) {
       response.message?.display()
     }
