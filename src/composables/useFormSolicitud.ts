@@ -414,7 +414,6 @@ export function useFormSolicitud(showAuthModal: () => void) {
               const catalogo = await apiCalls.getColoniasPorCP(
                 +event.srcElement._value,
               )
-              console.log(catalogo)
               const cat = catalogo.map((obj: any) => ({
                 ...obj,
                 value: obj.colonia,
@@ -824,11 +823,6 @@ export function useFormSolicitud(showAuthModal: () => void) {
           rules: 'required',
           accept: 'image/png, image/jpeg, image/jpg, application/pdf',
           suffixIcon: 'fileDoc',
-          on: {
-            change: () => {
-              console.log(form.value[9].fields[0])
-            },
-          },
         },
         {
           label: 'INE',
@@ -851,7 +845,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           value: 5000,
           name: 'importesolicitado',
           type: 'number',
-          rules: 'required|min:2000|max:5000|number',
+          rules: 'required|min:1000|max:5000|number',
         },
         {
           label: 'Plazos',
@@ -862,14 +856,6 @@ export function useFormSolicitud(showAuthModal: () => void) {
           items: catPromociones,
           placeholder: 'Selecciona los plazos',
           skipCat: true,
-          // on: {
-          //   change: (e: any) => {
-          //     seleccionarPromocion(
-          //       form.value[10].fields[1].value,
-          //       idsolicitud.value as number,
-          //     )
-          //   },
-          // },
         },
       ],
     },
@@ -920,6 +906,9 @@ export function useFormSolicitud(showAuthModal: () => void) {
         label: promo.nombre,
       }),
     )
+
+    form.value[10].fields[1].value =
+      catPromociones.value[catPromociones.value.length - 1].value
   }
 
   function calcLiquidez(campo: string, value: number) {
