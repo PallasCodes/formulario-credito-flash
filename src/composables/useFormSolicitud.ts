@@ -204,7 +204,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           name: 'password',
           rules: 'required|length:6,16',
           type: 'password',
-          suffixIcon: 'eyeClosed',
+          'suffix-icon': 'eyeClosed',
           on: {
             suffixIconClick: (node: any, e: Event) => {
               node.props.suffixIcon =
@@ -220,7 +220,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           name: 'password_confirm',
           rules: 'required|confirm',
           type: 'password',
-          suffixIcon: 'eyeClosed',
+          'suffix-icon': 'eyeClosed',
           on: {
             suffixIconClick: (node: any, e: Event) => {
               node.props.suffixIcon =
@@ -822,7 +822,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           type: 'file',
           rules: 'required',
           accept: 'image/png, image/jpeg, image/jpg, application/pdf',
-          suffixIcon: 'fileDoc',
+          'suffix-icon': 'fileDoc',
         },
         {
           label: 'INE',
@@ -831,7 +831,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           type: 'file',
           rules: 'required',
           accept: 'image/png, image/jpeg, image/jpg, application/pdf',
-          suffixIcon: 'fileDoc',
+          'suffix-icon': 'fileDoc',
         },
       ],
     },

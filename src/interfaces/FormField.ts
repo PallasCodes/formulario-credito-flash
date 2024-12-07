@@ -17,7 +17,7 @@ export interface Field {
   catCode?: number
   uppercase?: boolean
   prefixIcon?: string
-  suffixIcon?: string
+  'suffix-icon'?: string
   validationMessages?: object
   errors?: any
   accept?: string

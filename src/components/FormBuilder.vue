@@ -75,7 +75,7 @@ function handleSubmit(step: FormStep) {
                 :readonly="field.disabled"
                 validation-label="El campo"
               >
-                <template #suffixIcon>
+                <template #prefixIcon>
                   <div v-if="field.loading">
                     <svg
                       viewBox="0 0 24 24"
