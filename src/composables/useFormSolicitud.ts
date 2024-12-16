@@ -151,7 +151,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           name: 'idnacionalidad',
           type: 'select',
           rules: 'required',
-          value: 771,
+          value: 700,
           catType: 'catvar',
           catCode: 1032,
           items: [],
