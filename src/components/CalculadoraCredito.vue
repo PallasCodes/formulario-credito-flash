@@ -29,8 +29,8 @@ const catPlazos = [
 
 const entidades = {
   ipe: {
-    '3': 295,
-    '6': 296,
+    '3': 224,
+    '6': 225,
   },
 }
 
@@ -43,7 +43,7 @@ const catDependencias = [
   { value: 'ipe', label: 'IPE' },
   { value: -1, label: 'Otro' },
 ]
-
+// TODO: dejar de hardcodear esta info, obtenerla de una api
 const catEstados = [
   { value: 1, label: 'Veracruz' },
   { value: -1, label: 'Otro' },
@@ -55,8 +55,8 @@ const tasaInteres = {
 }
 
 const sindicatos = {
-  '296': 994,
-  '295': 995,
+  '224': 996,
+  '225': 997,
 }
 
 const emit = defineEmits([
