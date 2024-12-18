@@ -14,6 +14,7 @@ import type { Field } from '@/interfaces/FormField'
 import { handleRequestByEndpoint } from '@/utils/handleRequest'
 import { useAppState } from '@/stores/appState'
 import { storeToRefs } from 'pinia'
+import { codigosBancos } from '@/types/codigosBancos.enum'
 
 export function useFormSolicitud(showAuthModal: () => void) {
   // COMPOSABLES
@@ -700,6 +701,31 @@ export function useFormSolicitud(showAuthModal: () => void) {
           catType: 'catvar',
           catCode: 1037,
           items: [],
+          on: {
+            change: () => {
+              const banco = form.value[7].fields[0].value
+              const clabe = form.value[7].fields[1].value
+
+              if (clabe >= 3) {
+                if (banco === 0) {
+                  form.value[7].fields[1].errors = []
+                  return
+                }
+                const codigoBancoSelec =
+                  codigosBancos[
+                    form.value[7].fields[0].value as keyof typeof codigosBancos
+                  ]
+
+                if (codigoBancoSelec !== clabe.substring(0, 3)) {
+                  form.value[7].fields[1].errors = [
+                    'La CLABE no pertenece al banco seleccionado',
+                  ]
+                } else {
+                  form.value[7].fields[1].errors = []
+                }
+              }
+            },
+          },
         },
         {
           label: 'CLABE interbancaria',
@@ -707,6 +733,32 @@ export function useFormSolicitud(showAuthModal: () => void) {
           type: 'text',
           rules: 'required|number|length:16,19',
           value: '638180000168328657',
+          errors: [],
+          on: {
+            input: (val: string) => {
+              const banco = form.value[7].fields[0].value
+              const clabe = form.value[7].fields[1].value
+
+              if (val.length >= 3) {
+                if (banco === 0) {
+                  form.value[7].fields[1].errors = []
+                  return
+                }
+                const codigoBancoSelec =
+                  codigosBancos[
+                    form.value[7].fields[0].value as keyof typeof codigosBancos
+                  ]
+
+                if (codigoBancoSelec !== val.substring(0, 3)) {
+                  form.value[7].fields[1].errors = [
+                    'La CLABE no pertenece al banco seleccionado',
+                  ]
+                } else {
+                  form.value[7].fields[1].errors = []
+                }
+              }
+            },
+          },
         },
         {
           label: 'Categoría',
@@ -825,7 +877,6 @@ export function useFormSolicitud(showAuthModal: () => void) {
     // PASO 10 - CARGAR ARCHIVOS
     {
       title: 'Confirmar solicitud de crédito',
-      btn: 'FINALIZAR',
       fields: [
         {
           label: 'Importe',
@@ -849,6 +900,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
     // PASO 11 - SELECCIONAR PROMOCIÓN
     {
       title: 'Carga de archivos',
+      btn: 'FINALIZAR',
       fields: [
         {
           label: 'Comprobante de domicilio',
@@ -918,7 +970,8 @@ export function useFormSolicitud(showAuthModal: () => void) {
       }),
     )
 
-    form.value[10].fields[1].value =
+    // @ts-ignore
+    form.value[9].fields[1].value =
       catPromociones.value[catPromociones.value.length - 1].value
   }
 

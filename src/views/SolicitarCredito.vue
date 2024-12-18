@@ -64,7 +64,7 @@ const payloadInfoCreditoWeb = {
     folio: null,
     fechaventa: null,
     plazo: null,
-    descuento: 5000,
+    descuento: null,
     idtipoperiodo: null,
   },
   fechafirma: new Date().toISOString().split('T')[0],
@@ -79,6 +79,7 @@ const payloadInfoCreditoWeb = {
   periodoinicio: '202412',
   periodofin: null,
 }
+// TODO: periodoinicio y periodofin
 
 enum Escenarios {
   CALCULADORA = 'calculadora',
@@ -205,11 +206,6 @@ async function formStepHandler(step: number): Promise<boolean> {
       }
 
       const { celular, correo, telefono } = getFormStepValues(1)
-      // const [contacto1, contacto2, contacto3] = await Promise.all([
-      //   registrarContacto(telefono, 1301),
-      //   registrarContacto(celular, 1302),
-      //   registrarContacto(correo, 1305),
-      // ])
       await registrarContacto(telefono, 1301)
       await registrarContacto(celular, 1302)
       const contacto3 = await registrarContacto(correo, 1305)
@@ -610,8 +606,12 @@ async function validarCelular(): Promise<boolean> {
 }
 
 async function onSiguiente() {
-  let error: boolean = false
+  const existingError = form.value[currentStep.value - 1].fields.some(
+    (field) => field.errors?.length > 0,
+  )
+  if (existingError) return
 
+  let error: boolean = false
   error = await formStepHandler(currentStep.value)
 
   if (!error) {
@@ -652,7 +652,7 @@ function getFormStepValues(step: number): any {
 function handleSubmitCalculadora(payload: any) {
   escenario.value = Escenarios.FORMULARIO
   formCalculadora.value = payload
-  form.value[10].fields[0].value = payload.importeSolicitado
+  form.value[9].fields[0].value = payload.importeSolicitado
   const formElement = document.getElementById('header') as HTMLDivElement
   window.scrollTo(0, formElement.getBoundingClientRect().height)
 }
@@ -664,7 +664,7 @@ function handleCreditoNoViable() {
 function handleClientePrevio(payload: any) {
   isModalLoginOpen.value = true
   formCalculadora.value = payload
-  form.value[10].fields[0].value = payload.importeSolicitado
+  form.value[9].fields[0].value = payload.importeSolicitado
 }
 
 interface SolicitudFlash {
