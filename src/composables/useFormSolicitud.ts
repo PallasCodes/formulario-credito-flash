@@ -180,6 +180,17 @@ export function useFormSolicitud(showAuthModal: () => void) {
           },
         },
         {
+          label: 'Teléfono fijo',
+          name: 'telefono',
+          type: 'tel',
+          rules: 'required|length:10,12|number',
+          value: '2281237047',
+          validationMessages: {
+            number: 'El formato no es válido',
+            length: 'El formato no es válido',
+          },
+        },
+        {
           label: 'Correo electrónico',
           name: 'correo',
           type: 'email',
@@ -813,30 +824,6 @@ export function useFormSolicitud(showAuthModal: () => void) {
     },
     // PASO 10 - CARGAR ARCHIVOS
     {
-      title: 'Carga de archivos',
-      fields: [
-        {
-          label: 'Comprobante de domicilio',
-          value: null,
-          name: 'comprobanteDomicilio',
-          type: 'file',
-          rules: 'required',
-          accept: 'image/png, image/jpeg, image/jpg, application/pdf',
-          'suffix-icon': 'fileDoc',
-        },
-        {
-          label: 'INE',
-          value: null,
-          name: 'ine',
-          type: 'file',
-          rules: 'required',
-          accept: 'image/png, image/jpeg, image/jpg, application/pdf',
-          'suffix-icon': 'fileDoc',
-        },
-      ],
-    },
-    // PASO 11 - SELECCIONAR PROMOCIÓN
-    {
       title: 'Confirmar solicitud de crédito',
       btn: 'FINALIZAR',
       fields: [
@@ -856,6 +843,30 @@ export function useFormSolicitud(showAuthModal: () => void) {
           items: catPromociones,
           placeholder: 'Selecciona los plazos',
           skipCat: true,
+        },
+      ],
+    },
+    // PASO 11 - SELECCIONAR PROMOCIÓN
+    {
+      title: 'Carga de archivos',
+      fields: [
+        {
+          label: 'Comprobante de domicilio',
+          value: null,
+          name: 'comprobanteDom',
+          type: 'file',
+          rules: 'required',
+          accept: 'image/png, image/jpeg, image/jpg, application/pdf',
+          'suffix-icon': 'fileDoc',
+        },
+        {
+          label: 'Identificación',
+          value: null,
+          name: 'identificacion',
+          type: 'file',
+          rules: 'required',
+          accept: 'image/png, image/jpeg, image/jpg, application/pdf',
+          'suffix-icon': 'fileDoc',
         },
       ],
     },
@@ -928,7 +939,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
 
   async function seleccionarPromocion(): Promise<boolean> {
     const payload = {
-      promocion: { idpromocion: form.value[10].fields[1].value },
+      promocion: { idpromocion: form.value[9].fields[1].value },
       solicitudv3: { idsolicitud: idsolicitud.value },
     }
 

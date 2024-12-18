@@ -123,6 +123,8 @@ const formCalculadora = ref<{
 }>({ importeSolicitado: 0, idEntidad: 0, idPromocion: 0, idSindicato: 0 })
 const isModalLoginOpen = ref<boolean>(false)
 const convenioActivo = ref<any>(null)
+let idOrden: string | number = '-1'
+let folio: number = 0
 
 // WATCHERS
 watch(
@@ -202,27 +204,25 @@ async function formStepHandler(step: number): Promise<boolean> {
         break
       }
 
-      if (!user.value) {
-        const { celular, correo } = getFormStepValues(1)
-        const [response3] = await Promise.all([
-          registrarContacto('2281238597', 1301),
-          registrarContacto(celular, 1302),
-          registrarContacto(correo, 1305),
-        ])
+      const { celular, correo, telefono } = getFormStepValues(1)
+      const [contacto1, contacto2, contacto3] = await Promise.all([
+        registrarContacto(telefono, 1301),
+        registrarContacto(celular, 1302),
+        registrarContacto(correo, 1305),
+      ])
 
-        const {
-          listaEmailsPersonales,
-          listaTelefonosCasa,
-          listaTelefonosCelular,
-        } = response3.data.contactos
+      const {
+        listaEmailsPersonales,
+        listaTelefonosCasa,
+        listaTelefonosCelular,
+      } = contacto3.data.contactos
 
-        error = await guardarInfoContactos(
-          listaTelefonosCelular[0].id,
-          listaTelefonosCasa[0].id,
-          listaEmailsPersonales[0].id,
-        )
-        setLoading(false)
-      }
+      error = await guardarInfoContactos(
+        listaTelefonosCelular[0].id,
+        listaTelefonosCasa[0].id,
+        listaEmailsPersonales[0].id,
+      )
+      setLoading(false)
       break
     case 7:
       setLoading(true)
@@ -264,19 +264,10 @@ async function formStepHandler(step: number): Promise<boolean> {
     case 9:
       setLoading(true)
       error = await guardarInfoFinanciera()
+      if (!error) await obtenerPromocionesDisponibles()
       setLoading(false)
       break
     case 10:
-      setLoading(true)
-      error = await cargarArchivos()
-      if (error) {
-        setLoading(false)
-        break
-      }
-      await obtenerPromocionesDisponibles()
-      setLoading(false)
-      break
-    case 11:
       setLoading(true)
       error = await seleccionarPromocion()
       if (error) {
@@ -295,7 +286,15 @@ async function formStepHandler(step: number): Promise<boolean> {
         setLoading(false)
         break
       }
-
+      setLoading(false)
+      break
+    case 11:
+      setLoading(true)
+      error = await cargarArchivos()
+      if (error) {
+        setLoading(false)
+        break
+      }
       escenario.value = Escenarios.SOLICITUD_FINALIZADA
       setLoading(false)
       break
@@ -308,17 +307,17 @@ async function formStepHandler(step: number): Promise<boolean> {
 }
 
 async function cargarArchivos(): Promise<boolean> {
-  const ine = form.value[9].fields[1].value[0].file
-  const comprobante = form.value[9].fields[0].value[0].file
+  const identificacion = form.value[10].fields[1].value[0].file
+  const comprobanteDom = form.value[10].fields[0].value[0].file
 
-  if (ine.size > 5_000_000) {
+  if (identificacion.size > 5_000_000) {
     Message.displayToast(
-      'El archivo de INE debe ser menor a 1MB',
+      'El archivo de identificación debe ser menor a 1MB',
       MessageType.ERROR,
     )
     return true
   }
-  if (comprobante.size > 5_000_000) {
+  if (comprobanteDom.size > 5_000_000) {
     Message.displayToast(
       'El archivo de comprobante de domicilio debe ser menor a 1MB',
       MessageType.ERROR,
@@ -327,8 +326,9 @@ async function cargarArchivos(): Promise<boolean> {
   }
 
   const payload = new FormData()
-  payload.set('ine', ine)
-  payload.set('comprobante', comprobante)
+  payload.set('identificacion', identificacion)
+  payload.set('comprobanteDom', comprobanteDom)
+  payload.set('idOrden', `${idOrden}`)
 
   const { error, message } = await handleRequestByEndpoint(
     'POST',
@@ -356,11 +356,16 @@ async function actualizarTrainProcess(trainprocess: number): Promise<boolean> {
 
 async function guardarCondicionesOrden(): Promise<boolean> {
   const payload = {
-    datos11condiciones: { ...payloadInfoCreditoWeb, ...getFormStepValues(11) },
+    datos11condiciones: { ...payloadInfoCreditoWeb, ...getFormStepValues(10) },
     solicitudv3: { idsolicitud: idsolicitud.value },
   }
 
-  const { error } = await nuevaOrden.guardarCondicionesOrden(payload)
+  const { error, data } = await nuevaOrden.guardarCondicionesOrden(payload)
+
+  if (!error) {
+    idOrden = data.solicitud.idOrden
+    folio = data.solicitud.folio
+  }
 
   return error
 }
@@ -543,7 +548,7 @@ async function registrarUsuario(): Promise<boolean> {
 }
 
 async function registrarInfoPersonal(): Promise<boolean> {
-  const { celular, correo, ...formValues } = getFormStepValues(1)
+  const { celular, correo, telefono, ...formValues } = getFormStepValues(1)
 
   const payload = {
     datos01infopersonal: { ...formValues },
@@ -610,12 +615,13 @@ async function onSiguiente() {
     const formElement = document.getElementById('header') as HTMLDivElement
     window.scrollTo(0, formElement.getBoundingClientRect().height)
 
-    if (user.value && currentStep.value == 6) {
-      // saltar registro de referencias si el usuario ya es cliente previo
-      currentStep.value = 8
-    } else if (convenioActivo.value && currentStep.value === 4) {
+    // if (user.value && currentStep.value == 6) {
+    //   // saltar registro de referencias si el usuario ya es cliente previo
+    //   currentStep.value = 8
+    // } else
+    if (convenioActivo.value && currentStep.value === 4) {
       // saltar registro de convenio si el usario ya tiene un convenio activo
-      currentStep.value += 5
+      currentStep.value = 5
     } else {
       currentStep.value += 1
     }
@@ -766,6 +772,7 @@ const appMode = import.meta.env.VITE_APP_MODE
   <SolicitudFinalizada
     v-if="escenario === Escenarios.SOLICITUD_FINALIZADA"
     class="mt-12 mb-2 sm:my-32"
+    :folio="folio"
   />
 
   <!-- MSG CRÉDITO NO VIABLE -->
