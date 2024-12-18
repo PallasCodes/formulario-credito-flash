@@ -64,7 +64,7 @@ const payloadInfoCreditoWeb = {
     folio: null,
     fechaventa: null,
     plazo: null,
-    descuento: null,
+    descuento: 5000,
     idtipoperiodo: null,
   },
   fechafirma: new Date().toISOString().split('T')[0],
