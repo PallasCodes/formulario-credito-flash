@@ -68,7 +68,7 @@ const payloadInfoCreditoWeb = {
     idtipoperiodo: null,
   },
   fechafirma: new Date().toISOString().split('T')[0],
-  idvendedor: 18088,
+  idvendedor: 2096,
   identidadfederativafirma: 30,
   idmunicipiofirma: 4603,
   idmedioentero: 16412,
@@ -205,11 +205,14 @@ async function formStepHandler(step: number): Promise<boolean> {
       }
 
       const { celular, correo, telefono } = getFormStepValues(1)
-      const [contacto1, contacto2, contacto3] = await Promise.all([
-        registrarContacto(telefono, 1301),
-        registrarContacto(celular, 1302),
-        registrarContacto(correo, 1305),
-      ])
+      // const [contacto1, contacto2, contacto3] = await Promise.all([
+      //   registrarContacto(telefono, 1301),
+      //   registrarContacto(celular, 1302),
+      //   registrarContacto(correo, 1305),
+      // ])
+      await registrarContacto(telefono, 1301)
+      await registrarContacto(celular, 1302)
+      const contacto3 = await registrarContacto(correo, 1305)
 
       const {
         listaEmailsPersonales,
@@ -566,7 +569,7 @@ async function iniciarSolicitud(): Promise<boolean> {
       idproductoscc: 299,
       idtipoorden: 14,
       idpersonafisica: -1,
-      idvendedor: 18088,
+      idvendedor: 2096,
     },
     identidad: user.value ? formCalculadora.value.idEntidad : undefined,
   }
