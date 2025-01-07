@@ -18,6 +18,7 @@ import { useAppState } from '@/stores/appState'
 import { handleRequestByEndpoint } from '@/utils/handleRequest'
 import { setJWT } from '@/api/api'
 import { Message, MessageType } from '@/utils/message'
+import ConfirmacionContactoModal from '@/components/ConfirmacionContactoModal.vue'
 
 // STORES
 const appState = useAppState()
@@ -123,6 +124,7 @@ const formCalculadora = ref<{
   idSindicato: number
 }>({ importeSolicitado: 0, idEntidad: 0, idPromocion: 0, idSindicato: 0 })
 const isModalLoginOpen = ref<boolean>(false)
+const isModalConfirOpen = ref<boolean>(false)
 const convenioActivo = ref<any>(null)
 let idOrden: string | number = '-1'
 let folio: number = 0
@@ -205,7 +207,10 @@ async function formStepHandler(step: number): Promise<boolean> {
         break
       }
 
+      console.log(form.value[0].fields)
+
       const { celular, correo, telefono } = getFormStepValues(1)
+
       await registrarContacto(telefono, 1301)
       await registrarContacto(celular, 1302)
       const contacto3 = await registrarContacto(correo, 1305)
@@ -639,7 +644,7 @@ function getFormStepValues(step: number): any {
       values[field.name] = +field.value
     } else {
       if (field.uppercase) {
-        values[field.name] = field.value.toUpperCase()
+        values[field.name] = field.value?.toUpperCase() || field.value
       } else {
         values[field.name] = field.value
       }
@@ -700,6 +705,10 @@ async function handleSesionIniciada() {
     form.value[0].errors = []
     form.value[0].fields[0].errors = []
     currentStep.value = solicitudActiva.trainProcess
+
+    if (solicitudActiva.trainProcess === 6) {
+      isModalConfirOpen.value = true
+    }
   }
 
   if (!error) {
@@ -709,6 +718,13 @@ async function handleSesionIniciada() {
   }
   setLoading(false)
   isModalLoginOpen.value = false
+}
+
+function handleConfirmDatos(formData: any) {
+  console.log(formData)
+  form.value[0].fields[13].value = formData.celular
+  form.value[0].fields[14].value = formData.telefono
+  form.value[0].fields[15].value = formData.correo
 }
 
 const appMode = import.meta.env.VITE_APP_MODE
@@ -788,6 +804,11 @@ const appMode = import.meta.env.VITE_APP_MODE
     :is-modal-open="isModalLoginOpen"
     @close="() => (isModalLoginOpen = false)"
     @sesion-iniciada="handleSesionIniciada"
+  />
+  <ConfirmacionContactoModal
+    :is-modal-open="isModalConfirOpen"
+    @close="() => (isModalConfirOpen = false)"
+    @send="handleConfirmDatos"
   />
 
   <CreditoInfo />

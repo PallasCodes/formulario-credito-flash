@@ -922,6 +922,34 @@ export function useFormSolicitud(showAuthModal: () => void) {
         },
       ],
     },
+    // PASO 5.5 (12) - CONFIRMACIÓN DE INFO CONTACTO
+    {
+      title: 'Información de domicilio',
+      loading: false,
+      fields: [
+        {
+          label: 'Teléfono fijo',
+          name: 'telefono',
+          type: 'text',
+          rules: 'required',
+          value: '2281237058',
+        },
+        {
+          label: 'Número celular',
+          name: 'celular',
+          type: 'text',
+          rules: 'required',
+          value: '2281237048',
+        },
+        {
+          label: 'Correo electrónico',
+          name: 'correo',
+          type: 'email',
+          value: 'bernardo.torres@intermercado.com.mx',
+          rules: 'required',
+        },
+      ],
+    },
   ])
 
   // METHODS
