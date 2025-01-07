@@ -104,9 +104,9 @@ function login() {
               Para continuar es necesario que inicies sesión.
             </p>
             <p v-if="showForm == 'signup'">
-              Al registrate en nuestro portal flash te enviaremos tus
-              credenciales de inicio de sesión mediante un SMS al número celular
-              vinculado a tu cuenta Intermercado.
+              Al registrarte en nuestro portal Crédito Flash, te enviaremos tu
+              contraseña de inicio de sesión mediante un SMS al número de
+              celular registrado en tu cuenta.
             </p>
           </div>
 

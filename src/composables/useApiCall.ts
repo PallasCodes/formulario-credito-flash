@@ -83,6 +83,10 @@ export function useApiCall() {
       codigo,
     )
 
+    if (codigo === 1037) {
+      response.data.elementos[0].nombre = 'Otro'
+    }
+
     setLoading(false)
 
     return response

@@ -30,7 +30,7 @@ defineProps<LoginFormProps>()
   </div>
 
   <div class="text-sm text-gray-800 mt-4">
-    ¿Ya tienes cuenta en nuestro portal de Crédito Web?
+    ¿Ya tienes cuenta en nuestro portal de Crédito Flash?
     <button class="font-bold text-blue-600" @click="login">
       Iniciar sesión
     </button>

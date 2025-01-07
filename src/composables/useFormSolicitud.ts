@@ -290,6 +290,8 @@ export function useFormSolicitud(showAuthModal: () => void) {
           catType: 'catsis',
           catCode: 273,
           items: [],
+          disabled: true,
+          skipInit: true,
         },
         {
           label: 'Fecha de expedición',
@@ -803,7 +805,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
       title: 'Liquidez financiera',
       fields: [
         {
-          label: 'Quincena 1',
+          label: 'Mensualidad 1',
           type: 'date',
           rules: 'required',
           value: '2024-09-30',
@@ -838,7 +840,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           disabled: true,
         },
         {
-          label: 'Quincena 2',
+          label: 'Mensualidad 2',
           type: 'date',
           rules: 'required',
           value: '2021-03-14',
@@ -876,7 +878,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
     },
     // PASO 10 - CARGAR ARCHIVOS
     {
-      title: 'Confirmar solicitud de crédito',
+      title: 'Confirma el monto de tu crédito',
       fields: [
         {
           label: 'Importe',
