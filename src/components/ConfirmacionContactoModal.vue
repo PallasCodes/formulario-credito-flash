@@ -75,21 +75,21 @@ async function handleSubmit() {
               type="email"
               label="Correo"
               validation="required"
-              :classes="{ outer: 'w-full !max-w-[100%]', input: 'uppercase' }"
+              :classes="{ outer: 'w-full !max-w-[100%]' }"
             />
             <FormKit
               v-model="formData.celular"
               type="text"
               label="Celular"
               validation="required"
-              :classes="{ outer: 'w-full !max-w-[100%]', input: 'uppercase' }"
+              :classes="{ outer: 'w-full !max-w-[100%]' }"
             />
             <FormKit
               v-model="formData.telefono"
               type="text"
               label="Teléfono fijo"
               validation="required"
-              :classes="{ outer: 'w-full !max-w-[100%]', input: 'uppercase' }"
+              :classes="{ outer: 'w-full !max-w-[100%]' }"
             />
           </FormKit>
 
