@@ -582,6 +582,7 @@ async function iniciarSolicitud(): Promise<boolean> {
 
     if (user.value) {
       currentStep.value = data.convenioRegistrado ? 6 : 5
+      isModalConfirOpen.value = true
     }
   }
 
