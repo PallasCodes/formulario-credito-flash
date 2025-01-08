@@ -313,17 +313,25 @@ async function formStepHandler(step: number): Promise<boolean> {
 async function cargarArchivos(): Promise<boolean> {
   const identificacion = form.value[10].fields[1].value[0].file
   const comprobanteDom = form.value[10].fields[0].value[0].file
+  const talonPago = form.value[10].fields[2].value[0].file
 
   if (identificacion.size > 5_000_000) {
     Message.displayToast(
-      'El archivo de identificación debe ser menor a 1MB',
+      'El archivo de identificación debe ser menor a 5MB',
       MessageType.ERROR,
     )
     return true
   }
   if (comprobanteDom.size > 5_000_000) {
     Message.displayToast(
-      'El archivo de comprobante de domicilio debe ser menor a 1MB',
+      'El archivo de comprobante de domicilio debe ser menor a 5MB',
+      MessageType.ERROR,
+    )
+    return true
+  }
+  if (talonPago.size > 5_000_000) {
+    Message.displayToast(
+      'El archivo de taón de pago debe ser menor a 5MB',
       MessageType.ERROR,
     )
     return true
@@ -332,6 +340,7 @@ async function cargarArchivos(): Promise<boolean> {
   const payload = new FormData()
   payload.set('identificacion', identificacion)
   payload.set('comprobanteDom', comprobanteDom)
+  payload.set('talonPago', talonPago)
   payload.set('idOrden', `${idOrden}`)
 
   const { error, message } = await handleRequestByEndpoint(
