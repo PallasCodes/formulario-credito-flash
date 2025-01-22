@@ -342,6 +342,7 @@ async function cargarArchivos(): Promise<boolean> {
   payload.set('comprobanteDom', comprobanteDom)
   payload.set('talonPago', talonPago)
   payload.set('idOrden', `${idOrden}`)
+  payload.set('idSolicitud', `${idsolicitud.value}`)
 
   const { error, message } = await handleRequestByEndpoint(
     'POST',
