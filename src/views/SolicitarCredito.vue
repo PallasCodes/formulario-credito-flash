@@ -10,9 +10,6 @@ import FormBuilder from '@/components/FormBuilder.vue'
 import MsgCreditoNoViable from '@/components/MsgCreditoNoViable.vue'
 import CalculadoraCredito from '@/components/CalculadoraCredito.vue'
 import SolicitudFinalizada from '@/components/SolicitudFinalizada.vue'
-import TheHeader from '@/components/TheHeader.vue'
-import CreditoInfo from '@/components/CreditoInfo.vue'
-import TheFooter from '@/components/TheFooter.vue'
 import AuthModal from '@/components/authModal/AuthModal.vue'
 import { useAppState } from '@/stores/appState'
 import { handleRequestByEndpoint } from '@/utils/handleRequest'
@@ -742,8 +739,7 @@ const appMode = import.meta.env.VITE_APP_MODE
 </script>
 
 <template>
-  <TheHeader />
-  <div v-if="appMode === 'dev'" class="fixed bottom-6 right-6 px-2 py-1 w-20">
+  <div v-if="appMode === 'dev'" class="fixed bottom-6 right-6 px-2 w-20">
     <input
       type="text"
       v-model="escenario"
@@ -762,28 +758,15 @@ const appMode = import.meta.env.VITE_APP_MODE
   </div>
 
   <!-- CALCULADORA -->
-  <div
+  <CalculadoraCredito
     v-if="escenario === Escenarios.CALCULADORA"
-    class="mt-10 sm:mt-20 sm:mb-32"
-  >
-    <h3
-      class="text-center sm:mb-10 text-[25px] sm:text-4xl font-bold text-gray-800"
-    >
-      Solicita tu crédito
-    </h3>
-    <CalculadoraCredito
-      @submit-calculadora="handleSubmitCalculadora"
-      @credito-no-viable="handleCreditoNoViable"
-      @cliente-previo="handleClientePrevio"
-    />
-  </div>
+    @submit-calculadora="handleSubmitCalculadora"
+    @credito-no-viable="handleCreditoNoViable"
+    @cliente-previo="handleClientePrevio"
+  />
 
   <!-- FORMULARIO SOLICITUD -->
-  <div
-    v-if="escenario === Escenarios.FORMULARIO"
-    class="mt-10 sm:mt-20 sm:mb-32"
-    id="formulario"
-  >
+  <div v-if="escenario === Escenarios.FORMULARIO" id="formulario">
     <h2
       class="text-center text-[20px] sm:text-2xl uppercase font-bold text-blue-900"
     >
@@ -801,15 +784,11 @@ const appMode = import.meta.env.VITE_APP_MODE
   <!-- SOLICITUD FINALIZADA -->
   <SolicitudFinalizada
     v-if="escenario === Escenarios.SOLICITUD_FINALIZADA"
-    class="mt-12 mb-2 sm:my-32"
     :folio="folio"
   />
 
   <!-- MSG CRÉDITO NO VIABLE -->
-  <MsgCreditoNoViable
-    v-if="escenario === Escenarios.PROSPECTO_NO_VIABLE"
-    class="mt-12 mb-2 sm:my-32"
-  />
+  <MsgCreditoNoViable v-if="escenario === Escenarios.PROSPECTO_NO_VIABLE" />
 
   <AuthModal
     :is-modal-open="isModalLoginOpen"
@@ -821,7 +800,4 @@ const appMode = import.meta.env.VITE_APP_MODE
     @close="() => (isModalConfirOpen = false)"
     @send="handleConfirmDatos"
   />
-
-  <CreditoInfo />
-  <TheFooter />
 </template>
