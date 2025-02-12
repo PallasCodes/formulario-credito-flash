@@ -297,7 +297,7 @@ async function formStepHandler(step: number): Promise<boolean> {
         break
       }
       escenario.value = Escenarios.SOLICITUD_FINALIZADA
-      window.location.href = 'https://intermercado.mx/gracias-credito-flash/'
+      window.top.location.href = 'https://intermercado.mx/gracias-credito-flash/'
       setLoading(false)
       break
     default:

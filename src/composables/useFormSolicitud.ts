@@ -901,7 +901,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
     },
     // PASO 11 - SELECCIONAR PROMOCIÓN
     {
-      title: 'Carga de archivos',
+      title: 'Agrega los siguientes documentos',
       btn: 'FINALIZAR',
       fields: [
         {
