@@ -28,12 +28,14 @@ watch(
   () => props.isModalOpen,
   (open) => {
     if (open) {
+      window.parent.postMessage({ action: 'abrir_fondo' }, '*')
       document.body.classList.add('overflow-hidden')
       showForm.value = 'login'
     } else {
       document.body.classList.remove('overflow-hidden')
       form.value.contrasena = ''
       form.value.rfc = ''
+      window.parent.postMessage({ action: 'cerrar_fondo' }, '*')
     }
   },
 )

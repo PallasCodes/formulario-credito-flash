@@ -20,12 +20,14 @@ watch(
   () => props.isModalOpen,
   (open) => {
     if (open) {
+      window.parent.postMessage({ action: 'abrir_fondo' }, '*')
       document.body.classList.add('overflow-hidden')
     } else {
       document.body.classList.remove('overflow-hidden')
       formData.value.celular = ''
       formData.value.telefono = ''
       formData.value.correo = ''
+      window.parent.postMessage({ action: 'cerrar_fondo' }, '*')
     }
   },
 )
