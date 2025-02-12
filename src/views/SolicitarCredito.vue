@@ -297,6 +297,7 @@ async function formStepHandler(step: number): Promise<boolean> {
         break
       }
       escenario.value = Escenarios.SOLICITUD_FINALIZADA
+      window.location.href = 'https://intermercado.mx/gracias-credito-flash/'
       setLoading(false)
       break
     default:
@@ -628,13 +629,8 @@ async function onSiguiente() {
   error = await formStepHandler(currentStep.value)
 
   if (!error) {
-    const formElement = document.getElementById('header') as HTMLDivElement
-    window.scrollTo(0, formElement.getBoundingClientRect().height)
+    window.scrollTo(0, 0)
 
-    // if (user.value && currentStep.value == 6) {
-    //   // saltar registro de referencias si el usuario ya es cliente previo
-    //   currentStep.value = 8
-    // } else
     if (convenioActivo.value && currentStep.value === 4) {
       // saltar registro de convenio si el usario ya tiene un convenio activo
       currentStep.value = 5
@@ -666,8 +662,7 @@ function handleSubmitCalculadora(payload: any) {
   escenario.value = Escenarios.FORMULARIO
   formCalculadora.value = payload
   form.value[9].fields[0].value = payload.importeSolicitado
-  const formElement = document.getElementById('header') as HTMLDivElement
-  window.scrollTo(0, formElement.getBoundingClientRect().height)
+  window.scrollTo(0, 0)
 }
 
 function handleCreditoNoViable() {
