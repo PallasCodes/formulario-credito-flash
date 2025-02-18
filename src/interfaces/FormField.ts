@@ -26,4 +26,5 @@ export interface Field {
   errorMessages?: string[]
   skipInit?: boolean
   step?: string | number
+  capture?: string
 }
