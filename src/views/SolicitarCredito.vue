@@ -96,11 +96,7 @@ onMounted(() => {
 function resetFormValues() {
   form.value.forEach((step, i) => {
     step.fields.forEach((field, j) => {
-      if (
-        field.type !== 'hidden' &&
-        field.type !== 'readonly' &&
-        !field.skipInit
-      ) {
+      if (field.type !== 'hidden' && field.type !== 'readonly' && !field.skipInit) {
         form.value[i].fields[j].value = null
       }
 
@@ -204,19 +200,14 @@ async function formStepHandler(step: number): Promise<boolean> {
         break
       }
 
-      console.log(form.value[0].fields)
-
       const { celular, correo, telefono } = getFormStepValues(1)
 
       await registrarContacto(telefono, 1301)
       await registrarContacto(celular, 1302)
       const contacto3 = await registrarContacto(correo, 1305)
 
-      const {
-        listaEmailsPersonales,
-        listaTelefonosCasa,
-        listaTelefonosCelular,
-      } = contacto3.data.contactos
+      const { listaEmailsPersonales, listaTelefonosCasa, listaTelefonosCelular } =
+        contacto3.data.contactos
 
       error = await guardarInfoContactos(
         listaTelefonosCelular[0].id,
@@ -251,10 +242,7 @@ async function formStepHandler(step: number): Promise<boolean> {
       await guardarReferencia(payload1)
       const { data: ref } = await guardarReferencia(payload2)
 
-      error = await guardarReferencias(
-        ref.referencias[0].id,
-        ref.referencias[1].id,
-      )
+      error = await guardarReferencias(ref.referencias[0].id, ref.referencias[1].id)
       setLoading(false)
       break
     case 8:
@@ -298,11 +286,10 @@ async function formStepHandler(step: number): Promise<boolean> {
       }
       escenario.value = Escenarios.SOLICITUD_FINALIZADA
       if (window.top) {
-        window.top.location.href =
-          'https://intermercado.mx/gracias-credito-flash/'
+        window.top.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
         setLoading(false)
       } else {
-        window.location.href = 'https://intermercado.mx/gracias-credito-flash/'
+        window.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
       }
 
       break
@@ -348,11 +335,7 @@ async function cargarArchivos(): Promise<boolean> {
   payload.set('idOrden', `${idOrden}`)
   payload.set('idSolicitud', `${idsolicitud.value}`)
 
-  const { error, message } = await handleRequestByEndpoint(
-    'POST',
-    '/s3/upload',
-    payload,
-  )
+  const { error, message } = await handleRequestByEndpoint('POST', '/s3/upload', payload)
 
   if (error) {
     message?.display()
@@ -389,10 +372,19 @@ async function guardarCondicionesOrden(): Promise<boolean> {
 }
 
 async function guardarInfoFinanciera(): Promise<boolean> {
-  const { q1deducciones, q2deducciones, ...formValues } = getFormStepValues(9)
+  const { q1fecha, q1percepciones, q1liquido } = getFormStepValues(9)
+
+  const infoFinanciera = {
+    q1fecha,
+    q1percepciones: +q1percepciones,
+    q1liquido: +q1liquido,
+    q2fecha: q1fecha,
+    q2percepciones: +q1percepciones,
+    q2liquido: +q1liquido,
+  }
 
   const payload = {
-    datos10infofinanciera: { ...formValues },
+    datos10infofinanciera: infoFinanciera,
     solicitudv3: { idsolicitud: idsolicitud.value },
   }
 
@@ -480,10 +472,7 @@ async function guardarInfoContactos(
   return error
 }
 
-async function registrarContacto(
-  contacto: string,
-  idtipo: number,
-): Promise<any> {
+async function registrarContacto(contacto: string, idtipo: number): Promise<any> {
   const payload = {
     contacto: {
       idtipo,
@@ -730,7 +719,6 @@ async function handleSesionIniciada() {
 }
 
 function handleConfirmDatos(formData: any) {
-  console.log(formData)
   form.value[0].fields[13].value = formData.celular
   form.value[0].fields[14].value = formData.telefono
   form.value[0].fields[15].value = formData.correo
@@ -768,9 +756,7 @@ const appMode = import.meta.env.VITE_APP_MODE
 
   <!-- FORMULARIO SOLICITUD -->
   <div v-if="escenario === Escenarios.FORMULARIO" id="formulario">
-    <h2
-      class="text-center text-[20px] sm:text-2xl uppercase font-bold text-blue-900"
-    >
+    <h2 class="text-center text-[20px] sm:text-2xl uppercase font-bold text-blue-900">
       {{ form[currentStep - 1].title }}
     </h2>
 

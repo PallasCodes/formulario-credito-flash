@@ -44,10 +44,7 @@ function showPassword(node: any, e: Event) {
   </div>
 
   <p class="text-sm text-gray-800 mt-4">
-    ¿Ya eres cliente Intermercado pero aún no estás registrado en nuestra
-    plataforma de Crédito Flash? Registrate en nuestra plataforma dando
-    <button class="text-blue-600 font-bold" @click="register">
-      click aquí
-    </button>
+    ¿No tienes cuenta? Registrate en nuestra plataforma dando
+    <button class="text-blue-600 font-bold" @click="register">click aquí</button>
   </p>
 </template>

@@ -142,6 +142,7 @@ function onSubmitCalculadora() {
         help="El monto mínimo es de $1,000 y el máximo de $5,000"
         :classes="{ outer: 'w-full !max-w-[100%]' }"
         validation-label="El campo"
+        step="500"
       />
       <FormKit
         v-model="form.plazos"
@@ -196,27 +197,6 @@ function onSubmitCalculadora() {
           <div class="flex-grow">
             <span class="block font-semibold">Total a pagar</span>
             <span class="block">{{ currencyFormat.format(getPagare) }}</span>
-          </div>
-        </div>
-
-        <div class="mb-6 flex text-center">
-          <div class="w-1/2">
-            <span class="block font-semibold"
-              >Tasa de interés <br />{{
-                tasaInteres[form.plazos as keyof typeof tasaInteres].toFixed(2)
-              }}%</span
-            >
-            <span class="block text-sm"> Mensual sin IVA </span>
-          </div>
-          <div class="w-1/2">
-            <span class="block font-semibold"
-              >CAT <br />{{
-                catalogoCat[form.plazos as keyof typeof catalogoCat]
-              }}</span
-            >
-            <span class="block text-sm">
-              Promedio sin IVA, para fines informativos y de comparación
-            </span>
           </div>
         </div>
       </section>

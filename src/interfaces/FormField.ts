@@ -25,4 +25,5 @@ export interface Field {
   loading?: boolean
   errorMessages?: string[]
   skipInit?: boolean
+  step?: string | number
 }

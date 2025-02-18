@@ -1,12 +1,7 @@
 import { ref } from 'vue'
 
 import type { FormStep } from '@/interfaces/Form'
-import {
-  curp,
-  dateBeforeToday,
-  legalBirthDate,
-  rfc,
-} from '@/utils/inputValidations'
+import { curp, dateBeforeToday, legalBirthDate, rfc } from '@/utils/inputValidations'
 import { useApiCall } from './useApiCall'
 import type { Catalogo } from '@/interfaces/Catalogo'
 import { useNuevaOrden } from './useNuevaOrden'
@@ -32,7 +27,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
     city?: string
   }
   let catColonias: any[] = []
-  const catPromociones = ref([])
+  const catPromos = ref([])
   // TODO: pedir celular de casa para registro en lugar del que está hardcodeado
 
   const form = ref<FormStep[]>([
@@ -140,12 +135,12 @@ export function useFormSolicitud(showAuthModal: () => void) {
         {
           label: 'Grado de estudios',
           name: 'idgradoestudios',
-          type: 'select',
+          type: 'hidden',
           rules: 'required',
-          value: 5906,
-          catType: 'catsis',
-          catCode: 59,
+          value: 5912,
           items: [],
+          skipCat: true,
+          skipInit: true,
         },
         {
           label: 'Nacionalidad',
@@ -183,13 +178,14 @@ export function useFormSolicitud(showAuthModal: () => void) {
         {
           label: 'Teléfono fijo',
           name: 'telefono',
-          type: 'tel',
+          type: 'hidden',
           rules: 'required|length:10,12|number',
           value: '2281237047',
           validationMessages: {
             number: 'El formato no es válido',
             length: 'El formato no es válido',
           },
+          skipInit: true,
         },
         {
           label: 'Correo electrónico',
@@ -221,8 +217,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
             suffixIconClick: (node: any, e: Event) => {
               node.props.suffixIcon =
                 node.props.suffixIcon === 'eye' ? 'eyeClosed' : 'eye'
-              node.props.type =
-                node.props.type === 'password' ? 'text' : 'password'
+              node.props.type = node.props.type === 'password' ? 'text' : 'password'
             },
           },
         },
@@ -237,8 +232,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
             suffixIconClick: (node: any, e: Event) => {
               node.props.suffixIcon =
                 node.props.suffixIcon === 'eye' ? 'eyeClosed' : 'eye'
-              node.props.type =
-                node.props.type === 'password' ? 'text' : 'password'
+              node.props.type = node.props.type === 'password' ? 'text' : 'password'
             },
           },
         },
@@ -277,8 +271,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           value: 'TOMB971024HDFRDR00',
           uppercase: true,
           validationMessages: {
-            matches:
-              'El formato introducido no coincide con el formato de CURP',
+            matches: 'El formato introducido no coincide con el formato de CURP',
           },
         },
         {
@@ -300,8 +293,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           rules: [['required'], dateBeforeToday()],
           value: '2024-10-10',
           validationMessages: {
-            date_before:
-              'La fecha de expedición no puede ser mayor al día actual',
+            date_before: 'La fecha de expedición no puede ser mayor al día actual',
           },
         },
         {
@@ -422,12 +414,8 @@ export function useFormSolicitud(showAuthModal: () => void) {
           type: 'text',
           rules: 'required|number|length:5,5',
           on: {
-            change: async (event: {
-              srcElement: { _value: string | number }
-            }) => {
-              const catalogo = await apiCalls.getColoniasPorCP(
-                +event.srcElement._value,
-              )
+            change: async (event: { srcElement: { _value: string | number } }) => {
+              const catalogo = await apiCalls.getColoniasPorCP(+event.srcElement._value)
               const cat = catalogo.map((obj: any) => ({
                 ...obj,
                 value: obj.colonia,
@@ -448,7 +436,6 @@ export function useFormSolicitud(showAuthModal: () => void) {
           on: {
             input: async (x: string) => {
               const colonia = catColonias.find((col) => col.label === x)
-              console.log(colonia)
               form.value[5].fields[5].value = colonia?.identidadfederativa
               form.value[5].fields[7].value = colonia?.ciudad
 
@@ -458,12 +445,10 @@ export function useFormSolicitud(showAuthModal: () => void) {
               )
 
               if (!error) {
-                form.value[5].fields[6].items = data.elementos.map(
-                  (obj: any) => ({
-                    label: obj.nombre,
-                    value: obj.id,
-                  }),
-                )
+                form.value[5].fields[6].items = data.elementos.map((obj: any) => ({
+                  label: obj.nombre,
+                  value: obj.id,
+                }))
               }
             },
           },
@@ -530,7 +515,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
     },
     // PASO 7 - REFERENCIAS PERSONALES
     {
-      title: 'Referencias personales',
+      title: 'Captura 2 referencias personales',
       loading: false,
       errors: [],
       fields: [
@@ -552,9 +537,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           errors: [],
           on: {
             change: () => {
-              if (
-                form.value[6].fields[1].value === form.value[6].fields[10].value
-              ) {
+              if (form.value[6].fields[1].value === form.value[6].fields[10].value) {
                 form.value[6].errors = [
                   'No puedes registrar dos referencias con el mismo parentesco',
                 ]
@@ -628,9 +611,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           items: [],
           on: {
             change: () => {
-              if (
-                form.value[6].fields[1].value === form.value[6].fields[10].value
-              ) {
+              if (form.value[6].fields[1].value === form.value[6].fields[10].value) {
                 form.value[6].errors = [
                   'No puedes registrar dos referencias con el mismo parentesco',
                 ]
@@ -692,7 +673,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
     },
     // PASO 8 - CUENTA TRANSFERENCIA Y DOMICILIACION
     {
-      title: 'Cuenta de transferencia y domiciliación',
+      title: 'Registra la Cuenta donde depositaremos tu crédito',
       fields: [
         {
           label: 'Banco',
@@ -802,17 +783,17 @@ export function useFormSolicitud(showAuthModal: () => void) {
     },
     // PASO 9 - LIQUIDEZ FINANCIERA
     {
-      title: 'Liquidez financiera',
+      title: 'Información de tu último talón de pago',
       fields: [
         {
-          label: 'Mensualidad 1',
+          label: 'Fecha de pago de tu pensión',
           type: 'date',
           rules: 'required',
           value: '2024-09-30',
           name: 'q1fecha',
         },
         {
-          label: 'Percepciones',
+          label: 'Percepciones de tu talón',
           type: 'number',
           rules: 'required',
           value: 9999,
@@ -820,9 +801,10 @@ export function useFormSolicitud(showAuthModal: () => void) {
           on: {
             input: (val: number) => calcLiquidez('q1percepciones', val),
           },
+          step: 500,
         },
         {
-          label: 'Deducciones',
+          label: 'Deducciones de tu talón',
           type: 'number',
           rules: 'required',
           value: 0,
@@ -830,10 +812,11 @@ export function useFormSolicitud(showAuthModal: () => void) {
           on: {
             input: (val: number) => calcLiquidez('q1deducciones', val),
           },
+          step: 500,
         },
         {
           label: 'Líquido',
-          type: 'number',
+          type: 'hidden',
           rules: 'required',
           value: 0,
           name: 'q1liquido',
@@ -841,30 +824,26 @@ export function useFormSolicitud(showAuthModal: () => void) {
         },
         {
           label: 'Mensualidad 2',
-          type: 'date',
+          type: 'hidden',
           rules: 'required',
           value: '2021-03-14',
           name: 'q2fecha',
         },
         {
           label: 'Percepciones',
-          type: 'number',
+          type: 'hidden',
           rules: 'required',
           value: 9999,
           name: 'q2percepciones',
-          on: {
-            input: (val: number) => calcLiquidez('q2percepciones', val),
-          },
+          step: 500,
         },
         {
           label: 'Deducciones',
-          type: 'number',
+          type: 'hidden',
           rules: 'required',
           value: 0,
           name: 'q2deducciones',
-          on: {
-            input: (val: number) => calcLiquidez('q2deducciones', val),
-          },
+          step: 500,
         },
         {
           label: 'Líquido',
@@ -878,7 +857,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
     },
     // PASO 10 - CARGAR ARCHIVOS
     {
-      title: 'Confirma el monto de tu crédito',
+      title: '¿Cuánto dinero necesitas?',
       fields: [
         {
           label: 'Importe',
@@ -886,6 +865,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           name: 'importesolicitado',
           type: 'number',
           rules: 'required|min:1000|max:5000|number',
+          step: 500,
         },
         {
           label: 'Plazos',
@@ -893,7 +873,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           name: 'idpromocion',
           type: 'select',
           rules: 'required',
-          items: catPromociones,
+          items: catPromos,
           placeholder: 'Selecciona los plazos',
           skipCat: true,
         },
@@ -957,9 +937,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
       form.value[0].errors = []
       form.value[0].fields[0].errors = []
     } else {
-      form.value[0].errors.push(
-        'El RFC ya está registrado, debes iniciar sesión',
-      )
+      form.value[0].errors.push('El RFC ya está registrado, debes iniciar sesión')
       form.value[0].fields[0].errors?.push(
         'El RFC ya está registrado, debes iniciar sesión',
       )
@@ -974,15 +952,13 @@ export function useFormSolicitud(showAuthModal: () => void) {
 
     const { data } = await nuevaOrden.obtenerPromocionesDisponibles(payload)
 
-    catPromociones.value = data.promociones.map(
-      (promo: { id: number; nombre: string }) => ({
-        value: promo.id,
-        label: promo.nombre,
-      }),
-    )
+    catPromos.value = data.promociones.map((promo: { id: number; nombre: string }) => ({
+      value: promo.id,
+      label: promo.nombre,
+    }))
 
     // @ts-ignore
-    form.value[9].fields[1].value = catPromociones.value[catPromociones.value.length - 1].value
+    form.value[9].fields[1].value = catPromos.value[catPromos.value.length - 1].value
   }
 
   function calcLiquidez(campo: string, value: number) {
@@ -1023,15 +999,11 @@ export function useFormSolicitud(showAuthModal: () => void) {
     let catalogo = []
 
     if (field.catType === 'catsis') {
-      const { data } = await apiCalls.getElementosPorTipo(
-        field.catCode as number,
-      )
+      const { data } = await apiCalls.getElementosPorTipo(field.catCode as number)
       catalogo = data.elementos
     }
     if (field.catType === 'catvar') {
-      const { data } = await apiCalls.getElementosVariosPorCodigo(
-        field.catCode as number,
-      )
+      const { data } = await apiCalls.getElementosVariosPorCodigo(field.catCode as number)
       catalogo = data.elementos
     }
 
