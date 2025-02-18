@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
 import { useAppState } from './stores/appState'
 import { storeToRefs } from 'pinia'
 
 import ToastsBuilder from '@/components/ToastsBuilder.vue'
 import SpinningLoader from './components/SpinningLoader.vue'
+import SolicitarCredito from './views/SolicitarCredito.vue'
 
 const appState = useAppState()
 const { loading } = storeToRefs(appState)
@@ -13,7 +13,7 @@ const { loading } = storeToRefs(appState)
 <template>
   <div id="vue-app">
     <SpinningLoader :loading="loading" />
-    <RouterView />
+    <SolicitarCredito />
     <ToastsBuilder />
   </div>
 </template>

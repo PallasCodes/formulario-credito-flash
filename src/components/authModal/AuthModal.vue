@@ -84,75 +84,67 @@ function login() {
 </script>
 
 <template>
-  <Teleport to="body">
-    <transition
-      enter-active-class="duration-500 ease-out"
-      enter-from-class="transform opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="duration-100 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="transform opacity-0"
+  <transition
+    enter-active-class="duration-500 ease-out"
+    enter-from-class="transform opacity-0"
+    enter-to-class="opacity-100"
+    leave-active-class="duration-100 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="transform opacity-0"
+  >
+    <div
+      v-if="isModalOpen"
+      class="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50"
+      id="modal-login"
     >
-      <div
-        v-if="isModalOpen"
-        class="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50"
-        id="modal-login"
-      >
-        <div class="bg-white py-6 px-8 rounded-lg shadow-lg w-full max-w-lg">
-          <!-- Header -->
-          <div class="mb-4">
-            <h3 class="text-xl font-bold mb-1">Inicio de sesión requerido</h3>
-            <p v-if="showForm == 'login'">
-              Para continuar es necesario que inicies sesión.
-            </p>
-            <p v-if="showForm == 'signup'">
-              Al registrarte en nuestro portal Crédito Flash, te enviaremos tu
-              contraseña de inicio de sesión mediante un SMS al número de
-              celular registrado en tu cuenta.
-            </p>
-          </div>
+      <div class="bg-white py-6 px-8 rounded-lg shadow-lg w-full max-w-lg">
+        <!-- Header -->
+        <div class="mb-4">
+          <h3 class="text-xl font-bold mb-1">Inicio de sesión requerido</h3>
+          <p v-if="showForm == 'login'">
+            Para continuar es necesario que inicies sesión.
+          </p>
+          <p v-if="showForm == 'signup'">
+            Al registrarte en nuestro portal Crédito Flash, te enviaremos tu
+            contraseña de inicio de sesión mediante un SMS al número de celular
+            registrado en tu cuenta.
+          </p>
+        </div>
 
-          <LoginForm
+        <LoginForm
+          v-if="showForm === 'login'"
+          :form="form"
+          :handle-login="handleLogin"
+          :register="register"
+        />
+        <SignupForm
+          v-if="showForm === 'signup'"
+          :form="form"
+          :handle-login="handleLogin"
+          :login="login"
+        />
+
+        <!-- Footer -->
+        <div class="flex justify-end mt-6 text-sm">
+          <button @click="closeModal" class="text-gray-500 font-bold mr-3">
+            Cancelar
+          </button>
+          <button
             v-if="showForm === 'login'"
-            :form="form"
-            :handle-login="handleLogin"
-            :register="register"
-          />
-          <SignupForm
+            @click="handleLogin"
+            class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
+          >
+            Iniciar sesión
+          </button>
+          <button
             v-if="showForm === 'signup'"
-            :form="form"
-            :handle-login="handleLogin"
-            :login="login"
-          />
-
-          <!-- Footer -->
-          <div class="flex justify-end mt-6 text-sm">
-            <button @click="closeModal" class="text-gray-500 font-bold mr-3">
-              Cancelar
-            </button>
-            <button
-              v-if="showForm === 'login'"
-              @click="handleLogin"
-              class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
-            >
-              Iniciar sesión
-            </button>
-            <button
-              v-if="showForm === 'signup'"
-              @click="handleSignup"
-              class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
-            >
-              Enviar SMS
-            </button>
-          </div>
+            @click="handleSignup"
+            class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
+          >
+            Enviar SMS
+          </button>
         </div>
       </div>
-    </transition>
-  </Teleport>
+    </div>
+  </transition>
 </template>
-
-<style>
-#modal-login {
-  font-family: 'Roboto', sans-serif;
-}
-</style>

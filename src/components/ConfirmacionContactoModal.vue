@@ -41,77 +41,69 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <Teleport to="body">
-    <transition
-      enter-active-class="duration-500 ease-out"
-      enter-from-class="transform opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="duration-100 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="transform opacity-0"
+  <transition
+    enter-active-class="duration-500 ease-out"
+    enter-from-class="transform opacity-0"
+    enter-to-class="opacity-100"
+    leave-active-class="duration-100 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="transform opacity-0"
+  >
+    <div
+      v-if="isModalOpen"
+      class="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50"
+      id="modal-login"
     >
-      <div
-        v-if="isModalOpen"
-        class="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50"
-        id="modal-login"
-      >
-        <div class="bg-white py-6 px-8 rounded-lg shadow-lg w-full max-w-lg">
-          <!-- Header -->
-          <div class="mb-4">
-            <h3 class="text-xl font-bold mb-1">Confirmación de datos</h3>
-            <p>
-              Antes de continuar con la solicitud es necesario que confirmes tus
-              datos de contacto
-            </p>
-          </div>
+      <div class="bg-white py-6 px-8 rounded-lg shadow-lg w-full max-w-lg">
+        <!-- Header -->
+        <div class="mb-4">
+          <h3 class="text-xl font-bold mb-1">Confirmación de datos</h3>
+          <p>
+            Antes de continuar con la solicitud es necesario que confirmes tus
+            datos de contacto
+          </p>
+        </div>
 
-          <!-- FORM -->
+        <!-- FORM -->
+        <FormKit
+          type="form"
+          :actions="false"
+          :classes="{ form: 'mb-6' }"
+          @submit="handleSubmit"
+        >
           <FormKit
-            type="form"
-            :actions="false"
-            :classes="{ form: 'mb-6' }"
-            @submit="handleSubmit"
-          >
-            <FormKit
-              v-model="formData.correo"
-              type="email"
-              label="Correo"
-              validation="required"
-              :classes="{ outer: 'w-full !max-w-[100%]' }"
-            />
-            <FormKit
-              v-model="formData.celular"
-              type="text"
-              label="Celular"
-              validation="required"
-              :classes="{ outer: 'w-full !max-w-[100%]' }"
-            />
-            <FormKit
-              v-model="formData.telefono"
-              type="text"
-              label="Teléfono fijo"
-              validation="required"
-              :classes="{ outer: 'w-full !max-w-[100%]' }"
-            />
-          </FormKit>
+            v-model="formData.correo"
+            type="email"
+            label="Correo"
+            validation="required"
+            :classes="{ outer: 'w-full !max-w-[100%]' }"
+          />
+          <FormKit
+            v-model="formData.celular"
+            type="text"
+            label="Celular"
+            validation="required"
+            :classes="{ outer: 'w-full !max-w-[100%]' }"
+          />
+          <FormKit
+            v-model="formData.telefono"
+            type="text"
+            label="Teléfono fijo"
+            validation="required"
+            :classes="{ outer: 'w-full !max-w-[100%]' }"
+          />
+        </FormKit>
 
-          <!-- Footer -->
-          <div class="flex justify-end mt-6 text-sm">
-            <button
-              @click="handleSubmit"
-              class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
-            >
-              Enviar
-            </button>
-          </div>
+        <!-- Footer -->
+        <div class="flex justify-end mt-6 text-sm">
+          <button
+            @click="handleSubmit"
+            class="bg-primary text-white px-4 py-2 rounded ml-2 font-bold"
+          >
+            Enviar
+          </button>
         </div>
       </div>
-    </transition>
-  </Teleport>
+    </div>
+  </transition>
 </template>
-
-<style>
-#modal-login {
-  font-family: 'Roboto', sans-serif;
-}
-</style>

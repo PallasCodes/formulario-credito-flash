@@ -982,8 +982,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
     )
 
     // @ts-ignore
-    form.value[9].fields[1].value =
-      catPromociones.value[catPromociones.value.length - 1].value
+    form.value[9].fields[1].value = catPromociones.value[catPromociones.value.length - 1].value
   }
 
   function calcLiquidez(campo: string, value: number) {

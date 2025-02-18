@@ -4,14 +4,14 @@ import { plugin, defaultConfig } from '@formkit/vue'
 
 import config from './formkit.config'
 import App from './App.vue'
-import router from './router'
 
 import './index.css'
 
 const app = createApp(App)
 
 app.use(createPinia())
-app.use(router)
 app.use(plugin, defaultConfig(config))
 
 app.mount('#vue-app')
+
+console.log('vue app mounted')
