@@ -28,25 +28,22 @@ watch(
   () => props.isModalOpen,
   (open) => {
     if (open) {
-      window.parent.postMessage({ action: 'abrir_fondo' }, '*')
       document.body.classList.add('overflow-hidden')
       showForm.value = 'login'
     } else {
       document.body.classList.remove('overflow-hidden')
       form.value.contrasena = ''
       form.value.rfc = ''
-      window.parent.postMessage({ action: 'cerrar_fondo' }, '*')
+      emit('close')
     }
   },
 )
 
 async function handleLogin() {
   setLoading(true)
-  const { error, data, message } = await handleRequestByEndpoint(
-    'POST',
-    '/auth/login',
-    { ...form.value },
-  )
+  const { error, data, message } = await handleRequestByEndpoint('POST', '/auth/login', {
+    ...form.value,
+  })
   setLoading(false)
 
   message?.display()
@@ -105,9 +102,8 @@ function login() {
             Para continuar es necesario que inicies sesión.
           </p>
           <p v-if="showForm == 'signup'">
-            Al registrarte en nuestro portal Crédito Flash, te enviaremos tu
-            contraseña de inicio de sesión mediante un SMS al número de celular
-            registrado en tu cuenta.
+            Al registrarte en nuestro portal Crédito Flash, te enviaremos tu contraseña de
+            inicio de sesión mediante un SMS al número de celular registrado en tu cuenta.
           </p>
         </div>
 

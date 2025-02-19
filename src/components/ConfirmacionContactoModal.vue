@@ -11,23 +11,20 @@ const props = defineProps<ModalProps>()
 const emit = defineEmits(['close', 'send'])
 
 // STATE
-const formData = ref({ correo: '', celular: '', telefono: '' })
+const formData = ref({ correo: '', celular: '' })
 
 const { setLoading } = useAppState()
-const { form } = useFormSolicitud(() => {})
 
 watch(
   () => props.isModalOpen,
   (open) => {
     if (open) {
-      window.parent.postMessage({ action: 'abrir_fondo' }, '*')
       document.body.classList.add('overflow-hidden')
     } else {
       document.body.classList.remove('overflow-hidden')
       formData.value.celular = ''
-      formData.value.telefono = ''
       formData.value.correo = ''
-      window.parent.postMessage({ action: 'cerrar_fondo' }, '*')
+      emit('close')
     }
   },
 )
@@ -59,8 +56,8 @@ async function handleSubmit() {
         <div class="mb-4">
           <h3 class="text-xl font-bold mb-1">Confirmación de datos</h3>
           <p>
-            Antes de continuar con la solicitud es necesario que confirmes tus
-            datos de contacto
+            Antes de continuar con la solicitud es necesario que confirmes tus datos de
+            contacto
           </p>
         </div>
 
@@ -82,13 +79,6 @@ async function handleSubmit() {
             v-model="formData.celular"
             type="text"
             label="Celular"
-            validation="required"
-            :classes="{ outer: 'w-full !max-w-[100%]' }"
-          />
-          <FormKit
-            v-model="formData.telefono"
-            type="text"
-            label="Teléfono fijo"
             validation="required"
             :classes="{ outer: 'w-full !max-w-[100%]' }"
           />

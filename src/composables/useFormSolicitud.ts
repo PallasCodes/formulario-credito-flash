@@ -23,9 +23,6 @@ export function useFormSolicitud(showAuthModal: () => void) {
   const { user } = storeToRefs(appState)
 
   // CATÁLOGOS
-  interface CatalogoColonias extends Catalogo {
-    city?: string
-  }
   let catColonias: any[] = []
   const catPromos = ref([])
   // TODO: pedir celular de casa para registro en lugar del que está hardcodeado
@@ -414,8 +411,13 @@ export function useFormSolicitud(showAuthModal: () => void) {
           type: 'text',
           rules: 'required|number|length:5,5',
           on: {
-            change: async (event: { srcElement: { _value: string | number } }) => {
-              const catalogo = await apiCalls.getColoniasPorCP(+event.srcElement._value)
+            input: async (x: string) => {
+              if (x.length < 5) return
+
+              const cp = +x
+              if (typeof cp !== 'number') return
+
+              const catalogo = await apiCalls.getColoniasPorCP(cp)
               const cat = catalogo.map((obj: any) => ({
                 ...obj,
                 value: obj.colonia,
@@ -887,11 +889,6 @@ export function useFormSolicitud(showAuthModal: () => void) {
           accept: 'image/png, image/jpeg, image/jpg, application/pdf',
           'suffix-icon': 'fileDoc',
           capture: 'camera',
-          on: {
-            change: (e: any) => {
-              console.log(e)
-            },
-          },
           help: 'Formatos admitidos: jpg, jpeg, pdf',
         },
         {

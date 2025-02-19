@@ -285,12 +285,7 @@ async function formStepHandler(step: number): Promise<boolean> {
         break
       }
       escenario.value = Escenarios.SOLICITUD_FINALIZADA
-      // if (window.top) {
-      //   window.top.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
-      //   setLoading(false)
-      // } else {
-      //   window.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
-      // }
+      window.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
 
       break
     default:
@@ -711,7 +706,7 @@ async function handleSesionIniciada() {
 
   if (!error) {
     escenario.value = Escenarios.FORMULARIO
-    const formElement = document.getElementById('header') as HTMLDivElement
+    const formElement = document.getElementById('vue-app') as HTMLDivElement
     window.scrollTo(0, formElement.getBoundingClientRect().height)
   }
   setLoading(false)
@@ -720,7 +715,7 @@ async function handleSesionIniciada() {
 
 function handleConfirmDatos(formData: any) {
   form.value[0].fields[13].value = formData.celular
-  form.value[0].fields[14].value = formData.telefono
+  form.value[0].fields[14].value = formData.celular
   form.value[0].fields[15].value = formData.correo
 }
 

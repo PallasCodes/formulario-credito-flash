@@ -59,15 +59,10 @@ const sindicatos = {
   '225': 997,
 }
 
-const emit = defineEmits([
-  'submitCalculadora',
-  'creditoNoViable',
-  'clientePrevio',
-])
+const emit = defineEmits(['submitCalculadora', 'creditoNoViable', 'clientePrevio'])
 
 const getPagare = computed(() => {
-  const interes =
-    tasaInteres[form.value.plazos as keyof typeof tasaInteres] / 100
+  const interes = tasaInteres[form.value.plazos as keyof typeof tasaInteres] / 100
   const capital = +form.value.monto
   const plazo = +form.value.plazos
   return capital * (interes * plazo) * 1.16 + capital

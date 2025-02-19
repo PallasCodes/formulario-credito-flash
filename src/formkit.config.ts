@@ -5,11 +5,7 @@ import { rootClasses } from '../formkit.theme'
 const legends = ['checkbox_multi', 'radio_multi', 'repeater', 'transferlist']
 
 function addAsteriskPlugin(node: any) {
-  if (
-    ['button', 'submit', 'hidden', 'group', 'list', 'meta'].includes(
-      node.props.type,
-    )
-  )
+  if (['button', 'submit', 'hidden', 'group', 'list', 'meta'].includes(node.props.type))
     return
 
   node.on('created', () => {
