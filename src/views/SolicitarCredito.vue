@@ -322,7 +322,7 @@ async function cargarArchivos(): Promise<boolean> {
   }
   if (talonPago.size > 5_000_000) {
     Message.displayToast(
-      'El archivo de taón de pago debe ser menor a 5MB',
+      'El archivo de talón de pago debe ser menor a 5MB',
       MessageType.ERROR,
     )
     return true

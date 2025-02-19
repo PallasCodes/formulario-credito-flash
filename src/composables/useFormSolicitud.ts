@@ -886,7 +886,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
           rules: 'required',
           accept: 'image/png, image/jpeg, image/jpg, application/pdf',
           'suffix-icon': 'fileDoc',
-          capture: 'environment',
+          capture: 'camera',
           on: {
             change: (e: any) => {
               console.log(e)
