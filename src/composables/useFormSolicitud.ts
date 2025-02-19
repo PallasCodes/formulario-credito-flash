@@ -849,7 +849,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
         },
       ],
     },
-    // PASO 10 - CARGAR ARCHIVOS
+    // PASO 10 - SELECCIONAR PROMOCIÓN
     {
       title: '¿Cuánto dinero necesitas?',
       fields: [
@@ -873,7 +873,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
         },
       ],
     },
-    // PASO 11 - SELECCIONAR PROMOCIÓN
+    // PASO 11 -  CARGAR ARCHIVOS
     {
       title: 'Agrega los siguientes documentos',
       btn: 'FINALIZAR',
@@ -892,6 +892,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
               console.log(e)
             },
           },
+          help: 'Formatos admitidos: jpg, jpeg, pdf',
         },
         {
           label: 'Identificación',
@@ -901,6 +902,8 @@ export function useFormSolicitud(showAuthModal: () => void) {
           rules: 'required',
           accept: 'image/png, image/jpeg, image/jpg, application/pdf',
           'suffix-icon': 'fileDoc',
+          help: 'Formatos admitidos: jpg, jpeg, pdf',
+          capture: 'environment',
         },
         {
           label: 'Talón de pago más reciente',
@@ -910,6 +913,8 @@ export function useFormSolicitud(showAuthModal: () => void) {
           rules: 'required',
           accept: 'image/png, image/jpeg, image/jpg, application/pdf',
           'suffix-icon': 'fileDoc',
+          help: 'Formatos admitidos: jpg, jpeg, pdf',
+          capture: 'environment',
         },
       ],
     },

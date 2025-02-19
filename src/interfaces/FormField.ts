@@ -27,4 +27,5 @@ export interface Field {
   skipInit?: boolean
   step?: string | number
   capture?: string
+  help?: string
 }
