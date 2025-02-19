@@ -285,12 +285,12 @@ async function formStepHandler(step: number): Promise<boolean> {
         break
       }
       escenario.value = Escenarios.SOLICITUD_FINALIZADA
-      if (window.top) {
-        window.top.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
-        setLoading(false)
-      } else {
-        window.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
-      }
+      // if (window.top) {
+      //   window.top.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
+      //   setLoading(false)
+      // } else {
+      //   window.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
+      // }
 
       break
     default:
