@@ -210,9 +210,9 @@ async function formStepHandler(step: number): Promise<boolean> {
         contacto3.data.contactos
 
       error = await guardarInfoContactos(
-        listaTelefonosCelular[0].id,
-        listaTelefonosCasa[0].id,
-        listaEmailsPersonales[0].id,
+        listaTelefonosCelular[0].idcontacto,
+        listaTelefonosCasa[0].idcontacto,
+        listaEmailsPersonales[0].idcontacto,
       )
       setLoading(false)
       break
@@ -284,9 +284,7 @@ async function formStepHandler(step: number): Promise<boolean> {
         setLoading(false)
         break
       }
-      escenario.value = Escenarios.SOLICITUD_FINALIZADA
       window.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
-
       break
     default:
       error = true
@@ -297,34 +295,43 @@ async function formStepHandler(step: number): Promise<boolean> {
 }
 
 async function cargarArchivos(): Promise<boolean> {
-  const identificacion = form.value[10].fields[1].value[0].file
   const comprobanteDom = form.value[10].fields[0].value[0].file
-  const talonPago = form.value[10].fields[2].value[0].file
+  const identificacionFrente = form.value[10].fields[1].value[0].file
+  const identificacionReverso = form.value[10].fields[2].value[0].file
+  const talonPago = form.value[10].fields[3].value[0].file
 
-  if (identificacion.size > 5_000_000) {
+  if (identificacionFrente.size > 10_000_000) {
     Message.displayToast(
-      'El archivo de identificación debe ser menor a 5MB',
+      'El archivo de identificación debe ser menor a 10MB',
       MessageType.ERROR,
     )
     return true
   }
-  if (comprobanteDom.size > 5_000_000) {
+  if (identificacionReverso.size > 10_000_000) {
     Message.displayToast(
-      'El archivo de comprobante de domicilio debe ser menor a 5MB',
+      'El archivo de identificación debe ser menor a 10MB',
       MessageType.ERROR,
     )
     return true
   }
-  if (talonPago.size > 5_000_000) {
+  if (comprobanteDom.size > 10_000_000) {
     Message.displayToast(
-      'El archivo de talón de pago debe ser menor a 5MB',
+      'El archivo de comprobante de domicilio debe ser menor a 10MB',
+      MessageType.ERROR,
+    )
+    return true
+  }
+  if (talonPago.size > 10_000_000) {
+    Message.displayToast(
+      'El archivo de talón de pago debe ser menor a 10MB',
       MessageType.ERROR,
     )
     return true
   }
 
   const payload = new FormData()
-  payload.set('identificacion', identificacion)
+  payload.set('identificacionFrente', identificacionFrente)
+  payload.set('identificacionReverso', identificacionReverso)
   payload.set('comprobanteDom', comprobanteDom)
   payload.set('talonPago', talonPago)
   payload.set('idOrden', `${idOrden}`)

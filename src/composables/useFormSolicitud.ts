@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import type { FormStep } from '@/interfaces/Form'
 import { curp, dateBeforeToday, legalBirthDate, rfc } from '@/utils/inputValidations'
 import { useApiCall } from './useApiCall'
-import type { Catalogo } from '@/interfaces/Catalogo'
+import { catMontos } from '@/types/catMontos'
 import { useNuevaOrden } from './useNuevaOrden'
 import type { Field } from '@/interfaces/FormField'
 import { handleRequestByEndpoint } from '@/utils/handleRequest'
@@ -857,11 +857,12 @@ export function useFormSolicitud(showAuthModal: () => void) {
       fields: [
         {
           label: 'Importe',
-          value: 5000,
+          value: 1000,
           name: 'importesolicitado',
-          type: 'number',
-          rules: 'required|min:1000|max:5000|number',
-          step: 500,
+          type: 'select',
+          rules: 'required',
+          items: catMontos,
+          skipCat: true,
         },
         {
           label: 'Plazos',
@@ -892,9 +893,20 @@ export function useFormSolicitud(showAuthModal: () => void) {
           help: 'Formatos admitidos: jpg, jpeg, pdf',
         },
         {
-          label: 'Identificación',
+          label: 'Identificación (frente)',
           value: null,
-          name: 'identificacion',
+          name: 'identificacionFrente',
+          type: 'file',
+          rules: 'required',
+          accept: 'image/png, image/jpeg, image/jpg, application/pdf',
+          'suffix-icon': 'fileDoc',
+          help: 'Formatos admitidos: jpg, jpeg, pdf',
+          capture: 'environment',
+        },
+        {
+          label: 'Identificación (reverso)',
+          value: null,
+          name: 'identificacionReversi',
           type: 'file',
           rules: 'required',
           accept: 'image/png, image/jpeg, image/jpg, application/pdf',
@@ -956,7 +968,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
 
     catPromos.value = data.promociones.map((promo: { id: number; nombre: string }) => ({
       value: promo.id,
-      label: promo.nombre,
+      label: promo.nombre.split('-')[1]?.trim() || promo.nombre,
     }))
 
     // @ts-ignore

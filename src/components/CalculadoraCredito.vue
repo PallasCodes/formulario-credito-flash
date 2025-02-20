@@ -2,9 +2,10 @@
 import { ref, computed } from 'vue'
 
 import { currencyFormat } from '@/utils/currencyFormat'
+import { catMontos } from '@/types/catMontos'
 
 const form = ref({
-  monto: '1000',
+  monto: 1000,
   plazos: 3,
   dependencia: undefined,
   estado: undefined,
@@ -34,11 +35,6 @@ const entidades = {
   },
 }
 
-const catalogoCat = {
-  3: '5,213.8%',
-  6: '3,463.8%',
-}
-
 const catDependencias = [
   { value: 'ipe', label: 'IPE' },
   { value: -1, label: 'Otro' },
@@ -63,7 +59,7 @@ const emit = defineEmits(['submitCalculadora', 'creditoNoViable', 'clientePrevio
 
 const getPagare = computed(() => {
   const interes = tasaInteres[form.value.plazos as keyof typeof tasaInteres] / 100
-  const capital = +form.value.monto
+  const capital = form.value.monto
   const plazo = +form.value.plazos
   return capital * (interes * plazo) * 1.16 + capital
 })
@@ -75,7 +71,7 @@ function onSubmitCalculadora() {
     // @ts-ignore
     const idEntidad = entidades[form.value.dependencia][`${form.value.plazos}`]
     emit('clientePrevio', {
-      importeSolicitado: Number(form.value.monto),
+      importeSolicitado: form.value.monto,
       idPromocion: form.value.plazos,
       idSindicato: sindicatos[`${idEntidad}` as keyof typeof sindicatos],
       idEntidad,
@@ -84,7 +80,7 @@ function onSubmitCalculadora() {
     // @ts-ignore
     const idEntidad = entidades[form.value.dependencia][`${form.value.plazos}`]
     emit('submitCalculadora', {
-      importeSolicitado: Number(form.value.monto),
+      importeSolicitado: form.value.monto,
       idPromocion: form.value.plazos,
       idSindicato: sindicatos[`${idEntidad}` as keyof typeof sindicatos],
       idEntidad,
@@ -129,15 +125,55 @@ function onSubmitCalculadora() {
         validation="required"
       />
 
-      <FormKit
-        v-model.number="form.monto"
-        type="number"
+      <!-- <FormKit
+        v-model="form.monto"
+        type="text"
         label="¿Cuánto dinero necesitas?"
-        validation="required|min:1000|max:5000"
         help="El monto mínimo es de $1,000 y el máximo de $5,000"
         :classes="{ outer: 'w-full !max-w-[100%]' }"
         validation-label="El campo"
-        step="500"
+        @input="formatCurrency"
+      >
+        <template #suffixIcon="context">
+          <button @click.prevent="() => stepDown(context)" class="mr-3 p-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-5"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+            </svg>
+          </button>
+          <button @click.prevent="() => stepUp(context)" class="p-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
+          </button>
+        </template>
+      </FormKit> -->
+      <FormKit
+        v-model="form.monto"
+        type="select"
+        label="¿Cuánto dinero necesitas?"
+        :classes="{ outer: 'w-full !max-w-[100%]' }"
+        validation="required"
+        validation-label="El campo"
+        :options="catMontos"
+        select-icon="caretDown"
       />
       <FormKit
         v-model="form.plazos"
@@ -175,16 +211,14 @@ function onSubmitCalculadora() {
         <div class="flex items-center text-center my-8">
           <div class="flex-grow">
             <span class="block font-semibold">Préstamo</span>
-            <span class="block">{{ currencyFormat.format(+form.monto) }}</span>
+            <span class="block">{{ currencyFormat.format(form.monto) }}</span>
           </div>
 
           <div class="font-bold text-xl">+</div>
 
           <div class="flex-grow">
             <span class="block font-semibold">Interéses</span>
-            <span class="block">{{
-              currencyFormat.format(getPagare - +form.monto)
-            }}</span>
+            <span class="block">{{ currencyFormat.format(getPagare - form.monto) }}</span>
           </div>
 
           <div class="font-bold text-xl">=</div>
