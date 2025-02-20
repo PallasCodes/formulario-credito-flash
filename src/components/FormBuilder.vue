@@ -46,18 +46,54 @@ function handleSubmit(step: FormStep) {
             :errors="step.errors"
             :classes="{ form: 'card-shadow form-solicitud' }"
           >
-            <div
-              v-for="field in step.fields"
-              class="form-control"
-              :key="field.name"
-            >
-              <span
-                v-if="field.type === 'readonly'"
-                :class="field.class"
-                class="block"
-              >
+            <div v-for="field in step.fields" class="form-control" :key="field.name">
+              <span v-if="field.type === 'readonly'" :class="field.class" class="block">
                 {{ field.label }}
               </span>
+              <!-- <FormKit
+                v-if="field.type === 'currency'"
+                v-model="field.value"
+                v-bind="field"
+                v-on="field.on || {}"
+                :validation="field.rules"
+                :name="field.name"
+                :classes="{
+                  input: { 'w-full': true, uppercase: field.uppercase as boolean },
+                  outer: 'w-full !max-w-[100%]',
+                }"
+                validation-label="El campo"
+              > -->
+              <!-- <template #suffixIcon="context">
+                  <button @click.prevent="() => stepDown(context)" class="mr-3 p-0">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="size-5"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                    </svg>
+                  </button>
+                  <button @click.prevent="() => stepUp(context)" class="p-0">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="size-5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>
+                  </button>
+                </template> -->
+              <!-- </FormKit> -->
               <FormKit
                 v-else
                 v-model="field.value"

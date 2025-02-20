@@ -16,6 +16,7 @@ import { handleRequestByEndpoint } from '@/utils/handleRequest'
 import { setJWT } from '@/api/api'
 import { Message, MessageType } from '@/utils/message'
 import ConfirmacionContactoModal from '@/components/ConfirmacionContactoModal.vue'
+import { currencyToInt } from '@/utils/currencyFormat'
 
 // STORES
 const appState = useAppState()
@@ -641,7 +642,9 @@ function getFormStepValues(step: number): any {
   const values: any = {}
 
   form.value[step - 1].fields.forEach((field) => {
-    if (field.type === 'number') {
+    if (field.currency) {
+      values[field.name] = currencyToInt(field.value)
+    } else if (field.type === 'number') {
       values[field.name] = +field.value
     } else {
       if (field.uppercase) {

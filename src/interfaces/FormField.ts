@@ -28,4 +28,5 @@ export interface Field {
   step?: string | number
   capture?: string
   help?: string
+  currency?: boolean
 }

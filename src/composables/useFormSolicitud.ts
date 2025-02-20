@@ -10,6 +10,7 @@ import { handleRequestByEndpoint } from '@/utils/handleRequest'
 import { useAppState } from '@/stores/appState'
 import { storeToRefs } from 'pinia'
 import { codigosBancos } from '@/types/codigosBancos.enum'
+import { formatCurrency, currencyToInt } from '@/utils/currencyFormat'
 
 export function useFormSolicitud(showAuthModal: () => void) {
   // COMPOSABLES
@@ -796,25 +797,37 @@ export function useFormSolicitud(showAuthModal: () => void) {
         },
         {
           label: 'Percepciones de tu talón',
-          type: 'number',
+          type: 'text',
           rules: 'required',
-          value: 9999,
+          value: '',
           name: 'q1percepciones',
           on: {
-            input: (val: number) => calcLiquidez('q1percepciones', val),
+            input: (val: string, node: any) => {
+              const formattedValue = formatCurrency(val)
+              if (node.value !== formattedValue) {
+                node.input(formattedValue)
+                calcLiquidez('q1percepciones', currencyToInt(formattedValue))
+              }
+            },
           },
-          step: 500,
+          currency: true,
         },
         {
           label: 'Deducciones de tu talón',
-          type: 'number',
+          type: 'text',
           rules: 'required',
-          value: 0,
+          value: '',
           name: 'q1deducciones',
           on: {
-            input: (val: number) => calcLiquidez('q1deducciones', val),
+            input: (val: string, node: any) => {
+              const formattedValue = formatCurrency(val)
+              if (node.value !== formattedValue) {
+                node.input(formattedValue)
+                calcLiquidez('q1deducciones', currencyToInt(formattedValue))
+              }
+            },
           },
-          step: 500,
+          currency: true,
         },
         {
           label: 'Líquido',
@@ -977,16 +990,16 @@ export function useFormSolicitud(showAuthModal: () => void) {
 
   function calcLiquidez(campo: string, value: number) {
     if (campo === 'q1deducciones') {
-      form.value[8].fields[3].value = +form.value[8].fields[1].value - +value
+      form.value[8].fields[3].value = currencyToInt(form.value[8].fields[1].value) - value
     }
     if (campo === 'q1percepciones') {
-      form.value[8].fields[3].value = +value - +form.value[8].fields[2].value
+      form.value[8].fields[3].value = value - currencyToInt(form.value[8].fields[2].value)
     }
     if (campo === 'q2deducciones') {
-      form.value[8].fields[7].value = +form.value[8].fields[5].value - +value
+      form.value[8].fields[7].value = currencyToInt(form.value[8].fields[5].value) - value
     }
     if (campo === 'q2percepciones') {
-      form.value[8].fields[7].value = +value - +form.value[8].fields[6].value
+      form.value[8].fields[7].value = value - currencyToInt(form.value[8].fields[6].value)
     }
   }
 
