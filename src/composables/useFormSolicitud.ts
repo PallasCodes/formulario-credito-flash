@@ -496,9 +496,9 @@ export function useFormSolicitud(showAuthModal: () => void) {
         {
           label: 'Meses de residencia',
           name: 'antmeses',
-          type: 'number',
-          rules: 'required|number|min:0|max:12',
-          value: 1,
+          type: 'hidden',
+          value: 0,
+          skipInit: true,
         },
         {
           label: 'Tipo de vivienda',
@@ -649,7 +649,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
         {
           label: 'Celular',
           name: 'celular2',
-          type: 'text',
+          type: 'tel',
           rules: 'required|length:10,12|number',
           value: '2281237058',
         },

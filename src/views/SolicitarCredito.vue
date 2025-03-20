@@ -35,18 +35,18 @@ const {
 } = useFormSolicitud(showAuthModal)
 
 const infoCentroTrabajoIpe = {
-  idcentrotrabajo: -1,
-  idtipo: 1800,
+  idcentrotrabajo: 111586,
+  idtipo: 1802,
   clavecentrotrabajo: null,
-  nombre: 'OFICINA IPE',
+  nombre: 'Instituto de pensiones del estado',
   idmunicipio: 4603,
-  domicilio: null,
-  numero: null,
+  domicilio: 'Arco Sur',
+  numero: 730,
   interior: null,
-  colonia: 'CENTRO',
-  cp: '91000',
-  ciudad: 'Xalapa',
-  telefono: '2281237054',
+  colonia: 'LOMAS VERDES',
+  cp: '91098',
+  ciudad: 'XALAPA',
+  telefono: '2281410500',
   extension: '',
   identidadfederativa: 30,
 }
@@ -627,7 +627,8 @@ async function onSiguiente() {
   error = await formStepHandler(currentStep.value)
 
   if (!error) {
-    window.scrollTo(0, 0)
+    const header = document.getElementById('headerFlash') as HTMLDivElement
+    window.scrollTo(0, header.getBoundingClientRect().height + 100)
 
     if (convenioActivo.value && currentStep.value === 4) {
       // saltar registro de convenio si el usario ya tiene un convenio activo
@@ -662,7 +663,8 @@ function handleSubmitCalculadora(payload: any) {
   escenario.value = Escenarios.FORMULARIO
   formCalculadora.value = payload
   form.value[9].fields[0].value = payload.importeSolicitado
-  window.scrollTo(0, 0)
+  const header = document.getElementById('headerFlash') as HTMLDivElement
+  window.scrollTo(0, header.getBoundingClientRect().height + 100)
 }
 
 function handleCreditoNoViable() {
@@ -716,8 +718,8 @@ async function handleSesionIniciada() {
 
   if (!error) {
     escenario.value = Escenarios.FORMULARIO
-    const formElement = document.getElementById('vue-app') as HTMLDivElement
-    window.scrollTo(0, formElement.getBoundingClientRect().height)
+    const header = document.getElementById('headerFlash') as HTMLDivElement
+    window.scrollTo(0, header.getBoundingClientRect().height + 100)
   }
   setLoading(false)
   isModalLoginOpen.value = false
