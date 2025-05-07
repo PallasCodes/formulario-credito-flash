@@ -41,7 +41,7 @@ const infoCentroTrabajoIpe = {
   nombre: 'Instituto de pensiones del estado',
   idmunicipio: 4603,
   domicilio: 'Arco Sur',
-  numero: 730,
+  numero: '730',
   interior: null,
   colonia: 'LOMAS VERDES',
   cp: '91098',
