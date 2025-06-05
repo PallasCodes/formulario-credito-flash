@@ -864,31 +864,6 @@ export function useFormSolicitud(showAuthModal: () => void) {
         },
       ],
     },
-    // PASO 10 - SELECCIONAR PROMOCIÓN
-    {
-      title: '¿Cuánto dinero necesitas?',
-      fields: [
-        {
-          label: 'Importe',
-          value: 1000,
-          name: 'importesolicitado',
-          type: 'select',
-          rules: 'required',
-          items: catMontos,
-          skipCat: true,
-        },
-        {
-          label: 'Plazos',
-          value: null,
-          name: 'idpromocion',
-          type: 'select',
-          rules: 'required',
-          items: catPromos,
-          placeholder: 'Selecciona los plazos',
-          skipCat: true,
-        },
-      ],
-    },
     // PASO 11 -  CARGAR ARCHIVOS
     {
       title: 'Agrega los siguientes documentos',
@@ -940,6 +915,31 @@ export function useFormSolicitud(showAuthModal: () => void) {
         },
       ],
     },
+    // PASO 10 - SELECCIONAR PROMOCIÓN
+    {
+      title: '¿Cuánto dinero necesitas?',
+      fields: [
+        {
+          label: 'Importe',
+          value: 1000,
+          name: 'importesolicitado',
+          type: 'select',
+          rules: 'required',
+          items: catMontos,
+          skipCat: true,
+        },
+        {
+          label: 'Plazos',
+          value: null,
+          name: 'idpromocion',
+          type: 'select',
+          rules: 'required',
+          items: catPromos,
+          placeholder: 'Selecciona los plazos',
+          skipCat: true,
+        },
+      ],
+    },
   ])
 
   // METHODS
@@ -985,7 +985,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
     }))
 
     // @ts-ignore
-    form.value[9].fields[1].value = catPromos.value[catPromos.value.length - 1].value
+    form.value[10].fields[1].value = catPromos.value[catPromos.value.length - 1].value
   }
 
   function calcLiquidez(campo: string, value: number) {
@@ -1005,7 +1005,7 @@ export function useFormSolicitud(showAuthModal: () => void) {
 
   async function seleccionarPromocion(): Promise<boolean> {
     const payload = {
-      promocion: { idpromocion: form.value[9].fields[1].value },
+      promocion: { idpromocion: form.value[10].fields[1].value },
       solicitudv3: { idsolicitud: idsolicitud.value },
     }
 

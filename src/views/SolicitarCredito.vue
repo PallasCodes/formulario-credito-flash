@@ -259,6 +259,15 @@ async function formStepHandler(step: number): Promise<boolean> {
       break
     case 10:
       setLoading(true)
+      error = await cargarArchivos()
+      if (error) {
+        setLoading(false)
+        break
+      }
+      setLoading(false)
+      break
+    case 11:
+      setLoading(true)
       error = await seleccionarPromocion()
       if (error) {
         setLoading(false)
@@ -276,15 +285,7 @@ async function formStepHandler(step: number): Promise<boolean> {
         setLoading(false)
         break
       }
-      setLoading(false)
-      break
-    case 11:
-      setLoading(true)
-      error = await cargarArchivos()
-      if (error) {
-        setLoading(false)
-        break
-      }
+
       window.location.href = `https://intermercado.mx/gracias-credito-flash?folio=${folio}`
       break
     default:
@@ -296,10 +297,10 @@ async function formStepHandler(step: number): Promise<boolean> {
 }
 
 async function cargarArchivos(): Promise<boolean> {
-  const comprobanteDom = form.value[10].fields[0].value[0].file
-  const identificacionFrente = form.value[10].fields[1].value[0].file
-  const identificacionReverso = form.value[10].fields[2].value[0].file
-  const talonPago = form.value[10].fields[3].value[0].file
+  const comprobanteDom = form.value[9].fields[0].value[0].file
+  const identificacionFrente = form.value[9].fields[1].value[0].file
+  const identificacionReverso = form.value[9].fields[2].value[0].file
+  const talonPago = form.value[9].fields[3].value[0].file
 
   if (identificacionFrente.size > 10_000_000) {
     Message.displayToast(
@@ -335,7 +336,6 @@ async function cargarArchivos(): Promise<boolean> {
   payload.set('identificacionReverso', identificacionReverso)
   payload.set('comprobanteDom', comprobanteDom)
   payload.set('talonPago', talonPago)
-  payload.set('idOrden', `${idOrden}`)
   payload.set('idSolicitud', `${idsolicitud.value}`)
 
   const { error, message } = await handleRequestByEndpoint('POST', '/s3/upload', payload)
@@ -360,7 +360,7 @@ async function actualizarTrainProcess(trainprocess: number): Promise<boolean> {
 
 async function guardarCondicionesOrden(): Promise<boolean> {
   const payload = {
-    datos11condiciones: { ...payloadInfoCreditoWeb, ...getFormStepValues(10) },
+    datos11condiciones: { ...payloadInfoCreditoWeb, ...getFormStepValues(11) },
     solicitudv3: { idsolicitud: idsolicitud.value },
   }
 
@@ -628,7 +628,7 @@ async function onSiguiente() {
 
   if (!error) {
     const header = document.getElementById('headerFlash') as HTMLDivElement
-    window.scrollTo(0, header.getBoundingClientRect().height + 100)
+    window.scrollTo(0, header?.getBoundingClientRect()?.height + 100)
 
     if (convenioActivo.value && currentStep.value === 4) {
       // saltar registro de convenio si el usario ya tiene un convenio activo
@@ -664,7 +664,7 @@ function handleSubmitCalculadora(payload: any) {
   formCalculadora.value = payload
   form.value[9].fields[0].value = payload.importeSolicitado
   const header = document.getElementById('headerFlash') as HTMLDivElement
-  window.scrollTo(0, header.getBoundingClientRect().height + 100)
+  window.scrollTo(0, header?.getBoundingClientRect()?.height + 100)
 }
 
 function handleCreditoNoViable() {
@@ -719,7 +719,7 @@ async function handleSesionIniciada() {
   if (!error) {
     escenario.value = Escenarios.FORMULARIO
     const header = document.getElementById('headerFlash') as HTMLDivElement
-    window.scrollTo(0, header.getBoundingClientRect().height + 100)
+    window.scrollTo(0, header?.getBoundingClientRect()?.height + 100)
   }
   setLoading(false)
   isModalLoginOpen.value = false
