@@ -159,33 +159,12 @@ function onSubmitCalculadora() {
         id="radio-cliente-previo"
       />
 
-      <section class="text-sm sm:text-base">
+      <section class="text-sm sm:text-base mb-6">
         <div class="text-center mt-6 block">
           <span class="text-lg font-semibold">Tu pago mensual sería de</span>
           <h3 class="text-2xl text-orange-600 font-bold">
             {{ currencyFormat.format((getPagare / (+form.plazos * 2)) * 2) }}
           </h3>
-        </div>
-
-        <div class="flex items-center text-center my-8">
-          <div class="flex-grow">
-            <span class="block font-semibold">Préstamo</span>
-            <span class="block">{{ currencyFormat.format(form.monto) }}</span>
-          </div>
-
-          <div class="font-bold text-xl">+</div>
-
-          <div class="flex-grow">
-            <span class="block font-semibold">Interéses</span>
-            <span class="block">{{ currencyFormat.format(getPagare - form.monto) }}</span>
-          </div>
-
-          <div class="font-bold text-xl">=</div>
-
-          <div class="flex-grow">
-            <span class="block font-semibold">Total a pagar</span>
-            <span class="block">{{ currencyFormat.format(getPagare) }}</span>
-          </div>
         </div>
       </section>
     </FormKit>
